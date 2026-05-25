@@ -1,0 +1,621 @@
+/*
+ * taniconnect.css
+ * Stylesheet utama aplikasi TaniConnect
+ * Tema: Natural/Organic - hijau segar, tanah, dan putih bersih
+ * Font: Plus Jakarta Sans (heading) + Nunito (body)
+ */
+
+/* CSS VARIABLES - Token desain global
+   Ubah di sini untuk ganti tema seluruh aplikasi */
+:root {
+    /* Warna utama - hijau tani */
+    --tc-primary:        #2D7A3A;
+    --tc-primary-light:  #4CAF50;
+    --tc-primary-dark:   #1B5E20;
+    --tc-primary-bg:     #E8F5E9;
+
+    /* Warna aksen */
+    --tc-oranye:         #E65100;
+    --tc-oranye-bg:      #FFF3E0;
+    --tc-biru:           #1565C0;
+    --tc-biru-bg:        #E3F2FD;
+    --tc-kuning:         #F9A825;
+    --tc-kuning-bg:      #FFFDE7;
+    --tc-merah:          #C62828;
+    --tc-merah-bg:       #FFEBEE;
+    --tc-info:           #00838F;
+    --tc-info-bg:        #E0F7FA;
+
+    /* Warna netral */
+    --tc-bg:             #F4F6F4;   /* Background halaman */
+    --tc-surface:        #FFFFFF;   /* Background kartu */
+    --tc-border:         #E0E7E0;
+    --tc-text:           #1C2B1C;
+    --tc-text-muted:     #6B7C6B;
+    --tc-text-light:     #9EAD9E;
+
+    /* Sidebar */
+    --tc-sidebar-bg:     #FFFFFF;
+    --tc-sidebar-w:      240px;
+    --tc-sidebar-w-mob:  280px;
+
+    /* Navbar */
+    --tc-navbar-h:       64px;
+
+    /* Tipografi */
+    --tc-font-head:      'Plus Jakarta Sans', sans-serif;
+    --tc-font-body:      'Nunito', sans-serif;
+
+    /* Shadows */
+    --tc-shadow-sm:      0 1px 3px rgba(0,0,0,0.08);
+    --tc-shadow:         0 2px 8px rgba(0,0,0,0.10);
+    --tc-shadow-md:      0 4px 16px rgba(0,0,0,0.10);
+
+    /* Border radius */
+    --tc-radius:         12px;
+    --tc-radius-sm:      8px;
+    --tc-radius-lg:      16px;
+}
+
+/* RESET & BASE */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--tc-font-body);
+    background-color: var(--tc-bg);
+    color: var(--tc-text);
+    display: flex;             /* Sidebar + Main berdampingan */
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--tc-font-head);
+    font-weight: 700;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* SIDEBAR */
+.tc-sidebar {
+    width: var(--tc-sidebar-w);
+    background: var(--tc-sidebar-bg);
+    border-right: 1px solid var(--tc-border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    z-index: 200;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    box-shadow: var(--tc-shadow-sm);
+}
+
+/* Logo di atas sidebar */
+.tc-sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 18px 16px;
+    flex-shrink: 0;
+}
+
+.tc-logo-icon {
+    width: 38px; height: 38px;
+    background: var(--tc-primary);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.tc-logo-name {
+    font-family: var(--tc-font-head);
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--tc-primary-dark);
+    line-height: 1.2;
+}
+
+.tc-logo-sub {
+    font-size: 11px;
+    color: var(--tc-text-muted);
+    font-weight: 500;
+}
+
+/* Divider tipis di sidebar */
+.tc-sidebar-divider {
+    margin: 0 14px;
+    border-color: var(--tc-border);
+    opacity: 1;
+}
+
+/* Navigasi sidebar */
+.tc-sidebar-nav {
+    padding: 8px 10px;
+    flex: 1;
+}
+
+.tc-sidebar-nav ul {
+    list-style: none;
+    padding: 0; margin: 0;
+}
+
+/* Setiap item menu sidebar */
+.tc-sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: var(--tc-radius-sm);
+    color: var(--tc-text-muted);
+    font-weight: 600;
+    font-size: 13.5px;
+    transition: all 0.18s ease;
+    position: relative;
+    margin-bottom: 2px;
+}
+
+.tc-sidebar-nav li a i {
+    font-size: 17px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Hover state menu sidebar */
+.tc-sidebar-nav li a:hover {
+    background: var(--tc-primary-bg);
+    color: var(--tc-primary);
+}
+
+/* Menu aktif (halaman yang sedang dibuka) */
+.tc-sidebar-nav li a.active {
+    background: var(--tc-primary-bg);
+    color: var(--tc-primary);
+    font-weight: 700;
+}
+
+/* Badge notifikasi merah di menu sidebar */
+.tc-badge-notif {
+    margin-left: auto;
+    background: #e53935;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 100px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 16px;
+    height: 18px;
+}
+
+/* MAIN CONTENT */
+.tc-main {
+    margin-left: var(--tc-sidebar-w);  /* Geser ke kanan sejauh lebar sidebar */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* NAVBAR ATAS */
+.tc-navbar {
+    height: var(--tc-navbar-h);
+    background: var(--tc-surface);
+    border-bottom: 1px solid var(--tc-border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: 12px;
+    box-shadow: var(--tc-shadow-sm);
+}
+
+.tc-navbar-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--tc-text);
+    white-space: nowrap;
+}
+
+/* Tombol hamburger toggle sidebar */
+.tc-sidebar-toggle {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: var(--tc-text-muted);
+    cursor: pointer;
+    padding: 4px;
+    display: none; /* Tersembunyi di desktop, muncul di mobile */
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+
+.tc-sidebar-toggle:hover { background: var(--tc-bg); }
+
+/* Tombol ikon di navbar (notifikasi bell) */
+.tc-navbar-icon-btn {
+    position: relative;
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--tc-bg);
+    color: var(--tc-text-muted);
+    font-size: 17px;
+    transition: all 0.15s;
+    text-decoration: none;
+}
+
+.tc-navbar-icon-btn:hover {
+    background: var(--tc-primary-bg);
+    color: var(--tc-primary);
+}
+
+/* Badge merah di ikon navbar */
+.tc-navbar-badge {
+    position: absolute;
+    top: 4px; right: 4px;
+    background: #e53935;
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    min-width: 14px; height: 14px;
+    border-radius: 100px;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+    padding: 0 3px;
+}
+
+/* Tombol dropdown profil navbar */
+.tc-navbar-profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: background 0.15s;
+}
+
+.tc-navbar-profile-btn:hover { background: var(--tc-bg); }
+.tc-navbar-profile-btn::after { display: none; } /* Hapus caret bawaan Bootstrap */
+
+.tc-navbar-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--tc-border);
+}
+
+.tc-navbar-username {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--tc-text);
+}
+
+/* Dropdown menu custom */
+.tc-dropdown-menu {
+    border: 1px solid var(--tc-border);
+    border-radius: var(--tc-radius-sm);
+    box-shadow: var(--tc-shadow-md);
+    font-size: 13.5px;
+}
+
+/* KONTEN HALAMAN */
+.tc-content {
+    padding: 24px;
+    flex: 1;
+}
+
+.tc-flash-container { padding-top: 16px; }
+
+/* KARTU (CARD) */
+.tc-card {
+    background: var(--tc-surface);
+    border-radius: var(--tc-radius);
+    border: 1px solid var(--tc-border);
+    box-shadow: var(--tc-shadow-sm);
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.tc-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 14px 18px;
+    min-height: 52px;
+    border-bottom: 1px solid var(--tc-border);
+    flex-shrink: 0;
+}
+
+.tc-card-title {
+    font-family: var(--tc-font-head);
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--tc-text);
+}
+
+.tc-card-body {
+    padding: 14px 18px;
+    flex: 1;
+}
+
+.tc-link-kecil {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tc-primary);
+    text-decoration: none;
+    transition: color 0.15s;
+    white-space: nowrap;
+}
+.tc-link-kecil:hover { color: var(--tc-primary-dark); text-decoration: underline; }
+
+/* KARTU STATISTIK (bagian atas dashboard) */
+.tc-stat-card {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 20px 18px;
+    flex: 1;                       /* ← tambahkan ini, agar mengisi tc-card */
+    flex-direction: row;
+}
+
+.tc-stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+/* Variasi warna ikon statistik */
+.tc-stat-icon--hijau  { background: var(--tc-primary-bg); color: var(--tc-primary); }
+.tc-stat-icon--biru   { background: var(--tc-biru-bg);    color: var(--tc-biru); }
+.tc-stat-icon--oranye { background: var(--tc-oranye-bg);  color: var(--tc-oranye); }
+
+.tc-stat-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tc-stat-number {
+    font-family: var(--tc-font-head);
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--tc-text);
+    line-height: 1.1;
+    word-break: break-word;
+}
+
+.tc-stat-label {
+    font-size: 12px;
+    color: var(--tc-text-muted);
+    font-weight: 600;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+/* ITEM PENGAJUAN TAWAR */
+.tc-tawar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--tc-border);
+}
+.tc-tawar-item:last-child { border-bottom: none; }
+
+.tc-tawar-info { flex: 1; min-width: 0; }
+.tc-tawar-komoditas { font-weight: 700; font-size: 13.5px; }
+.tc-tawar-pasar { font-size: 11.5px; color: var(--tc-text-muted); }
+.tc-tawar-harga {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--tc-primary-dark);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ITEM PERMINTAAN TERDEKAT */
+.tc-req-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--tc-border);
+    transition: background 0.15s;
+}
+.tc-req-item:last-child { border-bottom: none; }
+.tc-req-item:hover { background: var(--tc-bg); }
+
+.tc-req-info { flex: 1; min-width: 0; }
+.tc-req-komoditas { font-weight: 700; font-size: 14px; }
+.tc-req-detail {
+    display: flex;
+    gap: 10px;
+    font-size: 11.5px;
+    color: var(--tc-text-muted);
+    flex-wrap: wrap;
+    margin-top: 3px;
+}
+.tc-req-deadline { color: var(--tc-oranye); font-weight: 600; }
+.tc-req-harga {
+    text-align: right;
+    min-width: 110px;
+    flex-shrink: 0;
+}
+.tc-req-harga > div {
+    font-weight: 700;
+    font-size: 13.5px;
+    color: var(--tc-primary-dark);
+    white-space: nowrap;
+    margin-bottom: 6px;
+}
+
+/* BADGE STATUS (permintaan, transaksi, pengiriman) */
+.tc-badge-status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 100px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+/* Warna badge berdasarkan status */
+.tc-badge-status--aktif,
+.tc-badge-status--dikirim,
+.tc-badge-status--dalam_perjalanan { background: var(--tc-biru-bg); color: var(--tc-biru); }
+
+.tc-badge-status--selesai,
+.tc-badge-status--dibayar          { background: var(--tc-primary-bg); color: var(--tc-primary); }
+
+.tc-badge-status--menunggu,
+.tc-badge-status--pending,
+.tc-badge-status--disiapkan        { background: var(--tc-kuning-bg); color: #E65100; }
+
+.tc-badge-status--ditolak,
+.tc-badge-status--batal            { background: var(--tc-merah-bg); color: var(--tc-merah); }
+
+.tc-badge-status--terpenuhi,
+.tc-badge-status--diterima         { background: var(--tc-primary-bg); color: var(--tc-primary-dark); }
+
+/* TOMBOL-TOMBOL */
+/* Tombol kecil default (outline hijau) */
+.tc-btn-sm {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 6px;
+    background: transparent;
+    border: 1.5px solid var(--tc-primary);
+    color: var(--tc-primary);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-block;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.tc-btn-sm:hover { background: var(--tc-primary); color: white; }
+
+/* Tombol kecil solid hijau */
+.tc-btn-primary-sm {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 6px;
+    background: var(--tc-primary);
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-block;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.tc-btn-primary-sm:hover { background: var(--tc-primary-dark); color: white; }
+
+/* EMPTY STATE */
+.tc-empty-state {
+    text-align: center;
+    padding: 28px 16px;
+    color: var(--tc-text-muted);
+}
+.tc-empty-state i {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 8px;
+    opacity: 0.4;
+}
+.tc-empty-state p {
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+/* LAYOUT DASHBOARD */
+.tc-content .row {
+    align-items: stretch;
+    margin-bottom: 20px;
+}
+.tc-content .row:last-child {
+    margin-bottom: 0;
+}
+.tc-content .row > div {
+    display: flex;
+    flex-direction: column;
+}
+
+/* RESPONSIVE - Mobile & Tablet */
+@media (max-width: 991px) {
+    /* Sidebar tersembunyi di mobile, muncul saat toggle */
+    .tc-sidebar {
+        transform: translateX(-100%);
+        width: var(--tc-sidebar-w-mob);
+    }
+
+    /* Class 'open' ditambahkan via JavaScript saat toggle diklik */
+    .tc-sidebar.open {
+        transform: translateX(0);
+        box-shadow: var(--tc-shadow-md);
+    }
+
+    /* Konten utama tidak perlu margin kiri karena sidebar overlay */
+    .tc-main { margin-left: 0; }
+
+    /* Tampilkan tombol hamburger di navbar */
+    .tc-sidebar-toggle { display: flex; }
+
+    /* Overlay gelap saat sidebar terbuka di mobile */
+    .tc-sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+        z-index: 150;
+    }
+    .tc-sidebar-overlay.show { display: block; }
+
+    .tc-tawar-item,
+    .tc-req-item {
+        flex-wrap: wrap;
+    }
+
+    .tc-req-harga {
+        width: 100%;
+        text-align: left;
+        min-width: unset;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 6px;
+    }
+
+    .tc-req-harga > div { margin-bottom: 0; }
+}
+
+@media (max-width: 767px) {
+    .tc-content { padding: 16px; }
+    .tc-navbar { padding: 0 16px; }
+    .tc-stat-number { font-size: 20px; }
+}
