@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pengiriman', function (Blueprint $table) {
-            $table->id('idKirim');
-            $table->id('idTawar');
+            $table->id('idKirim'); // Ini tetap dibiarkan sebagai Primary Key
+            $table->unsignedBigInteger('idTawar'); // <-- Ubah baris ini
             $table->string('NamaPengirim');
             $table->string('NoKendaraan');
             $table->date('TanggalTiba');

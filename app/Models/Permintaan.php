@@ -2,21 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Permintaan extends Model
 {
-    protected $table = 'permintaan';
-    protected $primaryKey = 'idMinta';
-    protected $fillable = [
-        'NamaPembeli',
-        'Komoditas',
-        'JumlahButuh',
-        'HargaTawar',
-        'LokasiPengirim',
-        'BatasTanggal',
-        'Status',
-        'Deskripsi',
-        'Gambar'
-        ];
+    // Mengizinkan kolom-kolom ini diisi massal
+    protected $fillable = ['komoditas', 'volume', 'batas_harga', 'batas_akhir'];
 }
+
