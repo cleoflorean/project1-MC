@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('HargaTawar', 12, 2);
             $table->text('LokasiPembeli');
             $table->date('BatasTanggal');
-            $table->string('Status', ['Aktif', 'Selesai'])->default('Aktif');
+            $table->enum('Status', ['Aktif', 'Selesai'])->default('Aktif'); // <-- Bagian yang diubah
             $table->text('Deskripsi');
             $table->string('Gambar');
             // $table->timestamps();
