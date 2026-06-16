@@ -10,12 +10,14 @@ class Panen extends Model
     protected $table = 'panen';
     protected $primaryKey = 'idPanen';
     protected $fillable = [
+        'NamaTanaman',
         'Komoditas',
-        'Kategori',
         'JumlahPanen',
+        'HargaPerKg',
         'TglPanen',
         'LokasiPanen',
         'Status',
-        'Deskripsi'
+        'Deskripsi',
+        'Gambar'
     ];
 }

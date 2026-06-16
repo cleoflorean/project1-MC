@@ -59,26 +59,17 @@
 
             {{-- Cari Permintaan Pasar --}}
             <li>
-                <a href="#"
-                   class="{{ request()->routeIs('pasar*') ? 'active' : '' }}">
+                <a href="{{ route('permintaan.index') }}"
+                   class="{{ request()->routeIs('permintaan*') || request()->routeIs('tawar.create') ? 'active' : '' }}">
                     <i class="bi bi-shop"></i>
                     <span>Cari Permintaan</span>
                 </a>
             </li>
-
-            {{-- Panen Saya --}}
-            <li>
-                <a href="#"
-                   class="{{ request()->routeIs('panen*') ? 'active' : '' }}">
-                    <i class="bi bi-basket3-fill"></i>
-                    <span>Panen Saya</span>
-                </a>
-            </li>
-
+            
             {{-- Tawarkan Panen --}}
             <li>
-                <a href="#"
-                   class="{{ request()->routeIs('tawar*') ? 'active' : '' }}">
+                <a href="{{ route('tawar.index') }}"
+                   class="{{ request()->routeIs('tawar.index') ? 'active' : '' }}">
                     <i class="bi bi-tags-fill"></i>
                     <span>Tawarkan Panen</span>
                 </a>
@@ -126,7 +117,7 @@
         </button>
 
         {{-- Judul halaman dinamis dari tiap view --}}
-        <h1 class="tc-navbar-title">@yield('page-title', 'Dashboard')</h1>
+        <h1 class="tc-navbar-title" style="font-size: 150%">@yield('page-title', 'Dashboard')</h1>
 
         {{-- Spacer mendorong elemen ke kanan --}}
         <div class="flex-grow-1"></div>
@@ -190,10 +181,7 @@
         @endif
     </div>
 
-    {{-- --------------------------------------------------------
-         KONTEN HALAMAN UTAMA
-         Setiap view mengisi bagian ini dengan @yield('content')
-         -------------------------------------------------------- --}}
+    {{-- KONTEN HALAMAN UTAMA --}}
     <div class="tc-content">
         @yield('content')
     </div>

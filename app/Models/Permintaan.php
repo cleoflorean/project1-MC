@@ -14,8 +14,9 @@ class Permintaan extends Model
         'JumlahButuh',
         'HargaTawar',
         'LokasiPengirim',
-        'Deadline',
+        'BatasTanggal',
         'Status',
-        'Deskripsi'
+        'Deskripsi',
+        'Gambar'
         ];
 }

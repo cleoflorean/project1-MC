@@ -3,26 +3,17 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Petani\DashboardController;
 use App\Http\Controllers\Petani\TawarController;
+use App\Http\Controllers\Petani\PanenController;
+use App\Http\controllers\Petani\PermintaanController;
 
 // Dashboard petani
 Route::get('/', [DashboardController::class, 'index']);
 
 // Route dummy
-// Panen
-Route::view('/panen', 'petani.dashboard')
-    ->name('panen.index');
-
-// Pasar
-Route::view('/pasar', 'petani.dashboard')
-    ->name('pasar.index');
 // Pengiriman
 Route::get('/pengiriman/detail/{id}', function ($id) {
     return 'Detail Pengiriman ' . $id;
 })->name('pengiriman.detail');
-
-// Tawarkan Panen
-Route::view('/tawar', 'petani.dashboard')
-    ->name('tawar.index');
 
 // Profil
 Route::view('/profil', 'petani.dashboard')
@@ -32,9 +23,15 @@ Route::view('/profil', 'petani.dashboard')
 Route::view('/notifikasi', 'petani.dashboard')
     ->name('notifikasi.index');
 
+Route::prefix('penawaran')->group(function () {
+    // tawar form
+    Route::get('/tawar', [TawarController::class, 'create'])->name('tawar.create');
+    
+    //simpan data penawaran
+    Route::post('/tawar', [TawarController::class, 'store'])->name('tawar.store');
+    
+    
+    Route::get('/', [TawarController::class, 'index'])->name('tawar.index');
+});
 
-
-
-Route::get('/tawar/{id}', function ($id) {
-    return 'Halaman tawar ' . $id;
-})->name('tawar.form');
+Route::get('/permintaan', [PermintaanController::class, 'index'])->name('permintaan.index');

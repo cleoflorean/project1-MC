@@ -1,13 +1,13 @@
 @extends('layouts.app')
- 
+
 @section('title', 'Dashboard Petani')
 @section('page-title', 'Dashboard Petani')
- 
+
 @section('content')
- 
+
 {{-- BARIS 1: KARTU STATISTIK RINGKASAN 3 kartu: Jenis Panen | Permintaan Baru | Dalam Pengiriman --}}
 <div class="row g-4 mb-4">
- 
+
     {{-- Kartu: Jumlah Jenis Panen Aktif --}}
     <div class="col-12 col-md-6 col-xl-4">
         <div class="tc-card tc-stat-card">
@@ -20,7 +20,7 @@
             </div>
         </div>
     </div>
- 
+
     {{-- Kartu: Permintaan Baru (7 hari terakhir) --}}
     <div class="col-12 col-md-6 col-xl-4">
         <div class="tc-card tc-stat-card">
@@ -33,7 +33,7 @@
             </div>
         </div>
     </div>
- 
+
     {{-- Kartu: Panen Dalam Pengiriman --}}
     <div class="col-12 col-md-6 col-xl-4">
         <div class="tc-card tc-stat-card">
@@ -46,87 +46,51 @@
             </div>
         </div>
     </div>
- 
 </div>
-{{-- /BARIS 1 --}}
- 
-{{-- BARIS 2: PENGAJUAN TAWAR --}}
-<div class="row g-4 mb-4">
- 
-    {{-- Pengajuan Tawar yang Masuk --}}
-    <div class="col-12 col-lg-6">
-        <div class="tc-card h-100">
-            <div class="tc-card-header">
-                <h6 class="tc-card-title">
-                    <i class="bi bi-tags-fill me-2 text-warning"></i>
-                    Pengajuan Tawar di Pasar
-                </h6>
-                <a href="{{ route('tawar.index') }}" class="tc-link-kecil">Lihat Semua</a>
-            </div>
-            <div class="tc-card-body">
-                @forelse($pengajuanTawar as $tawar)
-                    <div class="tc-tawar-item">
-                        <div class="tc-tawar-info">
-                            <div class="tc-tawar-komoditas">{{ $tawar->komoditas }}</div>
-                            <div class="tc-tawar-pasar">
-                                <i class="bi bi-shop"></i>
-                                {{ optional($tawar->pasar)->nama ?? '-' }}
-                            </div>
-                        </div>
-                        <div class="tc-tawar-harga">
-                            Rp{{ number_format($tawar->harga_per_kg, 0, ',', '.') }}/kg
-                        </div>
-                        {{-- Badge status tawar --}}
-                        <span class="tc-badge-status tc-badge-status--{{ $tawar->status ?? 'aktif' }}">
-                            {{ ucfirst($tawar->status ?? 'aktif') }}
-                        </span>
-                    </div>
-                @empty
-                    <div class="tc-empty-state">
-                        <i class="bi bi-tags"></i>
-                        <p>Belum ada penawaran aktif</p>
-                        <a href="{{ route('pasar.index') }}" class="tc-btn-sm">Cari Permintaan</a>
-                    </div>
-                @endforelse
-            </div>
-        </div>
-    </div>
- 
-</div>
-{{-- /BARIS 2 --}}
- 
-{{-- BARIS 3: PERMINTAAN TERDEKAT & RIWAYAT TRANSAKSI --}}
+
+{{-- BARIS 2: PERMINTAAN & PENGAJUAN TAWAR --}}
 <div class="row g-4 align-items-stretch">
- 
-    {{-- Permintaan Terdekat Sesuai Komoditas --}}
-    <div class="col-lg-6">
+
+    {{-- Permintaan Terdekat --}}
+    <div class="col-12 col-lg-7">
         <div class="tc-card h-100">
             <div class="tc-card-header">
                 <h6 class="tc-card-title">
-                    <i class="bi bi-geo-alt-fill me-2 text-danger"></i>
-                    Permintaan Terdekat
+                    <i class="bi bi-geo-alt-fill me-2 text-danger"></i> Permintaan Terdekat
                 </h6>
-                <a href="{{ route('pasar.index') }}" class="tc-link-kecil">Lihat Semua</a>
+                <a href="#" class="tc-link-kecil">Lihat Semua</a>
             </div>
             <div class="tc-card-body p-0">
                 @forelse($permintaanTerdekat as $req)
                     <div class="tc-req-item">
                         <div class="tc-req-info">
-                            <div class="tc-req-komoditas">{{ $req->komoditas }}</div>
+
+                            <div class="tc-req-image">
+                                <img src="{{ asset($req->Gambar) }}" alt="{{  $req->komoditas }}">
+                            </div>
+
+                            <div class="tc-req-komoditas">
+                                {{ $req->komoditas }}
+                            </div>
                             <div class="tc-req-detail">
-                                <span><i class="bi bi-box"></i> {{ number_format($req->jumlah_butuh) }} Kg</span>
-                                <span><i class="bi bi-geo"></i> {{ $req->jarak_km ?? '-' }} km</span>
+                                <span>
+                                    <i class="bi bi-box"></i>
+                                    {{ number_format($req->jumlah_butuh) }} Kg
+                                </span>
+                                <span>
+                                    <i class="bi bi-geo"></i>
+                                    {{ $req->jarak_km ?? '-' }} km
+                                </span>
                                 <span class="tc-req-deadline">
                                     <i class="bi bi-clock"></i>
-                                    Deadline: {{ \Carbon\Carbon::parse($req->deadline)->format('d M Y') }}
+                                    Deadline:
+                                    {{ \Carbon\Carbon::parse($req->deadline)->format('d M Y') }}
                                 </span>
                             </div>
                         </div>
                         <div class="tc-req-harga">
                             <div>Rp{{ number_format($req->harga_per_kg, 0, ',', '.') }}/kg</div>
-                            <a href="{{ route('tawar.form', $req->id) }}" class="tc-btn-primary-sm">
-                                Tawar
-                            </a>
+                            <a href="{{ route('tawar.create', $req->id) }}" class="tc-btn-primary-sm">Tawar</a>
                         </div>
                     </div>
                 @empty
@@ -139,10 +103,57 @@
             </div>
         </div>
     </div>
- 
+
+    {{-- Pengajuan Tawar di Pasar --}}
+    <div class="col-12 col-lg-5">
+        <div class="tc-card h-100">
+            <div class="tc-card-header">
+                <h6 class="tc-card-title">
+                    <i class="bi bi-tags-fill me-2 text-warning"></i>
+                    Pengajuan Tawar di Pasar
+                </h6>
+                <a href="{{ route('tawar.index') }}"class="tc-link-kecil">
+                    Lihat Semua
+                </a>
+            </div>
+            <div class="tc-card-body">
+                @forelse($pengajuanTawar as $tawar)
+                    <div class="tc-tawar-item">
+                        <div class="tc-tawar-info">
+                            <div class="tc-req-image">
+                                <img src="{{ asset($tawar->Gambar ?? 'upload/penawaran/default.png') }}" alt="{{  $tawar->NamaTanaman ?? 'Tanaman'}}">
+                            </div>
+
+                            <div class="tc-tawar-text">
+                                <div class="tc-tawar-komoditas"> 
+                                    {{ $tawar->nama_tanaman ?? 'Komoditas' }}</div>
+                                <div class="tc-tawar-pasar">
+                                    <i class="bi bi-shop"></i> 
+                                    {{ optional($tawar->pasar)->nama ?? '-' }}
+                                </div>
+                            </div>
+                            
+                        </div>
+                            <div class="tc-tawar-harga"> Rp{{ number_format($tawar->harga_per_kg, 0, ',', '.') }}/kg
+                            </div>
+                            <span class="tc-badge-status tc-badge-status--{{ $tawar->status ?? 'aktif' }}">
+                                {{ ucfirst($tawar->status ?? 'aktif') }}
+                            </span>
+                    </div>
+                @empty
+                    <div class="tc-empty-state">
+                        <i class="bi bi-tags"></i>
+                        <p>Belum ada penawaran aktif</p>
+                        <a href="{{ route('pasar.index') }}" class="tc-btn-sm">
+                            Cari Permintaan
+                        </a>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
 </div>
-{{-- /BARIS 3 --}}
- 
+
 @endsection
 
 @push('scripts')

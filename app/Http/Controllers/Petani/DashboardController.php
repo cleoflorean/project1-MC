@@ -14,106 +14,52 @@ class DashboardController extends Controller
         $panen = Panen::all();
 
         // Dummy data
-        $jumlahJenisPanen = 5;
+        $jumlahJenisPanen = 2;
         $permintaanBaru = 12;
-        $dalamPengiriman = 3;
-        $pendapatanBulanIni = 15750000;
-        $persentaseKenaikan = 10;
-
-        // Jangka panan
-        $jangkaPanen = collect([
-            (object)[
-                'komoditas' => 'Cabai Merah',
-                'lokasi' => 'Sari Jadi',
-                'sisa_hari' => 5
-            ],
-            (object)[
-                'komoditas' => 'Tomat',
-                'lokasi' => 'Ciamis',
-                'sisa_hari' => 5
-            ],
-        ]);
+        $dalamPengiriman = 2;
 
         //Pengajuan tawar
         $pengajuanTawar = collect([
             (object)[
-                'komoditas'=> 'Cabai',
+                'komoditas' => 'Cabai',
                 'harga_per_kg' => 32000,
                 'status' => 'aktif',
                 'pasar' => (object)[
                     'nama' => 'Pasar Induk'
-                ]           
-            ]
-
-        ]);
-
-        // Pengriman
-        $panenDalamPengiriman = collect([
-            (object)[
-                'id' => 1,
-                'status' => 'dikirim',
-                //Relasi permintaan
-                'permintaan' => (object)[
-                    'komoditas' => 'Tomat',
-                //Relasi pasar
-                    'pasar' => (object)[
-                        'nama' => 'Distributor Ciamis'
-                    ]
-                ]
-            ],
-
-            (object)[
-                'id' => 2,
-                'status' => 'dalam_perjalanan',
-
-                'permintaan' => (object)[
-                    'komoditas' => 'Cabai Merah',
-
-                    'pasar' => (object)[
-                        'nama' => 'Pasar Induk Medan'
-                    ]
-                ]
-            ]
-
-        ]);
-
-        //Pendapatan 7 hari
-        $pendapatan7Hari = [
-            ['tanggal' => 'Sen', 'jumalah' => 2000000],
-            ['tanggal' => 'Sel', 'jumlah' => 1500000],
-            ['tanggal' => 'Rab', 'jumlah' => 3000000],
-            ['tanggal' => 'Kam', 'jumlah' => 2500000],
-            ['tanggal' => 'Jum', 'jumlah' => 1800000],
-            ['tanggal' => 'Sab', 'jumlah' => 2200000],
-            ['tanggal' => 'Min', 'jumlah' => 2700000],
-        ];
-
-        //Riwayat transaksi
-        $riwayatTransaksi = collect([
-            (object)[
-                'id' => 1,
-                'komoditas' => 'Cabai Rawit',
-                'jumlah_kg' => 500,
-                'jarak_km' => 12,
-                'deadline' => now(),
-                'harga_per_kg' => 28000,
+                ],
+                'Gambar' => 'images/cabai.jpg'
             ]
         ]);
 
-        // Riwayat transaksi
-        $riwayatTransaksi = collect([
-            (object)[
-                'total_harga' => 2500000,
-                'status' => 'selesai',
-                'created_at' => now(),
-                'permintaan' => (object)[
-                    'komoditas' => 'Cabai',
-                    'pasar' => (object)[
-                        'nama' => 'Pasar Induk'
-                    ]
-                ]
-            ]
-        ]);
+        // // Pengriman
+        // $panenDalamPengiriman = collect([
+        //     (object)[
+        //         'id' => 1,
+        //         'status' => 'dikirim',
+        //         //Relasi permintaan
+        //         'permintaan' => (object)[
+        //             'komoditas' => 'Tomat',
+        //         //Relasi pasar
+        //             'pasar' => (object)[
+        //                 'nama' => 'Distributor Ciamis'
+        //             ]
+        //         ]
+        //     ],
+
+        //     (object)[
+        //         'id' => 2,
+        //         'status' => 'dalam_perjalanan',
+
+        //         'permintaan' => (object)[
+        //             'komoditas' => 'Cabai Merah',
+
+        //             'pasar' => (object)[
+        //                 'nama' => 'Pasar Induk Medan'
+        //             ]
+        //         ]
+        //     ]
+
+        // ]);
 
         $permintaanTerdekat = [
             (object)[
@@ -123,7 +69,8 @@ class DashboardController extends Controller
                 'jarak_km' => 5,
                 'harga_per_kg' => 12000,
                 'harga_tawar' => 25000,
-                'deadline' => '2026-05-22'
+                'deadline' => '2026-05-22',
+                'Gambar' => 'images/cabai.jpg',
             ],
 
             (object)[
@@ -133,7 +80,8 @@ class DashboardController extends Controller
                 'jarak_km' => 8,
                 'harga_per_kg' => 8000,
                 'harga_tawar' => 12000,
-                'deadline' => '2026-06-16'
+                'deadline' => '2026-06-16',
+                'Gambar' => 'images/tomat.jpg',
             ]
         ];
 
@@ -141,7 +89,6 @@ class DashboardController extends Controller
             'menuju_panen' => '5 Hari',
             'pengajuan_tawar' => 5,
             'dalam_pengiriman' => 2,
-            'pendapatan_bulan' => 'Rp15.750.000',
         ];
 
         return view('petani.dashboard', compact(
@@ -149,13 +96,8 @@ class DashboardController extends Controller
             'jumlahJenisPanen',
             'permintaanBaru',
             'dalamPengiriman',
-            'pendapatanBulanIni',
-            'persentaseKenaikan',
-            'jangkaPanen',
-            'pengajuanTawar',
-            'panenDalamPengiriman',
-            'pendapatan7Hari',
-            'riwayatTransaksi',
+            'pengajuanTawar',   
+            // 'panenDalamPengiriman',
             'permintaanTerdekat',
             'dashboard'
             ));

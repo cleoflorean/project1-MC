@@ -14,13 +14,15 @@ return new class extends Migration
         Schema::create('permintaan', function (Blueprint $table) {
             $table->id('idMinta');
             $table->string('NamaPembeli');
+            $table->string('NamaTanaman');
             $table->string('Komoditas');
             $table->integer('JumlahButuh');
             $table->decimal('HargaTawar', 12, 2);
-            $table->text('LokasiPengirim');
-            $table->date('Deadline');
-            $table->string('Status');
+            $table->text('LokasiPembeli');
+            $table->date('BatasTanggal');
+            $table->string('Status', ['Aktif', 'Selesai'])->default('Aktif');
             $table->text('Deskripsi');
+            $table->string('Gambar');
             // $table->timestamps();
         });
     }
