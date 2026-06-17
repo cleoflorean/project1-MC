@@ -12,12 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('permintaans', function (Blueprint $table) {
-        $table->id();
-        $table->string('komoditas');
-        $table->integer('volume');
-        $table->integer('batas_harga');
-        $table->date('batas_akhir');
-        $table->timestamps();
+            $table->id();
+            
+            // Relasi ke tabel users
+            // onDelete('cascade') berarti jika user dihapus, permintaannya ikut terhapus
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            
+            $table->string('komoditas');
+            $table->integer('volume');
+            $table->integer('batas_harga');
+            $table->date('batas_akhir');
+            $table->timestamps();
         });
     }
 

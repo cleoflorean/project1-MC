@@ -7,7 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Permintaan extends Model
 {
-    // Mengizinkan kolom-kolom ini diisi massal
-    protected $fillable = ['komoditas', 'volume', 'batas_harga', 'batas_akhir'];
-}
+    // Pastikan user_id masuk ke dalam fillable
+    protected $fillable = [
+        'user_id', 
+        'komoditas', 
+        'volume', 
+        'batas_harga', 
+        'batas_akhir'
+    ];
 
+    // Setiap permintaan dimiliki oleh satu user
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+}
