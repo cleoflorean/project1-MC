@@ -23,14 +23,19 @@ class User extends Authenticatable
         'role',     // Mengaktifkan kolom role agar bisa disimpan
     ];
 
-    /**
-     * Relasi ke tabel pembeli_profiles
-     */
+    // Relasi One-to-One ke profil pembeli
     public function pembeliProfile()
     {
         return $this->hasOne(PembeliProfile::class);
     }
 
+    // Relasi One-to-Many ke permintaan
+    public function permintaans()
+    {
+        return $this->hasMany(Permintaan::class);
+    }
+
+    
     /**
      * The attributes that should be hidden for serialization.
      *

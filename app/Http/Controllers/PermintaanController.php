@@ -16,23 +16,33 @@ class PermintaanController extends Controller
             'batas_akhir' => 'required|date',
         ]);
 
-        Permintaan::create($request->all());
+        // PERUBAHAN: Menggunakan relasi agar user_id otomatis terisi
+        $request->user()->permintaans()->create([
+            'komoditas' => $request->komoditas,
+            'volume' => $request->volume,
+            'batas_harga' => $request->batas_harga,
+            'batas_akhir' => $request->batas_akhir,
+        ]);
 
-        // Setelah sukses, kembali ke dashboard dengan pesan sukses
         return redirect()->back()->with('success', 'Permintaan pengadaan berhasil disimpan!');
     }
 
     // 2. Menampilkan semua data di halaman "Permintaan Saya"
-    public function index()
+    public function index(Request $request)
     {
-        $permintaans = Permintaan::latest()->get(); // Ambil dari yang terbaru
+        // PERUBAHAN: Hanya memanggil data milik user yang sedang login
+        $permintaans = $request->user()->permintaans()->latest()->get(); 
+        
         return view('Pembeli/permintaan', compact('permintaans'));
     }
 
     // 3. Menampilkan detail item saat baris tabel di-klik
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $permintaan = Permintaan::findOrFail($id);
+        // PERUBAHAN: Mencari data ID, tapi dikunci hanya di dalam data milik user tersebut
+        // Jika user mencoba membuka ID milik orang lain, Laravel akan otomatis menampilkan error 404 (Not Found)
+        $permintaan = $request->user()->permintaans()->findOrFail($id);
+        
         return view('permintaan.show', compact('permintaan'));
     }
 }
