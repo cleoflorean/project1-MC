@@ -13,48 +13,20 @@ class PermintaanController extends Controller
     {
         $search = $request->query('search');
 
-        $permintaan = collect([
-        (object)[
-            'idPermintaan' => 1,
-            'NamaPembeli' => 'PT Segar Alam Nusantara',
-            'LokasiPembeli' => 'Bandung, Jawa Barat',
-            'NamaTanaman' => 'Tomat Beef',
-            'JumlahDibutuhkan' => 500,
-            'HargaMaksimal' => 15000,
-            'BatasTanggal' => '2026-07-15',
-            'Status' => 'Mendesak',
-        ],
-        (object)[
-            'idPermintaan' => 2,
-            'NamaPembeli' => 'Koperasi Tani Makmur',
-            'LokasiPembeli' => 'Cianjur, Jawa Barat',
-            'NamaTanaman' => 'Cabai Rawit Merah',
-            'JumlahDibutuhkan' => 1200,
-            'HargaMaksimal' => 45000,
-            'BatasTanggal' => '2026-06-30',
-            'Status' => 'Rutin',
-        ]
-    ]);
-
-    if ($search) {
-        $permintaan = $permintaan->filter(function ($item) use ($search) {
-            return false !== stripos($item->NamaTanaman, $search) || 
-                   false !== stripos($item->NamaPembeli, $search);
-        });
-    }
-
+        // Ambil data dari database
         $query = Permintaan::where('Status', 'Aktif');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('NamaTanaman', 'Like', '%' . $search . '%')
-                    ->orWhere('NamaPembeli', 'Like', '%' . $search . '%');
+                  ->orWhere('NamaPembeli', 'Like', '%' . $search . '%');
             });
         }
 
-        $permintaan = $permintaan->merge($query->get());
+        $permintaan = $query->get();
 
-        $komoditas = Panen::where('Komoditas')->get();
+        // Ambil daftar komoditas dari tabel panen
+        $komoditas = Panen::pluck('Komoditas')->unique()->filter();
 
         return view('petani.permintaan', compact('permintaan', 'search', 'komoditas'));
     }

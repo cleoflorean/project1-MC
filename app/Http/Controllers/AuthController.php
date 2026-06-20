@@ -18,33 +18,33 @@ class AuthController extends Controller
     $credentials = $request->validate([
         'email' => ['required', 'email'],
         'password' => ['required'],
-        'role' => ['required', 'in:pembeli,petani'],
     ]);
-
     // Ambil email & password saja untuk proses Auth::attempt
     $loginData = $request->only('email', 'password');
+    
+    // --- KODE DETEKTIF SEMENTARA ---
+    // Kita cari user berdasarkan email yang Anda ketik saat login
+    $userLama = \App\Models\User::where('email', $request->email)->first();
+    
+    // if ($userLama) {
+    //     // dd() akan menghentikan aplikasi dan menampilkan panjang karakter & isi password di database
+    //     dd([
+    //         'Panjang Karakter Password di DB' => strlen($userLama->password),
+    //         'Isi Password Terenkripsi' => $userLama->password
+    //     ]);
+    // }
+    // // --------------- sampe sini
 
     // 2. Cek email dan password di database
     if (Auth::attempt($loginData)) {
-        
-        // 3. JIKA password benar, cek apakah ROLE sesuai dengan yang dipilih di form
-        if (Auth::user()->role !== $request->role) {
-            Auth::logout(); // Paksa logout jika role tidak cocok
-            return back()->withErrors([
-                'email' => 'Role yang Anda pilih salah untuk akun ini.',
-            ])->onlyInput('email');
-        }
-
+        // 3. Amankan session jika login sukses
         $request->session()->regenerate();
-
-        // 4. Pengalihan halaman berdasarkan role jika sukses
+        // 4. Pengalihan halaman otomatis berdasarkan role yang tercatat di database
         if (Auth::user()->role === 'petani') {
             return redirect()->intended('/dashboard-petani');
         }
-
         return redirect()->intended('/dashboard-pembeli'); // Mengarah ke rute pembeli
     }
-
     // Jika email atau password salah
     return back()->withErrors([
         'email' => 'Kredensial tidak sesuai dengan data kami.',

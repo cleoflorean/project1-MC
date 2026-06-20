@@ -144,7 +144,7 @@
                     <div class="tc-empty-state">
                         <i class="bi bi-tags"></i>
                         <p>Belum ada penawaran aktif</p>
-                        <a href="{{ route('pasar.index') }}" class="tc-btn-sm">
+                        <a href="{{ route('petani.permintaan.index') }}" class="tc-btn-sm">
                             Cari Permintaan
                         </a>
                     </div>

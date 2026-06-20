@@ -50,7 +50,7 @@
         <ul>
             {{-- Dashboard - Halaman utama petani --}}
             <li>
-                <a href="/"
+                <a href="{{ route('petani.dashboard') }}"
                    class="{{ request()->routeIs('dashboard*') ? 'active' : '' }}">
                     <i class="bi bi-grid-1x2-fill"></i>
                     <span>Dashboard</span>
@@ -59,7 +59,7 @@
 
             {{-- Cari Permintaan Pasar --}}
             <li>
-                <a href="{{ route('permintaan.index') }}"
+                <a href="{{ route('petani.permintaan.index') }}"
                    class="{{ request()->routeIs('permintaan*') || request()->routeIs('tawar.create') ? 'active' : '' }}">
                     <i class="bi bi-shop"></i>
                     <span>Cari Permintaan</span>
@@ -149,7 +149,7 @@
                 <li><hr class="dropdown-divider"></li>
                 <li>
                     {{-- Logout dengan form POST agar aman (CSRF protected) --}}
-                    <form action="#" method="POST">
+                    <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="dropdown-item text-danger">
                             <i class="bi bi-box-arrow-right me-2"></i> Keluar

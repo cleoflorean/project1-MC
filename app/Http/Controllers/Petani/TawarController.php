@@ -12,9 +12,9 @@ class TawarController extends Controller
     public function create(Request $request)
     {
         // Sesuaikan query dengan parameter URL dari halaman pasar (nama_tanaman & kategori)
-        $namaTanaman = $request->query('nama_tanaman');
         $idMinta     = $request->query('idMinta');
-        $kategori    = $request->query('kategori'); // Menggunakan istilah kategori sesuai form baru
+        $namaTanaman = $request->query('NamaTanaman');
+        $kategori    = $request->query('Kategori'); // Menggunakan istilah kategori sesuai form baru
 
         // Kembalikan ke view petani.form_tawar (Pastikan folder & nama file view sudah sesuai)
         return view('Petani.form_tawar', compact('namaTanaman', 'idMinta', 'kategori'));
@@ -56,13 +56,19 @@ class TawarController extends Controller
         $penawaran->save();
 
         // Alihkan halaman ke index penawaran (Atau sesuaikan ke rute halaman riwayat yang kamu inginkan)
-        return redirect()->route('permintaan.index')->with('success', 'Penawaran panen berhasil dikirim!');
+        return redirect()->route('tawar.index')->with('success', 'Penawaran panen berhasil dikirim!');
     }
 
     public function index() {
-        // Jika di atas sudah pakai 'use App\Models\Tawar;', di sini cukup tulis begini:
-        $pengajuanTawar = Penawaran::all(); 
-        
+        $pengajuanTawar = Penawaran::with('permintaan')->get();
         return view('Petani.tawar', compact('pengajuanTawar'));
+    }
+
+    public function destroy($id)
+    {
+        $penawaran = Penawaran::findOrFail($id);
+        $penawaran->delete();
+
+        return redirect()->route('tawar.index')->with('success', 'Penawaran berhasil dihapus!');
     }
 }

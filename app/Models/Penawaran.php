@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory; //hapus kalo datanya sudah tidak dummy
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Permintaan;
 
 class Penawaran extends Model
 {   
@@ -18,6 +19,11 @@ class Penawaran extends Model
         'HargaTawar',
         'Status',
         'Catatan',
-        'Gambar'
+        'Gambar',
     ];
+
+    public function permintaan()
+    {
+        return $this->belongsTo(Permintaan::class, 'idMinta', 'idPermintaan');
+    }
 }

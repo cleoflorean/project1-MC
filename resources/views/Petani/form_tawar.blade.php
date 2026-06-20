@@ -27,11 +27,9 @@
 
     {{-- Form Utama Penawaran --}}
     <form action="{{ route('tawar.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        
-        {{-- ID Permintaan (Hidden) --}}
-        <input type="hidden" name="idMinta" value="{{ request()->query('idMinta', $idMinta ?? '') }}">
-        <input type="hidden" name="komoditas" value="{{ request()->query('Komoditas', $komoditas ?? '') }}">
+    @csrf
+    {{-- Menggabungkan ketangguhan request() dengan kemudahan variabel Controller --}}
+    <input type="hidden" name="idMinta" value="{{ $idMinta ?? request()->query('idMinta') }}">
 
         <div class="row g-4">
             

@@ -74,10 +74,12 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/tawar', [TawarController::class, 'create'])->name('tawar.create');
             Route::post('/tawar', [TawarController::class, 'store'])->name('tawar.store');
             Route::get('/', [TawarController::class, 'index'])->name('tawar.index');
+            Route::delete('/{id}', [TawarController::class, 'destroy'])->name('tawar.destroy');
         });
 
         // Fitur Permintaan (Petani)
         Route::get('/permintaan', [PetaniPermintaanController::class, 'index'])->name('petani.permintaan.index');
+        Route::get('/pasar', [PetaniPermintaanController::class, 'index'])->name('pasar.index');
     });
 
 });

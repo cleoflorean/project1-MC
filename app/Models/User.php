@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Permintaan;
 
 class User extends Authenticatable
 {
@@ -32,7 +33,7 @@ class User extends Authenticatable
     // Relasi One-to-Many ke permintaan
     public function permintaans()
     {
-        return $this->hasMany(Permintaan::class);
+        return $this->hasMany(Permintaan::class, 'user_id');
     }
 
     

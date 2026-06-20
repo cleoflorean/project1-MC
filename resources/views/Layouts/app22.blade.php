@@ -23,17 +23,21 @@
     @endguest
     
     @auth
-        @if(auth()->user()->role === 'pembeli')
-            <li><a href="{{ route('pembeli') }}" class="nav-item {{ request()->routeIs('pembeli') ? 'active' : '' }}">Beranda</a></li>
-            
-            <li><a href="{{ route('permintaan.index') }}" class="nav-item {{ request()->routeIs('permintaan.index') ? 'active' : '' }}">Permintaan Saya</a></li>
-            
-            <li><a href="#" class="nav-item">Penawaran Masuk</a></li>
-        @endif
-
         @if(auth()->user()->role === 'petani')
-            <li><a href="{{ route('petani') }}" class="nav-item {{ request()->routeIs('petani') ? 'active' : '' }}">Beranda</a></li>
-            <li><a href="#" class="nav-item">Permintaan Masuk</a></li>
+            {{-- Beranda → dashboard petani --}}
+            <li>
+                <a href="{{ route('petani.dashboard') }}" 
+                class="nav-item {{ request()->routeIs('petani.dashboard') ? 'active' : '' }}">
+                    Beranda
+                </a>
+            </li>
+            {{-- Cari Permintaan → halaman permintaan petani --}}
+            <li>
+                <a href="{{ route('petani.permintaan.index') }}" 
+                class="nav-item {{ request()->routeIs('petani.permintaan.index') ? 'active' : '' }}">
+                    Cari Permintaan
+                </a>
+            </li>
         @endif
     @endauth
 

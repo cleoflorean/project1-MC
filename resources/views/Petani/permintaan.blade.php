@@ -77,9 +77,12 @@
                             <span><i class="bi bi-calendar-event me-2"></i>Batas Akhir :</span>
                             <span class="fw-semibold text-danger">{{ \Carbon\Carbon::parse($item->BatasTanggal)->format('d M Y') }}</span>
                         </div>
-
-                        <a href="{{ route('tawar.create', ['idMinta' => $item->idPermintaan, 'NamaTanaman' => $item->NamaTanaman, 'Komoditas' => $item->Status ]) 
-                            }}"
+                        
+                        <a href="{{ route('tawar.create', [
+                            'idMinta' => $item->idPermintaan, 
+                            'NamaTanaman' => $item->NamaTanaman, 
+                            'Komoditas' => $item->Komoditas
+                        ]) }}"
                             class="btn btn-success w-100 py-2.5 rounded-3 fw-semibold shadow-sm text-center text-white text-decoration-none d-block" style="font-size: 13px;">
                             <i class="bi bi-send-fill me-2"></i>Tawarkan Hasil Panen
                         </a>

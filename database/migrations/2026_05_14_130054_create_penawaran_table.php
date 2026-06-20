@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('Status');
             $table->text('Catatan');
             $table->string('Gambar')->nullable();
-            // $table->timestamps();
+            $table->timestamps();
         });
     }
 
