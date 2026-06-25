@@ -1,6 +1,6 @@
 @extends('layouts.app22')
 
-@section('title', 'Profil Saya - B2B Supply')
+@section('title', 'Profil Saya - TaniHarvest')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('profil.css') }}">
