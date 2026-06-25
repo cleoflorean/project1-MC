@@ -1,6 +1,6 @@
 @extends('layouts.app22')
 
-@section('title', 'Beranda - Agrimart')
+@section('title', 'Beranda - TaniHarvest')
 
 @section('content')
 <div class="hero-section">
