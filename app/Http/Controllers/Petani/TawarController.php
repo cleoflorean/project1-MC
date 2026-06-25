@@ -36,14 +36,17 @@ class TawarController extends Controller
 
         // Instansiasi Model Tawar untuk simpan ke database
         $penawaran = new Penawaran();
+        $penawaran = new Penawaran();
         $penawaran->idMinta     = $request->idMinta;
-        $penawaran->NamaTanaman = $request->NamaTanaman; // Wajib disimpan jika di tabel tawar ada kolom ini
-        $penawaran->Komoditas   = $request->Komoditas;    // Wajib disimpan jika di tabel tawar ada kolom ini
+        $penawaran->user_id     = auth()->id(); // OTOMATIS NGAMBIL ID PETANI
+        $penawaran->NamaTanaman = $request->NamaTanaman; 
+        $penawaran->Komoditas   = $request->Komoditas;    
         $penawaran->JumlahTawar = $request->JumlahTawar;
         $penawaran->HargaTawar  = $request->HargaTawar;
         $penawaran->Catatan     = $request->Catatan;
-        $penawaran->Status      = 'Pending'; // Otomatis diset pending di awal
+        $penawaran->Status      = 'Pending'; 
 
+        // ... kode upload gambar dan save ...
         // Logika upload Gambar jika petani memasukkan foto
         if ($request->hasFile('Gambar')) {
             $file = $request->file('Gambar');

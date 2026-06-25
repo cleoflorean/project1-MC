@@ -33,7 +33,7 @@ class RegisterController extends Controller
         DB::beginTransaction();
 
         try {
-            // Simpan akun ke tabel users
+            // 1. Simpan akun ke tabel users
             $user = User::create([
                 'username' => $request->username,
                 'email'    => $request->email,
@@ -41,9 +41,9 @@ class RegisterController extends Controller
                 'role'     => $request->role,
             ]);
 
-            // Simpan detail ke tabel pembeli_profiles
-            PembeliProfile::create([
-                'user_id'    => $user->id,
+            // 2. Simpan detail ke tabel pembeli_profiles menggunakan RELASI
+            // Ganti PembeliProfile::create menjadi $user->pembeliProfile()->create
+            $user->pembeliProfile()->create([
                 'nama_toko'  => $request->nama_toko,
                 'alamat'     => $request->alamat,
                 'no_telepon' => $request->no_telepon,
