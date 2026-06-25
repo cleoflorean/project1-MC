@@ -14,7 +14,7 @@
         <div class="nav-container">
             <div class="nav-left">
                 <div class="logo">
-                    <i class="fas fa-leaf"></i> Agrimart
+                    <i class="fas fa-leaf"></i> TaniHarvest
                 </div>
                 <ul class="nav-menu">
     @guest

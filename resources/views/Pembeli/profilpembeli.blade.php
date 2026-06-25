@@ -8,7 +8,7 @@
 <main class="profil-wrapper">
     <header class="profil-header">
         <div>
-            <h1>Profil Pembeli B2B - {{ $profil->nama_perusahaan ?? $user->name }}</h1>
+            <h1>Profil Pembeli TaniHarvest - {{ $profil->nama_perusahaan ?? $user->name }}</h1>
             <p class="profil-desc">Kelola informasi identitas dan preferensi pengadaan Anda.</p>
         </div>
         <button class="btn btn-secondary" id="btn-edit-profile">

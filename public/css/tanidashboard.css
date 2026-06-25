@@ -93,39 +93,50 @@ a { text-decoration: none; color: inherit; }
     box-shadow: var(--tc-shadow-sm);
 }
 
-/* Logo di atas sidebar */
 .tc-sidebar-logo {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 20px 18px 16px;
+    flex-direction: column; /* Ikon di atas, teks di bawah */
+    align-items: center;    /* Rata tengah */
+    gap: 12px;              /* Jarak antara ikon dan teks */
+    padding: 24px 18px 20px;
     flex-shrink: 0;
+    text-align: center;     /* Memastikan teks rata tengah */
 }
 
 .tc-logo-icon {
-    width: 38px; height: 38px;
+    width: 45px; height: 45px; /* Sedikit diperbesar agar ikon lebih dominan */
     background: var(--tc-primary);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
+    border-radius: 12px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
     color: white;
-    font-size: 18px;
+    font-size: 22px; /* Ikon daun lebih besar */
     flex-shrink: 0;
+}
+
+/* Container untuk teks agar bisa rata tengah */
+.tc-logo-text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .tc-logo-name {
     font-family: var(--tc-font-head);
     font-weight: 800;
-    font-size: 15px;
+    font-size: 18px; /* Ukuran lebih besar agar menonjol */
     color: var(--tc-primary-dark);
     line-height: 1.2;
 }
 
 .tc-logo-sub {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--tc-text-muted);
-    font-weight: 500;
+    font-weight: 600;
+    text-transform: uppercase; /* Opsional: agar terlihat lebih profesional */
+    letter-spacing: 0.5px;
 }
-
 /* Divider tipis di sidebar */
 .tc-sidebar-divider {
     margin: 0 14px;

@@ -9,7 +9,7 @@
 <div class="row g-4 mb-4">
 
     {{-- Kartu: Total Penawaran Diajukan --}}
-    <div class="col-12 col-md-6 col-xl-4">
+    {{-- <div class="col-12 col-md-6 col-xl-4">
         <div class="tc-card tc-stat-card">
             <div class="tc-stat-icon tc-stat-icon--biru">
                 <i class="bi bi-tags-fill"></i>
@@ -19,10 +19,10 @@
                 <div class="tc-stat-label">Total Penawaran</div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     {{-- Kartu: Dalam Pengiriman --}}
-    <div class="col-12 col-md-6 col-xl-4">
+    {{-- <div class="col-12 col-md-6 col-xl-4">
         <div class="tc-card tc-stat-card">
             <div class="tc-stat-icon tc-stat-icon--oranye">
                 <i class="bi bi-truck"></i>
@@ -32,10 +32,10 @@
                 <div class="tc-stat-label">Dalam Pengiriman</div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     {{-- Kartu: Status Panen (Dikosongkan sesuai kesepakatan) --}}
-    <div class="col-12 col-md-6 col-xl-4">
+    {{-- <div class="col-12 col-md-6 col-xl-4">
         <div class="tc-card tc-stat-card">
             <div class="tc-stat-icon tc-stat-icon--hijau">
                 <i class="bi bi-basket3-fill"></i>
@@ -45,7 +45,7 @@
                 <div class="tc-stat-label">Jadwal Panen</div>
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>
 
 {{-- BARIS 2: PERMINTAAN & PENGAJUAN TAWAR --}}
