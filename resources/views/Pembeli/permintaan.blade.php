@@ -69,9 +69,9 @@
                     <label style="display: block; margin-bottom: 5px;">Pilih Komoditas</label>
                     <select name="komoditas" class="form-control" required style="width: 100%; padding: 0.5rem;">
                         <option value="">-- Pilih Spesifikasi --</option>
-                        <option value="Cabai Merah Keriting">Cabai Merah Keriting</option>
-                        <option value="Tomat Sayur Premium">Tomat Sayur Premium</option>
-                        <option value="Kentang Granola">Kentang Granola</option>
+                        <option value="Sayur">Sayur</option>
+                        <option value="Kacang-Kacangan">Kacang-Kacangan</option>
+                        <option value="Buah-Buahan">Buah-Buahan</option>
                     </select>
                 </div>
 
