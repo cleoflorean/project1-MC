@@ -17,30 +17,29 @@
                     <i class="fas fa-leaf"></i> Agrimart
                 </div>
                 <ul class="nav-menu">
-    
     @guest
         <li><a href="{{ route('beranda') }}" class="nav-item {{ request()->routeIs('beranda') ? 'active' : '' }}">Beranda</a></li>
     @endguest
     
     @auth
+        @if(auth()->user()->role === 'pembeli')
+            <li>
+                <a href="{{ route('pembeli') }}" class="nav-item {{ request()->routeIs('pembeli') ? 'active' : '' }}">
+                    Dashboard
+                </a>
+            </li>
+            <li>
+    <a href="{{ route('permintaan.index') }}" class="nav-item {{ request()->routeIs('permintaan.index') ? 'active' : '' }}">
+        Permintaan Saya
+    </a>
+</li>
+        @endif
+
         @if(auth()->user()->role === 'petani')
-            {{-- Beranda → dashboard petani --}}
-            <li>
-                <a href="{{ route('petani.dashboard') }}" 
-                class="nav-item {{ request()->routeIs('petani.dashboard') ? 'active' : '' }}">
-                    Beranda
-                </a>
-            </li>
-            {{-- Cari Permintaan → halaman permintaan petani --}}
-            <li>
-                <a href="{{ route('petani.permintaan.index') }}" 
-                class="nav-item {{ request()->routeIs('petani.permintaan.index') ? 'active' : '' }}">
-                    Cari Permintaan
-                </a>
-            </li>
+            <li><a href="{{ route('petani.dashboard') }}" class="nav-item">Beranda Petani</a></li>
+            <li><a href="{{ route('petani.permintaan.index') }}" class="nav-item">Cari Permintaan</a></li>
         @endif
     @endauth
-
 </ul>
             </div>
             

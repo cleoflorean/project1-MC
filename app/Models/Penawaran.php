@@ -11,9 +11,10 @@ class Penawaran extends Model
     use HasFactory; // ini juga
     protected $table = 'penawaran';
     protected $primaryKey = 'idTawar';
-    protected $fillable =[
-        'idPanen',
+   protected $fillable =[
+        'user_id', // ID Petani
         'idMinta',
+        'NamaTanaman',
         'Komoditas',
         'JumlahTawar',
         'HargaTawar',

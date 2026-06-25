@@ -1,48 +1,50 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Permintaan;
+use App\Models\Penawaran;
 
 class PermintaanController extends Controller
 {
-    // 1. Menyimpan data dari form dashboard ke database
-    public function store(Request $request)
+    // Dashboard Pembeli (Untuk nampilin tawaran petani)
+    public function dashboard(Request $request)
     {
-        $request->validate([
-            'komoditas' => 'required',
-            'volume' => 'required|numeric',
-            'batas_harga' => 'required|numeric',
-            'batas_akhir' => 'required|date',
-        ]);
+        $idPermintaans = $request->user()->permintaans()->pluck('idPermintaan');
+        $penawarans = Penawaran::whereIn('idMinta', $idPermintaans)->latest()->get();
 
-        // PERUBAHAN: Menggunakan relasi agar user_id otomatis terisi
-        $request->user()->permintaans()->create([
-            'komoditas' => $request->komoditas,
-            'volume' => $request->volume,
-            'batas_harga' => $request->batas_harga,
-            'batas_akhir' => $request->batas_akhir,
-        ]);
-
-        return redirect()->back()->with('success', 'Permintaan pengadaan berhasil disimpan!');
+        return view('Pembeli/pembeli', compact('penawarans'));
     }
 
-    // 2. Menampilkan semua data di halaman "Permintaan Saya"
+    // Permintaan Saya
     public function index(Request $request)
     {
-        // PERUBAHAN: Hanya memanggil data milik user yang sedang login
+        // Ambil data yang bener dari database
         $permintaans = $request->user()->permintaans()->latest()->get(); 
-        
         return view('Pembeli/permintaan', compact('permintaans'));
     }
 
-    // 3. Menampilkan detail item saat baris tabel di-klik
-    public function show(Request $request, $id)
+    // Simpan Data
+    public function store(Request $request)
     {
-        // PERUBAHAN: Mencari data ID, tapi dikunci hanya di dalam data milik user tersebut
-        // Jika user mencoba membuka ID milik orang lain, Laravel akan otomatis menampilkan error 404 (Not Found)
-        $permintaan = $request->user()->permintaans()->findOrFail($id);
-        
-        return view('permintaan.show', compact('permintaan'));
+        $request->validate([
+            'NamaTanaman'   => 'required|string',
+            'komoditas'     => 'required|string',
+            'volume'        => 'required|numeric',
+            'batas_harga'   => 'required|numeric',
+            'batas_akhir'   => 'required|date',
+        ]);
+
+        $request->user()->permintaans()->create([
+            'NamaTanaman'      => $request->NamaTanaman,
+            'Komoditas'        => $request->komoditas,
+            'JumlahDibutuhkan' => $request->volume,
+            'HargaMaksimal'    => $request->batas_harga,
+            'BatasTanggal'     => $request->batas_akhir,
+            'Status'           => 'Aktif',
+        ]);
+
+        return redirect()->back()->with('success', 'Permintaan berhasil disimpan!');
     }
 }

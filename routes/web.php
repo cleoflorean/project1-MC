@@ -47,10 +47,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
 
-    // Fitur Permintaan (Pembeli)
+
+    // Area Pembeli
+    Route::get('/dashboard-pembeli', [PembeliPermintaanController::class, 'dashboard'])->name('pembeli');
+    
+    // RUTE INI YANG DIPANGGIL DI NAVBAR
     Route::get('/permintaan', [PembeliPermintaanController::class, 'index'])->name('permintaan.index');
+    
     Route::post('/permintaan/store', [PembeliPermintaanController::class, 'store'])->name('permintaan.store');
-    Route::get('/permintaan/{id}', [PembeliPermintaanController::class, 'show'])->name('permintaan.show');
 
     // --------------------------------------
     // Area Petani

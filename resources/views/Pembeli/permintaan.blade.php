@@ -10,30 +10,32 @@
             <h1>Daftar Permintaan Anda</h1>
             <p style="color: #64748b;">Pantau rincian spesifikasi kebutuhan dan evaluasi penawaran.</p>
         </div>
-        <button class="btn btn-primary" onclick="openModal('formModalRequest')">
+        <button class="btn btn-primary" onclick="openModal('formModalRequest')" style="padding: 0.5rem 1rem; cursor: pointer;">
             <i class="fas fa-plus"></i> Buat Baru
         </button>
     </header>
 
     <div class="request-list">
         @forelse($permintaans ?? [] as $item)
-            <div class="card" style="margin-bottom: 1rem; padding: 1.5rem; display: flex; gap: 1.5rem; align-items: center;">
+            <div class="card" style="margin-bottom: 1rem; padding: 1.5rem; display: flex; gap: 1.5rem; align-items: center; border: 1px solid #e2e8f0; border-radius: 8px;">
                 <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px; color: #2e7d32; font-size: 1.5rem;">
                     <i class="fas fa-boxes-stacked"></i>
                 </div>
                 <div>
-                    <h4 style="margin-bottom: 0.25rem;">{{ $item->komoditas }}</h4>
+                    <h4 style="margin-bottom: 0.25rem;">{{ $item->NamaTanaman }}</h4>
                     <p style="color: #64748b; font-size: 0.9rem;">
-                        Volume: {{ number_format($item->volume, 0, ',', '.') }} kg | Target Harga: Rp {{ number_format($item->batas_harga, 0, ',', '.') }}/kg
+                        Komoditas: {{ $item->Komoditas }} | 
+                        Volume: {{ number_format($item->JumlahDibutuhkan, 0, ',', '.') }} kg | 
+                        Harga Max: Rp {{ number_format($item->HargaMaksimal, 0, ',', '.') }}/kg
                     </p>
                 </div>
             </div>
         @empty
-            <div class="card" style="text-align: center; padding: 4rem 2rem;">
+            <div class="card" style="text-align: center; padding: 4rem 2rem; border: 1px solid #e2e8f0; border-radius: 8px;">
                 <i class="fas fa-folder-open" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
                 <h3 style="margin-bottom: 0.5rem;">Belum Ada Permintaan</h3>
                 <p style="color: #64748b; margin-bottom: 1.5rem;">Anda belum membuat permintaan komoditas apapun.</p>
-                <button class="btn btn-primary" onclick="openModal('formModalRequest')">
+                <button class="btn btn-primary" onclick="openModal('formModalRequest')" style="padding: 0.5rem 1rem; cursor: pointer;">
                     Buat Sekarang
                 </button>
             </div>
@@ -43,8 +45,8 @@
 </main>
 
 <div class="modal-overlay" id="formModalRequest" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-    <div class="card" style="width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
-        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="card" style="width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; background: white; padding: 20px; border-radius: 8px;">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <div>
                 <h3>Buat Permintaan Pengadaan</h3>
                 <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">Siarkan spesifikasi Anda ke ekosistem.</p>
@@ -57,28 +59,38 @@
         <div class="card-body">
             <form action="{{ route('permintaan.store') }}" method="POST">
                 @csrf
-                <div class="form-group">
-                    <label>Pilih Komoditas</label>
-                    <select name="komoditas" class="form-control" required>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 5px;">Nama Tanaman</label>
+                    <input type="text" name="NamaTanaman" class="form-control" placeholder="Contoh: Cabai Rawit Dewata" required style="width: 100%; padding: 0.5rem;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 5px;">Pilih Komoditas</label>
+                    <select name="komoditas" class="form-control" required style="width: 100%; padding: 0.5rem;">
                         <option value="">-- Pilih Spesifikasi --</option>
                         <option value="Cabai Merah Keriting">Cabai Merah Keriting</option>
                         <option value="Tomat Sayur Premium">Tomat Sayur Premium</option>
                         <option value="Kentang Granola">Kentang Granola</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>Volume (kg)</label>
-                    <input type="number" name="volume" class="form-control" placeholder="Contoh: 2500" required>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 5px;">Volume (kg)</label>
+                    <input type="number" name="volume" class="form-control" placeholder="Contoh: 2500" required style="width: 100%; padding: 0.5rem;">
                 </div>
-                <div class="form-group">
-                    <label>Harga Maksimal (Rp/kg)</label>
-                    <input type="number" name="batas_harga" class="form-control" placeholder="Contoh: 30000" required>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 5px;">Harga Maksimal (Rp/kg)</label>
+                    <input type="number" name="batas_harga" class="form-control" placeholder="Contoh: 30000" required style="width: 100%; padding: 0.5rem;">
                 </div>
-                <div class="form-group">
-                    <label>Batas Akhir Penerimaan</label>
-                    <input type="date" name="batas_akhir" class="form-control" required>
+
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 5px;">Batas Akhir Penerimaan</label>
+                    <input type="date" name="batas_akhir" class="form-control" required style="width: 100%; padding: 0.5rem;">
                 </div>
-                <button type="submit" class="btn btn-primary btn-full">
+
+                <button type="submit" class="btn btn-primary btn-full" style="width: 100%; padding: 0.75rem; background: #2e7d32; color: white; border: none; border-radius: 5px; cursor: pointer;">
                     <i class="fas fa-paper-plane"></i> Kirim Permintaan
                 </button>
             </form>
@@ -87,7 +99,6 @@
 </div>
 
 <script>
-    // Script sederhana untuk membuka & menutup form modal
     function openModal(id) {
         document.getElementById(id).style.display = 'flex';
     }

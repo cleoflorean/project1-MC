@@ -9,16 +9,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('penawaran', function (Blueprint $table) {
-            $table->id('idTawar');
-            $table->integer('idPanen');
-            $table->integer('idMinta');
+            $table->id('idTawar'); // Primary Key
+            
+            // Kolom Relasi
+            $table->unsignedBigInteger('idMinta'); // Ke permintaan pembeli
+            $table->unsignedBigInteger('user_id'); // Ke petani yang nawar
+            
+            // Kolom Data Penawaran (TIDAK ADA idPanen)
             $table->string('NamaTanaman');
             $table->string('Komoditas');
             $table->integer('JumlahTawar');
-            $table->decimal('HargaTawar', 12, 2);
-            $table->string('Status');
+            $table->decimal('HargaTawar', 15, 2);
             $table->text('Catatan');
             $table->string('Gambar')->nullable();
+            $table->string('Status')->default('Pending');
             $table->timestamps();
         });
     }

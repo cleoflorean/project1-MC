@@ -46,8 +46,13 @@
                                 <i class="bi bi-building fs-4"></i>
                             </div>
                             <div>
-                                <h6 class="fw-bold text-dark mb-0" style="font-size: 15px;">{{ $item->NamaPembeli }}</h6>
-                                <span class="text-muted small" style="font-size: 12px;"><i class="bi bi-geo-alt-fill me-1"></i> {{ $item->LokasiPembeli }}</span>
+                                <h6 class="fw-bold text-dark mb-0" style="font-size: 15px;">
+                                    {{ $item->user->pembeliProfile->nama_toko ?? $item->user->username ?? 'Pembeli Belum Set Nama' }}
+                                </h6>
+                                <span class="text-muted small" style="font-size: 12px;">
+                                    <i class="bi bi-geo-alt-fill me-1"></i> 
+                                    {{ $item->user->pembeliProfile->alamat ?? 'Lokasi belum diatur' }}
+                                </span>
                             </div>
                         </div>
 
@@ -57,14 +62,12 @@
 
                             <h4 class="fw-bold text-success mb-2" style="font-size: 19px;">{{ $item->NamaTanaman }}</h4>
 
-                            {{-- <span class="text-muted d-block small mb-1" style="font-size: 12px;">Kategori Komoditas:</span> --}}
                             <h4 class="text-muted d-block small mb-3" style="font-size: 12px;">{{ $item->Komoditas ?? 'Sayuran' }}</h4> 
-                            {{-- 'sayuran' bisa dihapus juga sudah memiliki data asli --}}
 
                             <div class="row text-center bg-light rounded-3 p-2 g-0">
                                 <div class="col-6 border-end">
                                     <span class="text-muted d-block small" style="font-size: 11px;">Jumlah Butuh</span>
-                                    <strong class="text-dark d-block mt-1" style="font-size: 14px;">{{ $item->JumlahDibutuhkan }} Kg</strong>
+                                    <strong class="text-dark d-block mt-1" style="font-size: 14px;">{{ number_format($item->JumlahDibutuhkan, 0, ',', '.') }} Kg</strong>
                                 </div>
                                 <div class="col-6">
                                     <span class="text-muted d-block small" style="font-size: 11px;">Target Harga</span>
@@ -94,7 +97,6 @@
                 <div class="text-muted display-5 mb-3"><i class="bi bi-inbox text-success opacity-40"></i></div>
                 <h5 class="fw-bold text-dark">Permintaan Tidak Ditemukan</h5>
                 <p class="text-muted small">Saat ini tidak ada pembeli yang mencari komoditas tersebut.</p>
-               
             </div>
         @endforelse
     </div>
