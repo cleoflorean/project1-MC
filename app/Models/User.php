@@ -30,6 +30,11 @@ class User extends Authenticatable
         return $this->hasOne(PembeliProfile::class);
     }
 
+    public function petaniProfile()
+    {
+        return $this->hasOne(PetaniProfile::class, 'id', 'id');
+    }
+
     // Relasi One-to-Many ke permintaan
     public function permintaans()
     {

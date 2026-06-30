@@ -139,12 +139,12 @@
                 <img src="{{ asset('images/profile.jpg') }}"
                      alt="Profil" class="tc-navbar-avatar">
                 <span class="tc-navbar-username d-none d-md-inline">
-                    Budi
+                    {{ auth()->user()->username }}
                 </span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end tc-dropdown-menu">
                 <li>
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="{{ route('petani.profil') }}">
                         <i class="bi bi-person-fill me-2"></i> Profil Saya
                     </a>
                 </li>

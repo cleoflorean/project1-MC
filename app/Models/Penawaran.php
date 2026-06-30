@@ -11,8 +11,9 @@ class Penawaran extends Model
     use HasFactory; // ini juga
     protected $table = 'penawaran';
     protected $primaryKey = 'idTawar';
+    public $timestamps = true;
    protected $fillable =[
-        'user_id', // ID Petani
+        'idPetani', // ID Petani
         'idMinta',
         'NamaTanaman',
         'Komoditas',
@@ -26,5 +27,10 @@ class Penawaran extends Model
     public function permintaan()
     {
         return $this->belongsTo(Permintaan::class, 'idMinta', 'idPermintaan');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'idPetani', 'id');
     }
 }

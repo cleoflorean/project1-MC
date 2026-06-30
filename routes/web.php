@@ -13,6 +13,7 @@ use App\Http\Controllers\Petani\DashboardController;
 use App\Http\Controllers\Petani\TawarController;
 use App\Http\Controllers\Petani\PanenController;
 use App\Http\Controllers\Petani\PermintaanController as PetaniPermintaanController;
+use App\Http\Controllers\Petani\PetaniProfileController;
 
 // ==========================================
 // HALAMAN PUBLIK (Akses tanpa login)
@@ -69,8 +70,12 @@ Route::middleware(['auth'])->group(function () {
             return 'Detail Pengiriman ' . $id;
         })->name('pengiriman.detail');
 
-        // Profil & Notifikasi Petani
-        Route::view('/profil', 'petani.dashboard')->name('petani.profil');
+        // Profil 
+        Route::get('/profil', [PetaniProfileController::class, 'index'])->name('petani.profil');
+        Route::post('/profil/update', [PetaniProfileController::class, 'update'])->name('petani.profil.update');
+        
+        // Notifikasi Petani
+        // Route::view('/profil', 'petani.dashboard')->name('petani.profil');
         Route::view('/notifikasi', 'petani.dashboard')->name('petani.notifikasi');
 
         // Fitur Penawaran Petani

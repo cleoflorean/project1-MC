@@ -13,7 +13,7 @@ return new class extends Migration
             
             // Kolom Relasi
             $table->unsignedBigInteger('idMinta'); // Ke permintaan pembeli
-            $table->unsignedBigInteger('user_id'); // Ke petani yang nawar
+            $table->unsignedBigInteger('idPetani'); // Ke petani yang nawar
             
             // Kolom Data Penawaran (TIDAK ADA idPanen)
             $table->string('NamaTanaman');

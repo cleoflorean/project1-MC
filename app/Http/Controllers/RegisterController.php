@@ -43,11 +43,21 @@ class RegisterController extends Controller
 
             // 2. Simpan detail ke tabel pembeli_profiles menggunakan RELASI
             // Ganti PembeliProfile::create menjadi $user->pembeliProfile()->create
-            $user->pembeliProfile()->create([
-                'nama_toko'  => $request->nama_toko,
-                'alamat'     => $request->alamat,
-                'no_telepon' => $request->no_telepon,
-            ]);
+            if ($user->role === 'petani') {
+                $user->petaniProfile()->create([
+                    'NamaLengkap' => $request->nama_toko,   // sesuaikan nama field form
+                    'NamaKebun'   => $request->nama_kebun ?? null,
+                    'Alamat'      => $request->alamat,
+                    'NoTlp'       => $request->no_telepon,
+                ]);
+
+            } else {
+                $user->pembeliProfile()->create([
+                    'nama_toko'  => $request->nama_toko,
+                    'alamat'     => $request->alamat,
+                    'no_telepon' => $request->no_telepon,
+                ]);
+            }
 
             DB::commit();
 

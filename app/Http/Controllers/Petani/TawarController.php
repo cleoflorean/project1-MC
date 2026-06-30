@@ -38,7 +38,7 @@ class TawarController extends Controller
         $penawaran = new Penawaran();
         $penawaran = new Penawaran();
         $penawaran->idMinta     = $request->idMinta;
-        $penawaran->user_id     = auth()->id(); // OTOMATIS NGAMBIL ID PETANI
+        $penawaran->idPetani     = auth()->id(); // OTOMATIS NGAMBIL ID PETANI
         $penawaran->NamaTanaman = $request->NamaTanaman; 
         $penawaran->Komoditas   = $request->Komoditas;    
         $penawaran->JumlahTawar = $request->JumlahTawar;
@@ -63,7 +63,11 @@ class TawarController extends Controller
     }
 
     public function index() {
-        $pengajuanTawar = Penawaran::with('permintaan')->get();
+        // Menggunakan where agar hanya mengambil data milik petani yang sedang login
+        $pengajuanTawar = Penawaran::with('permintaan.user.pembeliProfile')
+                        ->where('idPetani', auth()->id())
+                        ->get();
+        
         return view('Petani.tawar', compact('pengajuanTawar'));
     }
 

@@ -11,6 +11,7 @@ class Permintaan extends Model
 
     protected $table = 'permintaans';
     protected $primaryKey = 'idPermintaan';
+    public $timestamps = true;
 
     protected $fillable = [
         'user_id',

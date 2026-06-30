@@ -15,8 +15,8 @@ class DashboardController extends Controller
         $petaniId = auth()->id();
 
         // 2. Hitung statistik untuk kartu-kartu di Dashboard
-        $totalPenawaran = Penawaran::where('user_id', $petaniId)->count();
-        $dalamPengiriman = Penawaran::where('user_id', $petaniId)->where('Status', 'Dikirim')->count();
+        $totalPenawaran = Penawaran::where('idPetani', $petaniId)->count();
+        $dalamPengiriman = Penawaran::where('idPetani', $petaniId)->where('Status', 'Dikirim')->count();
 
         $dashboard = [
             'pengajuan_tawar'  => $totalPenawaran,
@@ -31,11 +31,10 @@ class DashboardController extends Controller
                                         ->latest()
                                         ->take(5)
                                         ->get();
-
         // 4. Riwayat Penawaran Petani (Tawaran yang sudah diajukan petani ini)
         // Mengambil 5 penawaran terbaru milik petani yang sedang login
         $pengajuanTawar = Penawaran::with('permintaan.user.pembeliProfile')
-                                   ->where('user_id', $petaniId)
+                                   ->where('idPetani', $petaniId)
                                    ->latest()
                                    ->take(5)
                                    ->get();
