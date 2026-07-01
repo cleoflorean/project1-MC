@@ -31,9 +31,11 @@ class User extends Authenticatable
     }
 
     public function petaniProfile()
-    {
-        return $this->hasOne(PetaniProfile::class, 'id', 'id');
-    }
+{
+    // Parameter pertama: Nama kolom foreign key di tabel petani_profiles (user_id)
+    // Parameter kedua: Nama kolom primary key di tabel users (id)
+    return $this->hasOne(PetaniProfile::class, 'user_id', 'id');
+}
 
     // Relasi One-to-Many ke permintaan
     public function permintaans()

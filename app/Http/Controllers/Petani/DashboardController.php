@@ -40,7 +40,7 @@ class DashboardController extends Controller
                                    ->get();
 
         // 5. Kirim semua data asli ke halaman view (petani.dashboard)
-        return view('petani.dashboard', compact(
+        return view('Petani.dashboard', compact(
             'dashboard',
             'permintaanTerdekat',
             'pengajuanTawar'

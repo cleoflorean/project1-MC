@@ -1,79 +1,52 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\PetaniProfile;
 use App\Models\PembeliProfile;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
 {
-    public function showRegister()
-    {
-        return view('Pembeli/register'); // Menampilkan view resources/views/Pembeli/register.blade.php
+    public function showRegister() {
+        return view('pembeli/register');
     }
 
-    public function store(Request $request)
-    {
-        // 1. Validasi Input Form (Termasuk konfirmasi password)
-        $request->validate([
-            'username'              => 'required|string|max:255|unique:users,username',
-            'email'                 => 'required|string|email|max:255|unique:users,email',
-            'password'              => 'required|string|min:6|confirmed', 
-            'role'                  => 'required|in:pembeli,petani',
-            'nama_toko'             => 'required|string|max:255',
-            'alamat'                => 'required|string',
-            'no_telepon'            => 'required|string|max:20',
+    public function store(Request $request) {
+        $validated = $request->validate([
+            'username'    => 'required|unique:users,username',
+            'email'       => 'required|email|unique:users,email',
+            'password'    => 'required|min:8|confirmed',
+            'role'        => 'required|in:petani,pembeli',
+            'NamaLengkap' => 'required|string|max:255',
+            'NoTlp'       => 'required|string|max:20',
+            'Alamat'      => 'required|string'
         ]);
 
-        // 2. Transaksi Database
-        DB::beginTransaction();
+        $user = User::create([
+            'username' => $validated['username'],
+            'email'    => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role'     => $validated['role']
+        ]);
 
-        try {
-            // 1. Simpan akun ke tabel users
-            $user = User::create([
-                'username' => $request->username,
-                'email'    => $request->email,
-                'password' => Hash::make($request->password),
-                'role'     => $request->role,
-            ]);
+        // Data yang diisi saat register (Sama untuk Petani & Pembeli)
+        $profileData = [
+            'user_id'     => $user->id,
+            'NamaLengkap' => $validated['NamaLengkap'],
+            'NoTlp'       => $validated['NoTlp'],
+            'Alamat'      => $validated['Alamat'],
+            'Bio'         => null, 
+            'FotoProfile' => null  
+        ];
 
-            // 2. Simpan detail ke tabel pembeli_profiles menggunakan RELASI
-            // Ganti PembeliProfile::create menjadi $user->pembeliProfile()->create
-            if ($user->role === 'petani') {
-                $user->petaniProfile()->create([
-                    'NamaLengkap' => $request->nama_toko,   // sesuaikan nama field form
-                    'NamaKebun'   => $request->nama_kebun ?? null,
-                    'Alamat'      => $request->alamat,
-                    'NoTlp'       => $request->no_telepon,
-                ]);
-
-            } else {
-                $user->pembeliProfile()->create([
-                    'nama_toko'  => $request->nama_toko,
-                    'alamat'     => $request->alamat,
-                    'no_telepon' => $request->no_telepon,
-                ]);
-            }
-
-            DB::commit();
-
-            // 3. Otomatis login setelah daftar
-            Auth::login($user);
-
-            // 4. Pengalihan halaman sesuai role masing-masing
-            if ($user->role === 'petani') {
-                return redirect()->route('petani.dashboard')->with('success', 'Pendaftaran Berhasil!');
-            }
-
-            return redirect()->route('pembeli')->with('success', 'Pendaftaran Berhasil!');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()])->withInput();
+        if ($user->role === 'petani') {
+            PetaniProfile::create($profileData);
+        } else {
+            PembeliProfile::create($profileData);
         }
+
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat. Silakan login.');
     }
 }

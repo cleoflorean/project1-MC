@@ -21,25 +21,39 @@
                     <table class="data-table" style="width: 100%; border-collapse: collapse;">
                         <thead>
                             <tr style="border-bottom: 2px solid #ddd;">
-                                <th style="padding: 10px;">Vendor</th>
-                                <th style="padding: 10px;">Komoditas</th>
-                                <th style="padding: 10px;">Kapasitas</th>
-                                <th style="padding: 10px;">Harga</th>
-                                <th style="padding: 10px;">Status</th>
+                                <th style="padding: 10px; text-align: left;">Nama</th>
+                                <th style="padding: 10px; text-align: left;">Komoditas</th>
+                                <th style="padding: 10px; text-align: left;">Kapasitas</th>
+                                <th style="padding: 10px; text-align: left;">Harga</th>
+                                <th style="padding: 10px; text-align: left;">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($penawarans ?? [] as $tawar)
-                                <tr>
-                                    <td style="padding: 10px;">Petani Komoditas<br><small>#{{ $tawar->idMinta }}</small></td>
-                                    <td style="padding: 10px;">{{ $tawar->Komoditas }}</td>
-                                    <td style="padding: 10px;">{{ number_format($tawar->JumlahTawar) }} kg</td>
-                                    <td style="padding: 10px;">Rp {{ number_format($tawar->HargaTawar, 0, ',', '.') }}</td>
-                                    <td style="padding: 10px;">{{ $tawar->Status }}</td>
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 10px;">
+                                        <strong>{{ $tawar->petani?->petaniProfile?->NamaLengkap ?? $tawar->petani?->username ?? 'Petani Tidak Diketahui' }}</strong><br>
+                                        <small style="color: #666;">📝 {{ $tawar->permintaan->NamaTanaman ?? 'Permintaan #'.$tawar->idMinta }}</small>
+                                    </td>
+                                    <td style="padding: 10px;">{{ $tawar->permintaan->Komoditas ?? '-' }}</td>
+                                    <td style="padding: 10px;">{{ number_format($tawar->JumlahTawar, 0, ',', '.') }} kg</td>
+                                    <td style="padding: 10px; font-weight: 600; color: #2e7d32;">Rp {{ number_format($tawar->HargaTawar, 0, ',', '.') }}</td>
+                                    <td style="padding: 10px;">
+                                        @php
+                                            $bg = $tawar->Status === 'Pending' ? '#fff3cd' : ($tawar->Status === 'Setuju' ? '#d4edda' : '#f8d7da');
+                                            $color = $tawar->Status === 'Pending' ? '#856404' : ($tawar->Status === 'Setuju' ? '#155724' : '#721c24');
+                                        @endphp
+                                        <span style="background-color: {{ $bg }}; color: {{ $color }}; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: 500;">
+                                            {{ $tawar->Status }}
+                                        </span>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" style="padding: 20px; text-align: center; color: #888;">Belum ada penawaran masuk.</td>
+                                    <td colspan="5" style="padding: 30px; text-align: center; color: #888;">
+                                        <i class="fas fa-inbox" style="font-size: 2rem; color: #ddd; margin-bottom: 10px;"></i><br>
+                                        Belum ada penawaran masuk untuk permintaan Anda.
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -72,7 +86,7 @@
                             <option value="Sayur">Sayur</option>
                             <option value="Kacang-Kacangan">Kacang-Kacangan</option>
                             <option value="Buah-Buahan">Buah-Buahan</option>
-                            </select>
+                        </select>
                     </div>
 
                     <div class="form-group" style="margin-bottom: 15px;">

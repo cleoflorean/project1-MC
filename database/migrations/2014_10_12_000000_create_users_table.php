@@ -7,10 +7,10 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('username')->unique();
-            $table->string('email')->unique();
+            $table->string('username')->unique(); // Username tidak boleh sama
+            $table->string('email')->unique();    // Email tidak boleh sama
             $table->string('password');
-            $table->enum('role', ['pembeli', 'petani'])->default('pembeli');
+            $table->enum('role', ['pembeli', 'petani']);
             $table->rememberToken();
             $table->timestamps();
         });

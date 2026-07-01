@@ -1,27 +1,16 @@
 <?php
-
 namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PembeliProfile extends Model
-{
-    use HasFactory;
-
-    // Pastikan nama tabel sesuai
+class PembeliProfile extends Model {
     protected $table = 'pembeli_profiles';
+    protected $primaryKey = 'idPembeli';
 
     protected $fillable = [
-        'user_id',
-        'nama_toko',
-        'alamat',
-        'no_telepon',
+        'user_id', 'NamaLengkap', 'Alamat', 'NoTlp', 'Bio', 'FotoProfile'
     ];
 
-    // Relasi balik ke User
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+    public function user() {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

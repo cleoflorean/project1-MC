@@ -169,26 +169,22 @@
 
             <div id="section-profile" style="display: none;">
                 <div class="form-group">
-                    <label class="form-label">Nama Toko / Nama Lengkap</label>
-                    <input type="text" id="nama_toko" name="nama_toko" value="{{ old('nama_toko') }}" class="form-input" required placeholder="Nama bisnis Anda">
+                    <label class="form-label">Nama Lengkap</label>
+                    <input type="text" id="NamaLengkap" name="NamaLengkap" class="form-input" required placeholder="Masukkan nama lengkap Anda">
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Nomor Telepon (WhatsApp)</label>
-                    <input type="text" id="no_telepon" name="no_telepon" value="{{ old('no_telepon') }}" class="form-input" required placeholder="08xxxxxxxxxx">
+                    <input type="text" id="NoTlp" name="NoTlp" class="form-input" required placeholder="08xxxxxxxxxx">
                 </div>
-
                 <div class="form-group" style="margin-bottom: 1.5rem;">
                     <label class="form-label">Alamat Lengkap</label>
-                    <textarea id="alamat" name="alamat" class="form-input" required rows="4" style="resize: vertical; font-family: inherit;" placeholder="Masukkan alamat lengkap"></textarea>
+                    <textarea id="Alamat" name="Alamat" class="form-input" required rows="4" style="resize: vertical;" placeholder="Masukkan alamat lengkap"></textarea>
                 </div>
-
                 <div style="display: flex; gap: 1rem;">
-                    <button type="button" onclick="prevStep()" class="btn-primary btn-secondary" style="flex: 1;">⬅️ Kembali</button>
+                    <button type="button" onclick="prevStep()" class="btn-primary btn-secondary" style="flex: 1;">⬅ Kembali</button>
                     <button type="submit" id="btnSubmit" class="btn-primary" style="flex: 2;">Daftar Sekarang</button>
                 </div>
             </div>
-            
         </form>
     </main>
 

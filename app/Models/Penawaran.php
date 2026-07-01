@@ -2,26 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory; //hapus kalo datanya sudah tidak dummy
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Permintaan;
 
 class Penawaran extends Model
 {   
-    use HasFactory; // ini juga
+    use HasFactory;
     protected $table = 'penawaran';
     protected $primaryKey = 'idTawar';
     public $timestamps = true;
-   protected $fillable =[
-        'idPetani', // ID Petani
-        'idMinta',
-        'NamaTanaman',
-        'Komoditas',
-        'JumlahTawar',
-        'HargaTawar',
-        'Status',
-        'Catatan',
-        'Gambar',
+    
+    protected $fillable =[
+        'idPetani', 'idMinta', 'NamaTanaman', 'Komoditas', 
+        'JumlahTawar', 'HargaTawar', 'Status', 'Catatan', 'Gambar'
     ];
 
     public function permintaan()
@@ -29,7 +22,8 @@ class Penawaran extends Model
         return $this->belongsTo(Permintaan::class, 'idMinta', 'idPermintaan');
     }
 
-    public function user()
+    // FUNGSI INI WAJIB ADA DAN DI-SAVE!
+    public function petani()
     {
         return $this->belongsTo(User::class, 'idPetani', 'id');
     }

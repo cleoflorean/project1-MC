@@ -8,24 +8,35 @@ use App\Models\Penawaran;
 
 class PermintaanController extends Controller
 {
-    // Dashboard Pembeli (Untuk nampilin tawaran petani)
+    /**
+     * Dashboard Pembeli (Untuk menampilkan 5 tawaran terbaru dari petani)
+     */
     public function dashboard(Request $request)
     {
+        // Ambil semua ID permintaan milik pembeli ini
         $idPermintaans = $request->user()->permintaans()->pluck('idPermintaan');
-        $penawarans = Penawaran::whereIn('idMinta', $idPermintaans)->latest()->get();
+        
+        $penawarans = Penawaran::with(['petani', 'permintaan']) // Hapus .petaniProfile-nya sementara
+            ->whereIn('idMinta', $idPermintaans)
+            ->latest()
+            ->take(5)
+            ->get(); // Sumpah, ini pasti gak bakal error lagi!
 
-        return view('Pembeli/pembeli', compact('penawarans'));
+        return view('Pembeli.pembeli', compact('penawarans'));
     }
 
-    // Permintaan Saya
+    /**
+     * Menampilkan daftar semua permintaan milik pembeli
+     */
     public function index(Request $request)
     {
-        // Ambil data yang bener dari database
         $permintaans = $request->user()->permintaans()->latest()->get(); 
-        return view('Pembeli/permintaan', compact('permintaans'));
+        return view('Pembeli.permintaan', compact('permintaans')); 
     }
 
-    // Simpan Data
+    /**
+     * Simpan Data Permintaan Baru
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -46,5 +57,50 @@ class PermintaanController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Permintaan berhasil disimpan!');
+    }
+
+    // =================================================================
+    // FITUR: MELIHAT PENAWARAN MASUK & MENGUBAH STATUS
+    // =================================================================
+
+    /**
+     * Menampilkan halaman daftar penawaran masuk dari sebuah permintaan
+     */
+    public function lihatPenawaran(Request $request, $idMinta) 
+    {
+        // Ambil data permintaan, pastikan ini milik user yang sedang login
+        $permintaan = Permintaan::where('idPermintaan', $idMinta)
+            ->where('user_id', $request->user()->id) 
+            ->firstOrFail();
+
+        // Ambil semua penawaran yang masuk untuk permintaan ini
+        $penawarans = Penawaran::where('idMinta', $idMinta)->get();
+
+        return view('Pembeli.penawaran_list', compact('permintaan', 'penawarans'));
+    }
+
+    /**
+     * Mengubah status setuju/tolak pada penawaran
+     */
+    public function updateStatusPenawaran(Request $request, $idTawar) 
+    {
+        $request->validate([
+            'status' => 'required|in:Setuju,Tidak Setuju'
+        ]);
+
+        $penawaran = Penawaran::findOrFail($idTawar);
+        $penawaran->Status = $request->status;
+        $penawaran->save();
+
+        // Logika cerdas: Jika satu penawaran disetujui, tolak penawaran lainnya
+        if ($request->status === 'Setuju') {
+            Permintaan::where('idPermintaan', $penawaran->idMinta)->update(['Status' => 'Selesai']);
+            
+            Penawaran::where('idMinta', $penawaran->idMinta)
+                ->where('idTawar', '!=', $idTawar)
+                ->update(['Status' => 'Tidak Setuju']);
+        }
+
+        return back()->with('success', 'Status penawaran berhasil diubah.');
     }
 }

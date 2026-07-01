@@ -73,7 +73,7 @@
                                 </div>
                                 <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">
                                     <i class="bi bi-box me-1"></i> {{ number_format($req->JumlahDibutuhkan, 0, ',', '.') }} Kg | 
-                                    <i class="bi bi-geo-alt me-1"></i> {{ $req->user->pembeliProfile->alamat ?? 'Lokasi tidak diketahui' }}
+                                    <i class="bi bi-geo-alt me-1"></i>{{ $req->user->pembeliProfile->Alamat ?? 'Lokasi tidak diketahui' }}
                                 </div>
                                 <div class="tc-req-deadline text-danger" style="font-size: 12px;">
                                     <i class="bi bi-clock me-1"></i> Batas: {{ \Carbon\Carbon::parse($req->BatasTanggal)->format('d M Y') }}
@@ -127,7 +127,7 @@
                                 </div>
                                 <div class="tc-tawar-pasar text-muted" style="font-size: 12px;">
                                     <i class="bi bi-shop me-1"></i> 
-                                    {{ $tawar->permintaan->user->pembeliProfile->nama_toko ?? $tawar->permintaan->user->username ?? 'Toko Pembeli' }}
+                                    {{ $tawar->permintaan->user->pembeliProfile->NamaLengkap ?? $tawar->permintaan->user->username ?? 'Toko Pembeli' }}
                                 </div>
                                 <div class="tc-tawar-harga text-success mt-1" style="font-size: 13px; font-weight: 600;"> 
                                     Rp{{ number_format($tawar->HargaTawar, 0, ',', '.') }}/kg

@@ -5,11 +5,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('pembeli_profiles', function (Blueprint $table) {
-            $table->bigIncrements('idPembeli');
+        Schema::create('petani_profiles', function (Blueprint $table) {
+            $table->bigIncrements('idPetani');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             
-            $table->string('NamaLengkap')->nullable(); // DISAMAKAN JADI NAMA LENGKAP
+            $table->string('NamaLengkap')->nullable(); // HANYA NAMA LENGKAP
             $table->text('Alamat')->nullable();
             $table->string('NoTlp', 20)->nullable();
             $table->text('Bio')->nullable();
@@ -18,5 +18,5 @@ return new class extends Migration {
             $table->timestamps();
         });
     }
-    public function down(): void { Schema::dropIfExists('pembeli_profiles'); }
+    public function down(): void { Schema::dropIfExists('petani_profiles'); }
 };

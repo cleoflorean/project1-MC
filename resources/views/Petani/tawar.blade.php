@@ -61,11 +61,11 @@
                                     </div>
                                     <div>
                                         <h6 class="fw-bold text-dark mb-0" style="font-size: 15px;">
-                                            {{ $tawar->permintaan->user->pembeliProfile->nama_toko ?? 'Penawaran Panen' }}
+                                            {{ $tawar->permintaan->user->pembeliProfile->NamaLengkap ?? $tawar->permintaan->user->username ?? 'Penawaran Panen' }}
                                         </h6>
                                         <span class="text-muted small" style="font-size: 12px;">
                                             <i class="bi bi-geo-alt-fill me-1"></i>
-                                            {{ $tawar->permintaan->user->pembeliProfile->alamat ?? '-' }}
+                                            {{ $tawar->permintaan->user->pembeliProfile->Alamat ?? 'Lokasi belum diatur' }}
                                         </span>
                                     </div>
                                 </div>

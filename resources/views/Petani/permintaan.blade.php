@@ -47,11 +47,11 @@
                             </div>
                             <div>
                                 <h6 class="fw-bold text-dark mb-0" style="font-size: 15px;">
-                                    {{ $item->user->pembeliProfile->nama_toko ?? $item->user->username ?? 'Pembeli Belum Set Nama' }}
+                                    {{ $item->user->pembeliProfile->NamaLengkap ?? $item->user->username ?? 'Pembeli Belum Set Nama' }}
                                 </h6>
                                 <span class="text-muted small" style="font-size: 12px;">
                                     <i class="bi bi-geo-alt-fill me-1"></i> 
-                                    {{ $item->user->pembeliProfile->alamat ?? 'Lokasi belum diatur' }}
+                                    {{ $item->user->pembeliProfile->Alamat ?? 'Lokasi belum diatur' }}
                                 </span>
                             </div>
                         </div>
