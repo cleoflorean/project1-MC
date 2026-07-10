@@ -7,7 +7,8 @@ class PetaniProfile extends Model {
     protected $primaryKey = 'idPetani';
 
     protected $fillable = [
-        'user_id', 'NamaLengkap', 'Alamat', 'NoTlp', 'Bio', 'FotoProfile'
+        'user_id', 'NamaLengkap', 'Alamat', 'NoTlp', 'Bio', 'FotoProfile',
+        'NamaBank', 'NamaPemilik', 'NoRekening' // Tambahkan ini
     ];
 
     public function user() {

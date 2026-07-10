@@ -17,17 +17,18 @@ class AuthController extends Controller
         ]);
 
         // Login sukses
-        // Di dalam AuthController.php bagian authenticate()
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // Cek role dari database, lalu arahkan menggunakan nama route yang benar
-        if (Auth::user()->role === 'petani') {
-            return redirect()->route('petani.dashboard');
-        } elseif (Auth::user()->role === 'pembeli') {
-            return redirect()->route('pembeli'); // Diarahkan ke dashboard pembeli, atau ganti 'beranda' jika ingin ke halaman landing awal
+            // Cek role dari database, lalu arahkan sesuai dashboard masing-masing
+            if (Auth::user()->role === 'petani') {
+                return redirect()->route('petani.dashboard');
+            } elseif (Auth::user()->role === 'pembeli') {
+                return redirect()->route('pembeli'); // dashboard pembeli
+            } elseif (Auth::user()->role === 'admin') {
+                return redirect()->route('admin.index'); // dashboard admin
+            }
         }
-    }
 
         return back()->withErrors(['email' => 'Email atau Password salah.']);
     }

@@ -11,9 +11,8 @@
 
     <div class="login-container">
         <div class="login-header">
-            <h2>login ke Sistem</h2>
+            <h2>Login ke Sistem</h2>
         </div>
-
 
         <form action="{{ route('login') }}" method="POST">
             @csrf
@@ -28,6 +27,13 @@
             <div class="form-group">
                 <label for="password">Kata Sandi</label>
                 <input type="password" id="password" name="password" required placeholder="Masukkan kata sandi">
+                
+                {{-- Tambahan Link Lupa Password --}}
+                <div style="text-align: center; margin-top: 8px;">
+                    <a href="mailto:admin@taniharvest.com" style="font-size: 0.85rem; color: #2e7d32; text-decoration: none; font-weight: 500; transition: 0.2s;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                        Lupa password? Lapor ke admin
+                    </a>
+                </div>
             </div>
 
             @if($errors->any())
@@ -36,7 +42,8 @@
                 </div>
             @endif
 
-            <button type="submit" class="btn-submit">Masuk</button>
+            {{-- Margin top ditambahkan sedikit agar tidak terlalu menempel dengan link lupa password --}}
+            <button type="submit" class="btn-submit" style="margin-top: 15px;">Masuk</button>
         </form>
     </div>
 

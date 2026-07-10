@@ -26,7 +26,16 @@
     @endif
 
     <div style="display: flex; flex-direction: column; gap: 20px;">
+        {{-- Loop semua data penawaran tanpa ada yang disembunyikan kartunya --}}
         @forelse($penawarans as $tawar)
+            
+            {{-- CEK STATUS PEMBAYARAN SECARA REALTIME --}}
+            @php
+                $sudahUpload = \App\Models\Pembayaran::where('idTawar', $tawar->idTawar)
+                                ->whereNotNull('BuktiTransfer')
+                                ->exists();
+            @endphp
+
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: border-color 0.2s;">
                 
                 <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
@@ -45,6 +54,12 @@
                             <span style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
                                 <i class="fas fa-clock" style="font-size: 0.75rem;"></i> Menunggu Evaluasi
                             </span>
+                        {{-- JIKA STATUS SETUJU DAN SUDAH UPLOAD BUKTI TF --}}
+                        @elseif($tawar->Status === 'Setuju' && $sudahUpload)
+                            <span style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-receipt" style="font-size: 0.75rem;"></i> Sudah Dibayar
+                            </span>
+                        {{-- JIKA STATUS SETUJU TAPI BELUM BAYAR --}}
                         @elseif($tawar->Status === 'Setuju')
                             <span style="background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
                                 <i class="fas fa-check" style="font-size: 0.75rem;"></i> Disetujui
@@ -73,9 +88,9 @@
                         </div>
                     </div>
 
+                    {{-- TOMBOL TERIMA/TOLAK HANYA MUNCUL JIKA STATUS PENDING --}}
                     @if($tawar->Status === 'Pending')
                     <div style="display: flex; gap: 10px; justify-content: flex-end; border-left: 1px solid #e2e8f0; padding-left: 20px;">
-                        
                         <form action="{{ route('pembeli.penawaran.update-status', $tawar->idTawar) }}" method="POST" style="margin: 0;">
                             @csrf @method('PATCH')
                             <input type="hidden" name="status" value="Setuju">
@@ -93,8 +108,46 @@
                         </form>
                     </div>
                     @endif
+                </div>
+
+                {{-- AREA BAWAH UNTUK STATUS SETUJU --}}
+                @if($tawar->Status === 'Setuju')
+                <div style="border-top: 1px dashed #e2e8f0; padding: 15px 20px; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+                    
+                    @if($sudahUpload)
+                        {{-- JIKA SUDAH BAYAR: TAMPILKAN TEKS KETERANGAN SAJA (TANPA TOMBOL) --}}
+                        <div style="color: #0369a1; font-size: 0.85rem; font-weight: 600;">
+                            <i class="fas fa-info-circle" style="color: #38bdf8;"></i> Bukti pembayaran telah diunggah. Silakan cek perkembangan status pesanan Anda di halaman <strong>Riwayat Transaksi</strong>.
+                        </div>
+                    @else
+                        {{-- JIKA BELUM BAYAR: TOMBOL AKSES TETAP AKTIF SEPERTI BIASA --}}
+                        <div style="color: #64748b; font-size: 0.85rem;">
+                            <i class="fas fa-info-circle text-blue-500"></i> Silakan selesaikan pembayaran.
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            @php
+                                $noWa = $tawar->petani->petaniProfile->NoTlp ?? null;
+                                if($noWa && substr($noWa, 0, 1) == '0') {
+                                    $noWa = '62' . substr($noWa, 1);
+                                }
+                                $pesanWa = "Halo, saya pembeli komoditas " . $tawar->Komoditas . ". Penawaran Anda telah saya setujui. Mari berdiskusi mengenai teknis pengiriman.";
+                            @endphp
+
+                            @if($noWa)
+                                <a href="https://wa.me/{{ $noWa }}?text={{ urlencode($pesanWa) }}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: #25D366; color: white; padding: 10px 18px; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: 0.2s; box-shadow: 0 2px 4px rgba(37,211,102,0.2);">
+                                    <i class="fab fa-whatsapp" style="font-size: 1rem;"></i> Chat Petani
+                                </a>
+                            @endif
+                            
+                            <a href="{{ route('pembayaran.show', $tawar->idTawar) }}" style="display: inline-flex; align-items: center; gap: 8px; background: #2563eb; color: white; padding: 10px 18px; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: 0.2s; box-shadow: 0 2px 4px rgba(37,99,235,0.2);">
+                                <i class="fas fa-wallet"></i> Lanjutkan Pembayaran
+                            </a>
+                        </div>
+                    @endif
 
                 </div>
+                @endif
+
             </div>
         @empty
             <div style="background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 50px 20px; text-align: center;">

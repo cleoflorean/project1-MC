@@ -7,10 +7,13 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('username')->unique(); // Username tidak boleh sama
-            $table->string('email')->unique();    // Email tidak boleh sama
+            $table->string('username')->unique(); 
+            $table->string('email')->unique();    
             $table->string('password');
-            $table->enum('role', ['pembeli', 'petani']);
+            
+            // PERBAIKAN FATAL: Tambahkan role 'admin' di sini agar AdminSeeder bisa berjalan!
+            $table->enum('role', ['pembeli', 'petani', 'admin'])->default('pembeli');
+            
             $table->rememberToken();
             $table->timestamps();
         });

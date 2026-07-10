@@ -27,4 +27,12 @@ class Permintaan extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    /**
+     * Hubungkan Permintaan ke tabel Penawaran (One-to-Many)
+     */
+    public function penawarans()
+    {
+        return $this->hasMany(Penawaran::class, 'idMinta', 'idPermintaan');
+    }
 }

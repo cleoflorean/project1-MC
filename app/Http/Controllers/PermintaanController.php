@@ -5,38 +5,25 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Permintaan;
 use App\Models\Penawaran;
+use App\Models\Pembayaran;
 
 class PermintaanController extends Controller
 {
-    /**
-     * Dashboard Pembeli (Untuk menampilkan 5 tawaran terbaru dari petani)
-     */
     public function dashboard(Request $request)
     {
-        // Ambil semua ID permintaan milik pembeli ini
         $idPermintaans = $request->user()->permintaans()->pluck('idPermintaan');
-        
-        $penawarans = Penawaran::with(['petani', 'permintaan']) // Hapus .petaniProfile-nya sementara
-            ->whereIn('idMinta', $idPermintaans)
-            ->latest()
-            ->take(5)
-            ->get(); // Sumpah, ini pasti gak bakal error lagi!
+        $penawarans = Penawaran::with(['petani', 'permintaan']) 
+            ->whereIn('idMinta', $idPermintaans)->latest()->take(5)->get(); 
 
         return view('Pembeli.pembeli', compact('penawarans'));
     }
 
-    /**
-     * Menampilkan daftar semua permintaan milik pembeli
-     */
     public function index(Request $request)
     {
         $permintaans = $request->user()->permintaans()->latest()->get(); 
         return view('Pembeli.permintaan', compact('permintaans')); 
     }
 
-    /**
-     * Simpan Data Permintaan Baru
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -48,59 +35,57 @@ class PermintaanController extends Controller
         ]);
 
         $request->user()->permintaans()->create([
-            'NamaTanaman'      => $request->NamaTanaman,
-            'Komoditas'        => $request->komoditas,
-            'JumlahDibutuhkan' => $request->volume,
-            'HargaMaksimal'    => $request->batas_harga,
-            'BatasTanggal'     => $request->batas_akhir,
-            'Status'           => 'Aktif',
+            'NamaTanaman'       => $request->NamaTanaman,
+            'Komoditas'         => $request->komoditas,
+            'JumlahDibutuhkan'  => $request->volume,
+            'HargaMaksimal'     => $request->batas_harga,
+            'BatasTanggal'      => $request->batas_akhir,
+            'Status'            => 'Aktif',
         ]);
 
-        return redirect()->back()->with('success', 'Permintaan berhasil disimpan!');
+        return redirect()->route('permintaan.index')->with('success', 'Permintaan berhasil dibuat.');
     }
 
-    // =================================================================
-    // FITUR: MELIHAT PENAWARAN MASUK & MENGUBAH STATUS
-    // =================================================================
-
-    /**
-     * Menampilkan halaman daftar penawaran masuk dari sebuah permintaan
-     */
-    public function lihatPenawaran(Request $request, $idMinta) 
+    // FIX NAMA VIEW BERDASARKAN FOTOMU: daftartawaran
+    public function lihatPenawaran($id)
     {
-        // Ambil data permintaan, pastikan ini milik user yang sedang login
-        $permintaan = Permintaan::where('idPermintaan', $idMinta)
-            ->where('user_id', $request->user()->id) 
-            ->firstOrFail();
-
-        // Ambil semua penawaran yang masuk untuk permintaan ini
-        $penawarans = Penawaran::where('idMinta', $idMinta)->get();
+        $permintaan = Permintaan::with(['penawarans.petani.petaniProfile'])->findOrFail($id);
+        $penawarans = $permintaan->penawarans;
 
         return view('Pembeli.penawaran_list', compact('permintaan', 'penawarans'));
     }
 
-    /**
-     * Mengubah status setuju/tolak pada penawaran
-     */
-    public function updateStatusPenawaran(Request $request, $idTawar) 
+    public function updateStatusPenawaran(Request $request, $id)
     {
-        $request->validate([
-            'status' => 'required|in:Setuju,Tidak Setuju'
-        ]);
-
-        $penawaran = Penawaran::findOrFail($idTawar);
+        $penawaran = Penawaran::findOrFail($id);
         $penawaran->Status = $request->status;
         $penawaran->save();
 
-        // Logika cerdas: Jika satu penawaran disetujui, tolak penawaran lainnya
         if ($request->status === 'Setuju') {
-            Permintaan::where('idPermintaan', $penawaran->idMinta)->update(['Status' => 'Selesai']);
+            $permintaan = Permintaan::findOrFail($penawaran->idMinta);
+            $totalBayar = $penawaran->JumlahTawar * $penawaran->HargaTawar;
             
-            Penawaran::where('idMinta', $penawaran->idMinta)
-                ->where('idTawar', '!=', $idTawar)
-                ->update(['Status' => 'Tidak Setuju']);
+            // Buat tagihan saat itu juga
+            Pembayaran::updateOrCreate(
+                ['idTawar' => $penawaran->idTawar],
+                [
+                    'TotalBayar'       => $totalBayar,
+                    'StatusPembayaran' => 'Belum Dibayar',
+                    'StatusPesanan'    => 'Menunggu Pembayaran'
+                ]
+            );
+
+            // Cek akumulasi volume
+            $totalVolumeTerkumpul = Penawaran::where('idMinta', $penawaran->idMinta)
+                                             ->where('Status', 'Setuju')->sum('JumlahTawar');
+
+            if ($totalVolumeTerkumpul >= $permintaan->JumlahDibutuhkan) {
+                $permintaan->update(['Status' => 'Selesai']);
+                Penawaran::where('idMinta', $penawaran->idMinta)
+                         ->where('Status', 'Pending')->update(['Status' => 'Tidak Setuju']);
+            }
         }
 
-        return back()->with('success', 'Status penawaran berhasil diubah.');
+        return back()->with('success', 'Status penawaran berhasil diperbarui.');
     }
 }

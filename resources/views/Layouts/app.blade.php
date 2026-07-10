@@ -79,18 +79,8 @@
 
             {{-- Pengiriman --}}
             <li>
-                <a href="#"
-                   class="{{ request()->routeIs('pengiriman*') ? 'active' : '' }}">
-                    <i class="bi bi-truck"></i>
-                    <span>Pengiriman</span>
-                </a>
-            </li>
-
-            {{-- Harga Pasar (informasi statis harga komoditas) --}}
-            <li>
-                <a href="#" class="{{ request()->is('harga*') ? 'active' : '' }}">
-                    <i class="bi bi-graph-up-arrow"></i>
-                    <span>Harga Pasar</span>
+                <a href="{{ route('petani.pesanan') }}">
+                    <i class="fas fa-check-circle"></i> Manajemen Pesanan
                 </a>
             </li>
         </ul>

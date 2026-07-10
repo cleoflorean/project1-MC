@@ -33,19 +33,24 @@
                             <li>
                                 <a href="{{ route('pembeli') }}" class="nav-item {{ request()->routeIs('pembeli') ? 'active' : '' }}">
                                     Dashboard
-                                    </a>
-    </li>
-    <li>
-        <a href="{{ route('permintaan.index') }}" class="nav-item {{ request()->routeIs('permintaan.index') && !request()->routeIs('permintaan.penawaran') ? 'active' : '' }}">
-            Permintaan Saya
-        </a>
-    </li>
-    <li>
-        <a href="{{ route('permintaan.index') }}" class="nav-item {{ request()->routeIs('permintaan.penawaran') ? 'active' : '' }}">
-            Penawaran Masuk
-        </a>
-    </li>
-@endif
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('permintaan.index') }}" class="nav-item {{ request()->routeIs('permintaan.index') && !request()->routeIs('permintaan.penawaran') ? 'active' : '' }}">
+                                    Permintaan Saya
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('permintaan.index') }}" class="nav-item {{ request()->routeIs('permintaan.penawaran') ? 'active' : '' }}">
+                                    Penawaran Masuk
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold {{ request()->routeIs('pembeli.riwayat') ? 'active text-success' : 'text-dark' }}" href="{{ route('pembeli.riwayat') }}">
+                                    <i class="fas fa-receipt"></i> Riwayat Transaksi
+                                </a>
+                            </li>
+                        @endif
 
                         @if(auth()->user()->role === 'petani')
                             <li>

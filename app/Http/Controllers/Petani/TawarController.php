@@ -36,7 +36,6 @@ class TawarController extends Controller
 
         // Instansiasi Model Tawar untuk simpan ke database
         $penawaran = new Penawaran();
-        $penawaran = new Penawaran();
         $penawaran->idMinta     = $request->idMinta;
         $penawaran->idPetani     = auth()->id(); // OTOMATIS NGAMBIL ID PETANI
         $penawaran->NamaTanaman = $request->NamaTanaman; 
