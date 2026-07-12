@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Pembayaran;
 use App\Models\Penawaran;
 use App\Models\Ulasan;
+use App\Models\User; // <-- TAMBAHKAN INI UNTUK MEMANGGIL DATA ADMIN
 use Illuminate\Support\Facades\Storage;
+use App\Models\AdminProfile;
 
 class PembayaranController extends Controller
 {
@@ -35,13 +37,17 @@ class PembayaranController extends Controller
     }
 
     public function show($idTawar)
-    {
-        $pembayaran = Pembayaran::with(['penawaran.petani.petaniProfile'])
-                                ->where('idTawar', $idTawar)
-                                ->firstOrFail();
+{
+    $pembayaran = Pembayaran::with(['penawaran.petani.petaniProfile'])
+                            ->where('idTawar', $idTawar)
+                            ->firstOrFail();
 
-        return view('Pembeli.pembayaran', compact('pembayaran')); 
-    }
+    // UBAH BAGIAN INI: 
+    // Karena sistem kamu 1 Admin, kita cukup panggil baris pertama dari tabel admin_profiles
+    $admin = AdminProfile::first();
+
+    return view('Pembeli.pembayaran', compact('pembayaran', 'admin')); 
+}
 
     public function uploadBukti(Request $request, $idPembayaran)
     {
@@ -58,7 +64,7 @@ class PembayaranController extends Controller
 
             $pembayaran->update([
                 'BuktiTransfer'    => $path,
-                'StatusPembayaran' => 'Lunas',
+                'StatusPembayaran' => 'Menunggu Verifikasi Admin', 
                 'StatusPesanan'    => 'Menunggu Verifikasi Admin',
                 'WaktuBayar'       => now() 
             ]);
@@ -72,7 +78,6 @@ class PembayaranController extends Controller
 
     public function riwayatTransaksi(Request $request)
     {
-        // FIX: Menambahkan relasi 'ulasan' agar Blade tahu mana yg sudah dinilai
         $riwayat = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.petaniProfile', 'ulasan'])
             ->whereHas('penawaran.permintaan', function ($query) use ($request) {
                 $query->where('user_id', $request->user()->id);
@@ -91,7 +96,6 @@ class PembayaranController extends Controller
         return view('Pembeli.detail', compact('pesanan'));
     }
 
-    // FUNGSI 1: KHUSUS UNTUK KLIK "PESANAN DITERIMA"
     public function pesananSelesai(Request $request, $id)
     {
         $pembayaran = Pembayaran::findOrFail($id);
@@ -104,7 +108,6 @@ class PembayaranController extends Controller
         return back()->with('success', 'Pesanan telah diterima! Silakan berikan penilaian Anda.');
     }
 
-    // FUNGSI BARU: KHUSUS MENYIMPAN RATING + FOTO/VIDEO ALA SHOPEE
     public function simpanUlasan(Request $request, $id)
     {
         $request->validate([

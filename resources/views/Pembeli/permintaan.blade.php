@@ -15,27 +15,47 @@
         </button>
     </header>
 
-    <div class="request-list">
+   <div class="request-list">
         @forelse($permintaans ?? [] as $item)
-            <div class="card" style="margin-bottom: 1rem; padding: 1.5rem; display: flex; gap: 1.5rem; align-items: center; border: 1px solid #e2e8f0; border-radius: 8px;">
-                
-                <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px; color: #2e7d32; font-size: 1.5rem;">
-                    <i class="fas fa-boxes-stacked"></i>
-                </div>
+            @php
+                // Cek apakah permintaan ini sudah memiliki penawaran yang disetujui
+                $hasApprovedOffer = $item->penawarans->where('Status', 'Setuju')->count() > 0;
+                $isExpired = \Carbon\Carbon::parse($item->BatasTanggal)->endOfDay()->isPast();
+            @endphp
+            
+            <div class="card" style="margin-bottom: 1.5rem; padding: 1.5rem; display: flex; gap: 1.5rem; align-items: center; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
                 
                 <div style="flex-grow: 1;">
-                    <h4 style="margin-bottom: 0.25rem;">{{ $item->NamaTanaman }}</h4>
-                    <p style="color: #64748b; font-size: 0.9rem; margin: 0;">
-                        Komoditas: {{ $item->Komoditas }} | 
-                        Volume: {{ number_format($item->JumlahDibutuhkan, 0, ',', '.') }} kg | 
-                        Harga Max: Rp {{ number_format($item->HargaMaksimal, 0, ',', '.') }}/kg
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem;">
+                        <h4 style="margin: 0; font-size: 1.25rem; color: #1e293b;">{{ $item->NamaTanaman }}</h4>
+                        <span style="font-size: 0.75rem; padding: 3px 8px; border-radius: 20px; background: {{ $isExpired ? '#fee2e2' : '#dcfce7' }}; color: {{ $isExpired ? '#991b1b' : '#166534' }};">
+                            {{ $isExpired ? 'Kadaluarsa' : 'Aktif' }}
+                        </span>
+                    </div>
+
+                    <p style="color: #64748b; font-size: 0.9rem; margin: 0; line-height: 1.6;">
+                        <i class="fas fa-tag"></i> {{ $item->Komoditas }} <br>
+                        <i class="fas fa-weight-hanging"></i> Volume: <strong>{{ number_format($item->JumlahDibutuhkan, 0, ',', '.') }} kg</strong> | 
+                        <i class="fas fa-money-bill-wave"></i> Harga Maks: <strong>Rp {{ number_format($item->HargaMaksimal, 0, ',', '.') }}/kg</strong><br>
+                        <i class="fas fa-calendar-alt"></i> Batas Akhir: <span style="color: {{ $isExpired ? '#dc2626' : 'inherit' }}">{{ \Carbon\Carbon::parse($item->BatasTanggal)->format('d M Y') }}</span>
                     </p>
                 </div>
 
-                <div>
-                    <a href="{{ route('permintaan.penawaran', $item->idPermintaan) }}" style="background-color: #2e7d32; color: white; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; display: inline-block; white-space: nowrap;">
-                        <i class="fas fa-envelope-open-text" style="margin-right: 5px;"></i> Lihat Penawaran
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <a href="{{ route('permintaan.penawaran', $item->idPermintaan) }}" style="background-color: #2e7d32; color: white; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; text-align: center; white-space: nowrap;">
+                        <i class="fas fa-envelope-open-text" style="margin-right: 5px;"></i> Cek Tawaran
                     </a>
+                    
+                    {{-- Tombol Hapus: Hanya muncul jika BELUM ADA tawaran yang disetujui[cite: 3] --}}
+                    @if(!$hasApprovedOffer)
+                        <form action="{{ route('permintaan.destroy', $item->idPermintaan) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus permintaan ini?');" style="margin: 0;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="background-color: transparent; color: #dc2626; border: 1px solid #dc2626; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; width: 100%; white-space: nowrap; transition: 0.2s;">
+                                <i class="fas fa-trash" style="margin-right: 5px;"></i> Hapus
+                            </button>
+                        </form>
+                    @endif
                 </div>
 
             </div>

@@ -103,36 +103,34 @@
                                     <span style="background: #f1f5f9; color: #64748b; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">{{ $trx->StatusPembayaran }}</span>
                                 @endif
                             </td>
-                            <td style="padding: 12px 20px; font-weight: 600;">
-                                <small style="color: #475569;">{{ $trx->StatusPesanan }}</small>
-                            </td>
                             <td style="padding: 12px 20px; text-align: center;">
-                                <div style="display: flex; gap: 6px; justify-content: center;">
-                                    {{-- Tombol Cek Bukti --}}
-                                    @if($trx->StatusPembayaran === 'Menunggu Verifikasi Admin' || $trx->StatusPembayaran === 'Menunggu Verifikasi')
-                                        {{-- FIX: Menambahkan storage/ agar path gambar terbaca publik --}}
-                                        <button onclick="bukaModalBukti('{{ asset('storage/' . $trx->BuktiTransfer) }}', '{{ route('admin.transaksi.verifikasi', $trx->idPembayaran) }}')" style="background: #2e7d32; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: 600; font-size: 0.75rem; cursor: pointer;">
-                                            Cek Bukti Transfer
-                                        </button>
-                                    @endif
+    <div style="display: flex; gap: 6px; justify-content: center;">
+        
+        {{-- Tombol Cek Bukti: Muncul jika Status Pembayaran ATAU Status Pesanan masih meminta verifikasi --}}
+        @if($trx->StatusPembayaran === 'Menunggu Verifikasi Admin' || $trx->StatusPembayaran === 'Menunggu Verifikasi' || $trx->StatusPesanan === 'Menunggu Verifikasi Admin')
+            <button onclick="bukaModalBukti('{{ asset('storage/' . $trx->BuktiTransfer) }}', '{{ route('admin.transaksi.verifikasi', $trx->idPembayaran) }}')" style="background: #2e7d32; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: 600; font-size: 0.75rem; cursor: pointer;">
+                Cek Bukti Transfer
+            </button>
+        @endif
 
-                                    {{-- Tombol Kendali Darurat (Refund / Cairkan) --}}
-                                    @if($trx->StatusPembayaran === 'Lunas' && $trx->StatusPesanan !== 'Pesanan Selesai')
-                                        <form action="{{ route('admin.transaksi.refund', $trx->idPembayaran) }}" method="POST" onsubmit="return confirm('Yakin ingin Refund dana ke Pembeli?')">
-                                            @csrf
-                                            <button type="submit" style="background: #c62828; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: 600; font-size: 0.75rem; cursor: pointer;">
-                                                🚨 Refund
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('admin.transaksi.cairkan', $trx->idPembayaran) }}" method="POST" onsubmit="return confirm('Paksa Cairkan dana ke Petani?')">
-                                            @csrf
-                                            <button type="submit" style="background: #1565c0; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: 600; font-size: 0.75rem; cursor: pointer;">
-                                                💰 Cairkan
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
-                            </td>
+        {{-- Tombol Kendali Darurat (Refund / Cairkan): Hanya boleh muncul jika benar-benar sudah Lunas DAN tidak sedang dalam status menunggu verifikasi --}}
+        @if($trx->StatusPembayaran === 'Lunas' && $trx->StatusPesanan !== 'Pesanan Selesai' && $trx->StatusPesanan !== 'Menunggu Verifikasi Admin')
+            <form action="{{ route('admin.transaksi.refund', $trx->idPembayaran) }}" method="POST" onsubmit="return confirm('Yakin ingin Refund dana ke Pembeli?')">
+                @csrf
+                <button type="submit" style="background: #c62828; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: 600; font-size: 0.75rem; cursor: pointer;">
+                    🚨 Refund
+                </button>
+            </form>
+            <form action="{{ route('admin.transaksi.cairkan', $trx->idPembayaran) }}" method="POST" onsubmit="return confirm('Paksa Cairkan dana ke Petani?')">
+                @csrf
+                <button type="submit" style="background: #1565c0; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: 600; font-size: 0.75rem; cursor: pointer;">
+                    💰 Cairkan
+                </button>
+            </form>
+        @endif
+        
+    </div>
+</td>
                         </tr>
                         @empty
                         <tr>

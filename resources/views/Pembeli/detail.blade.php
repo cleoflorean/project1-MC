@@ -17,7 +17,7 @@
         {{-- BANNER STATUS PESANAN (SUDAH DIPERBAIKI SESUAI ALUR REKBER) --}}
         <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: space-between;">
             <div>
-                <h3 style="margin: 0 0 5px 0; font-size: 1.1rem; color: #111827; font-weight: 700;">Status Transaksi</h3>
+                <h3 style="margin: 0 0 5px 0; font-size: 1.1rberem; color: #111827; font-weight: 700;">Status Transaksi</h3>
                 
                 @if(empty($pesanan->BuktiTransfer))
                     <p style="margin: 0; color: #ef4444; font-size: 0.9rem; font-weight: 600;">Menunggu Pembayaran</p>

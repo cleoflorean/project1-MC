@@ -124,10 +124,20 @@
 
         {{-- Dropdown profil pengguna di pojok kanan navbar --}}
         <div class="dropdown">
-            <button class="tc-navbar-profile-btn dropdown-toggle"
-                    data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="tc-navbar-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            {{-- Cek apakah user punya profil dan file FotoProfile ada --}}
+            @php
+                $profil = auth()->user()->petaniProfile;
+            @endphp
+
+            @if($profil && $profil->FotoProfile)
+                <img src="{{ asset($profil->FotoProfile) }}"
+                alt="Profil" class="tc-navbar-avatar" style="object-fit: cover;">
+            @else
+            {{-- Gambar default jika petani belum upload foto profil --}}
                 <img src="{{ asset('images/profile.jpg') }}"
-                     alt="Profil" class="tc-navbar-avatar">
+                alt="Profil" class="tc-navbar-avatar" style="object-fit: cover;">
+            @endif
                 <span class="tc-navbar-username d-none d-md-inline">
                     {{ auth()->user()->username }}
                 </span>

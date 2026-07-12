@@ -5,35 +5,31 @@ namespace App\Http\Controllers\Petani;
 use App\Http\Controllers\Controller;
 use App\Models\Permintaan;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class PermintaanController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $search = $request->query('search');
+        $today = Carbon::now()->toDateString();
 
-        // Ambil data permintaan, SEKALIGUS bawa data relasi user dan pembeliProfile (Eager Loading)
-        $query = Permintaan::with('user.pembeliProfile')->where('Status', 'Aktif');
+        // 1. Ambil semua Permintaan Pasar yang MASIH AKTIF (Batas tanggal belum terlewat)
+        $permintaanAktif = Permintaan::with('user.pembeliProfile')
+                                    ->where('Status', 'Aktif')
+                                    ->whereDate('BatasTanggal', '>=', $today)
+                                    ->orderBy('BatasTanggal', 'asc')
+                                    ->get();
 
-        // Perbaikan fitur pencarian agar mencari ke dalam tabel relasi
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('NamaTanaman', 'Like', '%' . $search . '%')
-                  ->orWhereHas('user', function ($qUser) use ($search) {
-                      $qUser->where('username', 'Like', '%' . $search . '%')
-                            ->orWhereHas('pembeliProfile', function ($qProfile) use ($search) {
-                                $qProfile->where('nama_toko', 'Like', '%' . $search . '%')
-                                         ->orWhere('alamat', 'Like', '%' . $search . '%');
-                            });
-                  });
-            });
-        }
+        // 2. Ambil semua Permintaan Pasar yang SUDAH KADALUARSA (Batas tanggal sudah lewat)
+        $permintaanKadaluarsa = Permintaan::with('user.pembeliProfile')
+                                        ->where('Status', 'Aktif')
+                                        ->whereDate('BatasTanggal', '<', $today)
+                                        ->orderBy('BatasTanggal', 'desc')
+                                        ->get();
 
-        $permintaan = $query->get();
-
-        // PERBAIKAN: Ambil daftar komoditas unik dari tabel Permintaan (karena tabel Panen sudah dihapus)
         $komoditas = Permintaan::where('Status', 'Aktif')->pluck('Komoditas')->unique()->filter();
 
-        return view('petani.permintaan', compact('permintaan', 'search', 'komoditas'));
+        // Kirim kedua tipe data ke satu halaman view yang sama
+        return view('petani.permintaan', compact('permintaanAktif', 'permintaanKadaluarsa', 'komoditas'));
     }
 }

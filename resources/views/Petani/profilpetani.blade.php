@@ -16,7 +16,7 @@
         <div>
             {{-- TOMBOL EDIT PROFIL: Sekarang berupa Link yang mengarah ke halaman edit --}}
             <a href="{{ route('petani.profil.edit') }}" style="display: inline-flex; align-items: center; gap: 8px; background: #15803d; color: white; padding: 10px 18px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: background 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                <i class="fas fa-edit" style="font-size: 0.85rem;"></i> Edit Profil
+                <i class="fas fa-edit" style="font-size: 0.85rem;"></i> Perbarui Profil & Sandi
             </a>
         </div>
     </div>
@@ -46,7 +46,7 @@
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 25px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
                 <div style="margin-bottom: 15px; display: flex; justify-content: center;">
                     @if(!empty($profil->FotoProfile))
-                        <img src="{{ asset('storage/' . $profil->FotoProfile) }}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1; padding: 4px; background: #fff;">
+                        <img src="{{ asset($profil->FotoProfile) }}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1; padding: 4px; background: #fff;">
                     @else
                         <div style="width: 150px; height: 150px; border-radius: 50%; background: #15803d; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; font-weight: bold; margin: 0 auto; border: 1px solid #cbd5e1;">
                             {{ strtoupper(substr($profil->NamaLengkap ?? $user->name, 0, 2)) }}

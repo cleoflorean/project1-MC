@@ -26,7 +26,7 @@
     @endif
 
     <div style="display: flex; flex-direction: column; gap: 20px;">
-        {{-- Loop semua data penawaran tanpa ada yang disembunyikan kartunya --}}
+        {{-- Loop semua data penawaran --}}
         @forelse($penawarans as $tawar)
             
             {{-- CEK STATUS PEMBAYARAN SECARA REALTIME --}}
@@ -39,13 +39,26 @@
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: border-color 0.2s;">
                 
                 <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div style="width: 35px; height: 35px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748b;">
-                            <i class="fas fa-tractor"></i>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        
+                        {{-- FOTO PROFIL PETANI --}}
+                        <div style="width: 48px; height: 48px; background: #e2e8f0; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; color: #64748b; border: 2px solid #cbd5e1; flex-shrink: 0;">
+                            @if(!empty($tawar->petani->petaniProfile->FotoProfile))
+                                <img src="{{ asset($tawar->petani->petaniProfile->FotoProfile) }}" alt="Foto Petani" style="width: 100%; height: 100%; object-fit: cover;">
+                            @else
+                                <i class="fas fa-tractor" style="font-size: 1.2rem;"></i>
+                            @endif
                         </div>
+
                         <div>
-                            <h4 style="margin: 0; font-size: 1rem; color: #1e293b; font-weight: 700;">{{ $tawar->petani->username ?? 'Mitra Petani' }}</h4>
-                            <span style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">ID Penawaran: #{{ str_pad($tawar->idTawar, 5, '0', STR_PAD_LEFT) }}</span>
+                            <h4 style="margin: 0; font-size: 1rem; color: #1e293b; font-weight: 700;">
+                                {{ $tawar->petani->petaniProfile->NamaLengkap ?? 'Nama Tidak Diketahui' }}
+                                <span style="font-size: 0.85rem; font-weight: normal; color: #64748b;">({{ $tawar->petani->username ?? 'Mitra Petani' }})</span>
+                            </h4>
+                            <span style="font-size: 0.8rem; color: #64748b; display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                                <i class="fas fa-map-marker-alt" style="color: #ef4444;"></i> 
+                                {{ $tawar->petani->petaniProfile->Alamat ?? 'Alamat belum diatur' }}
+                            </span>
                         </div>
                     </div>
 
@@ -54,12 +67,10 @@
                             <span style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
                                 <i class="fas fa-clock" style="font-size: 0.75rem;"></i> Menunggu Evaluasi
                             </span>
-                        {{-- JIKA STATUS SETUJU DAN SUDAH UPLOAD BUKTI TF --}}
                         @elseif($tawar->Status === 'Setuju' && $sudahUpload)
                             <span style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
                                 <i class="fas fa-receipt" style="font-size: 0.75rem;"></i> Sudah Dibayar
                             </span>
-                        {{-- JIKA STATUS SETUJU TAPI BELUM BAYAR --}}
                         @elseif($tawar->Status === 'Setuju')
                             <span style="background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
                                 <i class="fas fa-check" style="font-size: 0.75rem;"></i> Disetujui
@@ -72,7 +83,7 @@
                     </div>
                 </div>
 
-                <div style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; align-items: center;">
+                <div style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; align-items: center;">
                     
                     <div>
                         <span style="display: block; font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Harga Penawaran</span>
@@ -86,6 +97,18 @@
                         <div style="font-size: 1.1rem; font-weight: 600; color: #334155;">
                             {{ number_format($tawar->JumlahTawar, 0, ',', '.') }} <span style="font-size: 0.9rem; color: #64748b;">kg</span>
                         </div>
+                    </div>
+
+                    {{-- Kondisi Barang --}}
+                    <div>
+                        <span style="display: block; font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Kondisi Barang</span>
+                        @if(!empty($tawar->Gambar))
+                            <a href="{{ route('pembeli.penawaran.foto', $tawar->idTawar) }}" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #334155; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; text-decoration: none;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                                <i class="fas fa-image" style="color: #3b82f6;"></i> Lihat Foto
+                            </a>
+                        @else
+                            <span style="font-size: 0.85rem; color: #94a3b8; font-style: italic;">Tidak ada foto</span>
+                        @endif
                     </div>
 
                     {{-- TOMBOL TERIMA/TOLAK HANYA MUNCUL JIKA STATUS PENDING --}}
@@ -115,12 +138,10 @@
                 <div style="border-top: 1px dashed #e2e8f0; padding: 15px 20px; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
                     
                     @if($sudahUpload)
-                        {{-- JIKA SUDAH BAYAR: TAMPILKAN TEKS KETERANGAN SAJA (TANPA TOMBOL) --}}
                         <div style="color: #0369a1; font-size: 0.85rem; font-weight: 600;">
                             <i class="fas fa-info-circle" style="color: #38bdf8;"></i> Bukti pembayaran telah diunggah. Silakan cek perkembangan status pesanan Anda di halaman <strong>Riwayat Transaksi</strong>.
                         </div>
                     @else
-                        {{-- JIKA BELUM BAYAR: TOMBOL AKSES TETAP AKTIF SEPERTI BIASA --}}
                         <div style="color: #64748b; font-size: 0.85rem;">
                             <i class="fas fa-info-circle text-blue-500"></i> Silakan selesaikan pembayaran.
                         </div>
@@ -147,7 +168,6 @@
 
                 </div>
                 @endif
-
             </div>
         @empty
             <div style="background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 50px 20px; text-align: center;">

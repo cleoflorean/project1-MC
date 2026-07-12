@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Pembayaran;
 use App\Models\User;
+use App\Models\AdminProfile; // <-- TAMBAHAN BARU
 
 class AdminController extends Controller
 {
@@ -44,11 +46,48 @@ class AdminController extends Controller
     }
 
     /**
+     * FITUR BARU: Menampilkan Halaman Profil & Rekening Admin
+     */
+    public function profil()
+    {
+        $user = Auth::user();
+        $profile = $user->adminProfile ?? new AdminProfile();
+        
+        return view('Admin.profil', compact('user', 'profile'));
+    }
+
+    /**
+     * FITUR BARU: Proses Update Profil & Rekening Admin
+     */
+    public function updateProfil(Request $request)
+    {
+        $request->validate([
+            'NamaLengkap' => 'required|string|max:100',
+            'NamaBank'    => 'required|string|max:50',
+            'NoRekening'  => 'required|numeric',
+            'NamaPemilik' => 'required|string|max:100',
+        ]);
+
+        $user = Auth::user();
+
+        AdminProfile::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'NamaLengkap' => $request->NamaLengkap,
+                'NamaBank'    => $request->NamaBank,
+                'NoRekening'  => $request->NoRekening,
+                'NamaPemilik' => $request->NamaPemilik,
+            ]
+        );
+
+        return redirect()->route('admin.profil')->with('success', 'Data Profil & Rekening Bersama berhasil diperbarui!');
+    }
+
+    /**
      * 2. Menampilkan Halaman Konfirmasi Pembayaran (Menu Konfirmasi)
      */
     public function konfirmasi()
     {
-        // Ambil semua data transaksi untuk dikonfirmasi
         $semuaTransaksi = Pembayaran::with(['penawaran.permintaan.user', 'penawaran.petani'])
                                     ->latest('idPembayaran')
                                     ->get();
@@ -61,7 +100,6 @@ class AdminController extends Controller
      */
     public function pengguna()
     {
-        // Ambil semua akun pengguna
         $semuaAkun = User::latest()->get();
         
         return view('Admin.pengguna', compact('semuaAkun'));
@@ -74,7 +112,6 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
         
-        // Return ke view detail pengguna
         return view('Admin.detail_pengguna', compact('user'));
     }
 
@@ -101,7 +138,7 @@ class AdminController extends Controller
         $pembayaran = Pembayaran::findOrFail($id);
         
         $pembayaran->update([
-            'StatusPembayaran' => 'Ditolak', // Atau 'Di-Refund'
+            'StatusPembayaran' => 'Ditolak',
             'StatusPesanan'    => 'Dibatalkan'
         ]);
 

@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -46,13 +45,17 @@ class User extends Authenticatable
     // RELASI UNTUK PEMBELI
     // ====================================================================
 
-    // Relasi One-to-One ke profil pembeli
+    /**
+     * Relasi One-to-One ke profil pembeli
+     */
     public function pembeliProfile()
     {
-        return $this->hasOne(PembeliProfile::class);
+        return $this->hasOne(PembeliProfile::class, 'user_id', 'id');
     }
 
-    // Relasi One-to-Many ke permintaan (Barang yang dicari pembeli)
+    /**
+     * Relasi One-to-Many ke permintaan (Barang yang dicari pembeli)
+     */
     public function permintaans()
     {
         return $this->hasMany(Permintaan::class, 'user_id');
@@ -62,7 +65,9 @@ class User extends Authenticatable
     // RELASI UNTUK PETANI
     // ====================================================================
 
-    // Relasi One-to-One ke profil petani
+    /**
+     * Relasi One-to-One ke profil petani
+     */
     public function petaniProfile()
     {
         // Parameter pertama: Nama kolom foreign key di tabel petani_profiles (user_id)
@@ -70,9 +75,23 @@ class User extends Authenticatable
         return $this->hasOne(PetaniProfile::class, 'user_id', 'id');
     }
 
-    // TAMBAHAN BARU: Relasi One-to-Many ke penawaran (Barang yang ditawarkan petani)
+    /**
+     * Relasi One-to-Many ke penawaran (Barang yang ditawarkan petani)
+     */
     public function penawarans()
     {
         return $this->hasMany(Penawaran::class, 'idPetani', 'id');
+    }
+
+    // ====================================================================
+    // RELASI UNTUK ADMIN
+    // ====================================================================
+
+    /**
+     * Relasi One-to-One ke profil admin
+     */
+    public function adminProfile()
+    {
+        return $this->hasOne(AdminProfile::class, 'user_id', 'id');
     }
 }

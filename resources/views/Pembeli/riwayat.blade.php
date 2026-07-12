@@ -95,13 +95,22 @@
                 </a>
 
             @elseif(trim($pesanan->StatusPesanan) === 'Dikirim')
-                {{-- TOMBOL PESANAN DITERIMA (HANYA MERUBAH STATUS) --}}
-                <form action="/riwayat-transaksi/{{ $pesanan->idPembayaran }}/selesai" method="POST" style="margin: 0;" onsubmit="return confirm('Pesanan sudah sampai? Klik OK untuk konfirmasi.')">
-                    @csrf
-                    <button type="submit" style="background: #14532d; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 6px rgba(20, 83, 45, 0.2);">
-                        Pesanan Diterima
-                    </button>
-                </form>
+                <div style="display: flex; gap: 10px;">
+                    
+                    {{-- TOMBOL KOMPLAIN (Mengarah ke rute form) --}}
+                    <a href="{{ route('pembeli.komplain.create', $pesanan->idPembayaran) }}" style="text-decoration: none; background: #ef4444; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2); display: flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-exclamation-triangle"></i> Ada Masalah
+                    </a>
+
+                    {{-- TOMBOL PESANAN SELESAI --}}
+                    <form action="{{ route('pembeli.pesanan.selesai', $pesanan->idPembayaran) }}" method="POST" style="margin: 0;" onsubmit="return confirm('Pesanan sudah sampai dengan aman? Klik OK untuk menyelesaikannya.')">
+                        @csrf
+                        <button type="submit" style="background: #14532d; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 6px rgba(20, 83, 45, 0.2); display: flex; align-items: center; gap: 5px;">
+                            <i class="fas fa-check"></i> Pesanan Diterima
+                        </button>
+                    </form>
+                    
+                </div>
 
             @elseif(in_array(trim($pesanan->StatusPesanan), ['Pesanan Selesai', 'Selesai']))
                 

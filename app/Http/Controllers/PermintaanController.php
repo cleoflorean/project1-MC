@@ -20,10 +20,26 @@ class PermintaanController extends Controller
 
     public function index(Request $request)
     {
-        $permintaans = $request->user()->permintaans()->latest()->get(); 
+        // Panggil relasi penawarans agar kita bisa cek apakah ada yang disetujui[cite: 1]
+        $permintaans = $request->user()->permintaans()->with('penawarans')->latest()->get(); 
         return view('Pembeli.permintaan', compact('permintaans')); 
     }
 
+    public function destroy($id)
+    {
+        $permintaan = Permintaan::with('penawarans')->findOrFail($id);
+        
+        // Cek apakah ada penawaran yang sudah "Setuju"[cite: 1]
+        $hasApproved = $permintaan->penawarans->where('Status', 'Setuju')->count() > 0;
+        
+        if ($hasApproved) {
+            return back()->with('error', 'Permintaan tidak bisa dihapus karena sudah ada tawaran yang disetujui.');
+        }
+
+        $permintaan->delete();
+        return back()->with('success', 'Permintaan berhasil dihapus.');
+    }
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -87,5 +103,14 @@ class PermintaanController extends Controller
         }
 
         return back()->with('success', 'Status penawaran berhasil diperbarui.');
+    }
+    // Tambahkan fungsi ini di dalam PermintaanController
+    public function lihatFoto($id)
+    {
+        // Cari data penawaran beserta relasi ke petani
+        $tawar = Penawaran::with(['petani.petaniProfile'])->findOrFail($id);
+
+        // Arahkan ke file blade baru (sesuaikan foldernya)
+        return view('Pembeli.foto_penawaran', compact('tawar'));
     }
 }

@@ -17,7 +17,7 @@
                             <div>
                                 <h5 class="fw-bold text-success mb-1" style="font-size: 14px;">Merespon Permintaan Pasar</h5>
                                 <p class="text-muted small mb-0" style="font-size: 13px;">
-                                    Anda sedang menawarkan hasil panen untuk komoditas yang dicari oleh pembeli. pastikan kualitas tanamen Anda sesuai standar.
+                                    Anda sedang menawarkan hasil panen untuk komoditas yang dicari oleh pembeli. pastikan kualitas tanaman Anda sesuai standar.
                                 </p>
                             </div>
                         </div>
@@ -40,34 +40,37 @@
 
                         {{-- Badge Status di pojok kanan atas --}}
                         @if($tawar->Status == 'Pending')
-                            <span class="position-absolute top-0 end-0 bg-success text-white small px-3 py-1 fw-medium" style="border-bottom-left-radius: 14px; border-top-right-radius: 15px; font-size: 11px;">Mendesak</span>
-                        @elseif($tawar->Status == 'Diterima' || $tawar->Status == 'Disetujui')
-                            <span class="position-absolute top-0 end-0 text-white small px-3 py-1 fw-medium" style="background-color: #28a745; border-bottom-left-radius: 14px; border-top-right-radius: 15px; font-size: 11px;">Diterima</span>
-                        @else
+                            <span class="position-absolute top-0 end-0 text-white small px-3 py-1 fw-medium" style="background-color: #ffc107; border-bottom-left-radius: 14px; border-top-right-radius: 15px; font-size: 11px;">Pending</span>
+                        @elseif($tawar->Status == 'Setuju')
+                            <span class="position-absolute top-0 end-0 text-white small px-3 py-1 fw-medium" style="background-color: #28a745; border-bottom-left-radius: 14px; border-top-right-radius: 15px; font-size: 11px;">Disetujui</span>
+                        @elseif($tawar->Status == 'Tidak Setuju')
                             <span class="position-absolute top-0 end-0 text-white small px-3 py-1 fw-medium" style="background-color: #dc3545; border-bottom-left-radius: 14px; border-top-right-radius: 15px; font-size: 11px;">Ditolak</span>
+                        @else
+                            <span class="position-absolute top-0 end-0 text-white small px-3 py-1 fw-medium" style="background-color: #6c757d; border-bottom-left-radius: 14px; border-top-right-radius: 15px; font-size: 11px;">{{ $tawar->Status }}</span>
                         @endif
 
                         <div class="card-body p-4">
 
-                            {{-- Foto atau Info Pembeli --}}
+                            {{-- Info Pembeli --}}
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-light p-2 rounded-3 me-3 text-success">
+                                    <i class="bi bi-building fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-0" style="font-size: 15px;">
+                                        {{ $tawar->permintaan->user->pembeliProfile->NamaLengkap ?? $tawar->permintaan->user->username ?? 'Penawaran Panen' }}
+                                    </h6>
+                                    <span class="text-muted small" style="font-size: 12px;">
+                                        <i class="bi bi-geo-alt-fill me-1"></i>
+                                        {{ $tawar->permintaan->user->pembeliProfile->Alamat ?? 'Lokasi belum diatur' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{-- Foto Jika Ada --}}
                             @if($tawar->Gambar)
                                 <div class="mb-3 rounded-3 overflow-hidden" style="height: 140px;">
                                     <img src="{{ asset($tawar->Gambar) }}" class="w-100 h-100 object-fit-cover" alt="{{ $tawar->NamaTanaman }}">
-                                </div>
-                            @else
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="bg-light p-2 rounded-3 me-3 text-success">
-                                        <i class="bi bi-building fs-4"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="fw-bold text-dark mb-0" style="font-size: 15px;">
-                                            {{ $tawar->permintaan->user->pembeliProfile->NamaLengkap ?? $tawar->permintaan->user->username ?? 'Penawaran Panen' }}
-                                        </h6>
-                                        <span class="text-muted small" style="font-size: 12px;">
-                                            <i class="bi bi-geo-alt-fill me-1"></i>
-                                            {{ $tawar->permintaan->user->pembeliProfile->Alamat ?? 'Lokasi belum diatur' }}
-                                        </span>
-                                    </div>
                                 </div>
                             @endif
 
@@ -105,15 +108,17 @@
                                 <p class="text-secondary small m-0 text-truncate" title="{{ $tawar->Catatan }}">"{{ $tawar->Catatan }}"</p>
                             </div>
 
-                            {{-- Tombol Hapus --}}
-                            <form action="{{ route('tawar.destroy', $tawar->idTawar) }}" method="POST"
-                                  onsubmit="return confirm('Yakin ingin menghapus penawaran ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-outline-danger w-100 btn-sm rounded-3">
-                                    <i class="bi bi-trash me-1"></i> Hapus Penawaran
-                                </button>
-                            </form>
+                            {{-- Tombol Aksi --}}
+                            @if($tawar->Status == 'Pending')
+                                <form action="{{ route('tawar.destroy', $tawar->idTawar) }}" method="POST"
+                                      onsubmit="return confirm('Yakin ingin membatalkan dan menghapus penawaran ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger w-100 btn-sm rounded-3">
+                                        <i class="bi bi-trash me-1"></i> Batalkan Penawaran
+                                    </button>
+                                </form>
+                            @endif
 
                         </div>
                     </div>

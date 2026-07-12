@@ -53,14 +53,18 @@
                     <div style="color: #059669; font-size: 1.3rem; background: #ffffff; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #e8f5e9;">
                         <i class="fas fa-university"></i>
                     </div>
-                    <div>
-                        <p style="margin: 0 0 2px 0; font-size: 0.75rem; color: #059669; font-weight: 700; letter-spacing: 0.5px;">BANK MANDIRI</p>
-                        <p style="margin: 0 0 4px 0; font-size: 1.3rem; font-weight: 800; color: #111827; letter-spacing: 0.5px;">123-00-999-888-77</p>
-                        <p style="margin: 0; font-size: 0.85rem; color: #6b7280; font-weight: 500;">a.n. PT TaniHub Nusantara</p>
+                   <div>
+                        <p style="margin: 0 0 2px 0; font-size: 0.75rem; color: #059669; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                            {{ $admin->NamaBank ?? 'BANK BELUM DIATUR' }}
+                        </p>
+                         <p style="margin: 0 0 4px 0; font-size: 1.3rem; font-weight: 800; color: #111827; letter-spacing: 0.5px;">
+                            {{ $admin->NoRekening ?? '-' }}
+                        </p>
+                        <p style="margin: 0; font-size: 0.85rem; color: #6b7280; font-weight: 500;">
+                            a.n. {{ $admin->NamaPemilik ?? 'Admin TaniHarvest' }}
+                        </p>
                     </div>
-                </div>
-            </div>
-
+                    </div>
             {{-- FORM UPLOAD DENGAN DESIGN MINIMALIS --}}
             <div>
                 <form action="{{ route('pembayaran.upload', $pembayaran->idPembayaran) }}" method="POST" enctype="multipart/form-data">

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Permintaan;
 use App\Models\Penawaran;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -21,25 +22,24 @@ class DashboardController extends Controller
         $dashboard = [
             'pengajuan_tawar'  => $totalPenawaran,
             'dalam_pengiriman' => $dalamPengiriman,
-            'menuju_panen'     => '-', // Dikosongkan karena tidak memakai data panen
+            'menuju_panen'     => '-', 
         ];
 
-        // 3. Ambil data Permintaan Pasar (Daftar pembeli yang butuh komoditas)
-        // Mengambil 5 permintaan terbaru yang masih Aktif
+        // 3. Ambil data Permintaan Pasar Terbaru (Hanya yang Aktif & Belum Kadaluarsa)
         $permintaanTerdekat = Permintaan::with('user.pembeliProfile')
                                         ->where('Status', 'Aktif')
+                                        ->whereDate('BatasTanggal', '>=', Carbon::now()->toDateString())
                                         ->latest()
                                         ->take(5)
                                         ->get();
+
         // 4. Riwayat Penawaran Petani (Tawaran yang sudah diajukan petani ini)
-        // Mengambil 5 penawaran terbaru milik petani yang sedang login
         $pengajuanTawar = Penawaran::with('permintaan.user.pembeliProfile')
                                    ->where('idPetani', $petaniId)
                                    ->latest()
                                    ->take(5)
                                    ->get();
 
-        // 5. Kirim semua data asli ke halaman view (petani.dashboard)
         return view('Petani.dashboard', compact(
             'dashboard',
             'permintaanTerdekat',
