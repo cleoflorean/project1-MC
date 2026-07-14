@@ -10,6 +10,10 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call([
+        AdminSeeder::class,
+        ]);
+
         User::create([
             'username' => 'Admin Utama',
             'email' => 'adminbesar@gmail.com',
