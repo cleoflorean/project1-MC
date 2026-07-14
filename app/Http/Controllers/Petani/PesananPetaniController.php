@@ -23,7 +23,7 @@ class PesananPetaniController extends Controller
             ->latest()
             ->get();
         
-        return view('Petani.pesananmasuk', compact('pesanans'));
+        return view('petani.pesananmasuk', compact('pesanans'));
     }
 
     /**
@@ -57,6 +57,6 @@ class PesananPetaniController extends Controller
             })
             ->findOrFail($id);
         
-        return view('Petani.pesanan-detail', compact('pesanan'));
+        return view('petani.pesanan-detail', compact('pesanan'));
     }
 }

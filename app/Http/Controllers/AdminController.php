@@ -53,7 +53,7 @@ class AdminController extends Controller
         $user = Auth::user();
         $profile = $user->adminProfile ?? new AdminProfile();
         
-        return view('Admin.profil', compact('user', 'profile'));
+        return view('admin.profil', compact('user', 'profile'));
     }
 
     /**
@@ -92,7 +92,7 @@ class AdminController extends Controller
                                     ->latest('idPembayaran')
                                     ->get();
                                     
-        return view('Admin.konfirmasi', compact('semuaTransaksi'));
+        return view('admin.konfirmasi', compact('semuaTransaksi'));
     }
 
     /**
@@ -102,7 +102,7 @@ class AdminController extends Controller
     {
         $semuaAkun = User::latest()->get();
         
-        return view('Admin.pengguna', compact('semuaAkun'));
+        return view('admin.pengguna', compact('semuaAkun'));
     }
 
     /**
@@ -112,7 +112,7 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
         
-        return view('Admin.detail_pengguna', compact('user'));
+        return view('admin.detail_pengguna', compact('user'));
     }
 
     /**

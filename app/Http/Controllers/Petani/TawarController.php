@@ -17,7 +17,7 @@ class TawarController extends Controller
         $kategori    = $request->query('Kategori'); // Menggunakan istilah kategori sesuai form baru
 
         // Kembalikan ke view petani.form_tawar (Pastikan folder & nama file view sudah sesuai)
-        return view('Petani.form_tawar', compact('namaTanaman', 'idMinta', 'kategori'));
+        return view('petani.form_tawar', compact('namaTanaman', 'idMinta', 'kategori'));
     }
 
     // 2. Memproses Data Saat Tombol "Kirim Penawaran" Diklik
@@ -67,7 +67,7 @@ class TawarController extends Controller
                         ->where('idPetani', auth()->id())
                         ->get();
         
-        return view('Petani.tawar', compact('pengajuanTawar'));
+        return view('petani.tawar', compact('pengajuanTawar'));
     }
 
     public function destroy($id)

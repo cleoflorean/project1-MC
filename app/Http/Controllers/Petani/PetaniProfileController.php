@@ -35,7 +35,7 @@ class PetaniProfileController extends Controller
             })->count();
 
 
-        return view('Petani.profilpetani', compact('profil', 'user', 'rataRataRating', 'totalUlasan', 'totalKontrak'));
+        return view('petani.profilpetani', compact('profil', 'user', 'rataRataRating', 'totalUlasan', 'totalKontrak'));
     }
 
     // 2. HALAMAN BARU: DAFTAR ULASAN LENGKAP
@@ -47,7 +47,7 @@ class PetaniProfileController extends Controller
                 $query->where('idPetani', $user->id); 
             })->latest()->get();
 
-        return view('Petani.daftar-ulasan', compact('daftarUlasan'));
+        return view('petani.daftar-ulasan', compact('daftarUlasan'));
     }
 
     // 3. HALAMAN FORM EDIT PROFIL (Fungsi yang baru ditambahkan)
@@ -56,7 +56,7 @@ class PetaniProfileController extends Controller
         $profil = PetaniProfile::where('user_id', $user->id)->first();
         
         // Mengarahkan ke file resources/views/Petani/editpetani.blade.php
-        return view('Petani.editpetani', compact('user', 'profil'));
+        return view('petani.editpetani', compact('user', 'profil'));
     }
 
     // 4. PROSES SIMPAN EDIT PROFIL

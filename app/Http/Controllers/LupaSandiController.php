@@ -11,7 +11,7 @@ class LupaSandiController extends Controller
     // POV: Guest - Menampilkan form lupa sandi
     public function showLupaSandi()
     {
-        return view('Pembeli.lupa-sandi');
+        return view('pembeli.lupa-sandi');
     }
 
     // POV: Guest - Memproses form lupa sandi

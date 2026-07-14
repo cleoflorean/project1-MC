@@ -40,7 +40,7 @@ class DashboardController extends Controller
                                    ->take(5)
                                    ->get();
 
-        return view('Petani.dashboard', compact(
+        return view('petani.dashboard', compact(
             'dashboard',
             'permintaanTerdekat',
             'pengajuanTawar'

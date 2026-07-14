@@ -15,14 +15,14 @@ class PermintaanController extends Controller
         $penawarans = Penawaran::with(['petani', 'permintaan']) 
             ->whereIn('idMinta', $idPermintaans)->latest()->take(5)->get(); 
 
-        return view('Pembeli.pembeli', compact('penawarans'));
+        return view('pembeli.pembeli', compact('penawarans'));
     }
 
     public function index(Request $request)
     {
         // Panggil relasi penawarans agar kita bisa cek apakah ada yang disetujui[cite: 1]
         $permintaans = $request->user()->permintaans()->with('penawarans')->latest()->get(); 
-        return view('Pembeli.permintaan', compact('permintaans')); 
+        return view('pembeli.permintaan', compact('permintaans')); 
     }
 
     public function destroy($id)
@@ -68,7 +68,7 @@ class PermintaanController extends Controller
         $permintaan = Permintaan::with(['penawarans.petani.petaniProfile'])->findOrFail($id);
         $penawarans = $permintaan->penawarans;
 
-        return view('Pembeli.penawaran_list', compact('permintaan', 'penawarans'));
+        return view('pembeli.penawaran_list', compact('permintaan', 'penawarans'));
     }
 
     public function updateStatusPenawaran(Request $request, $id)
@@ -111,6 +111,6 @@ class PermintaanController extends Controller
         $tawar = Penawaran::with(['petani.petaniProfile'])->findOrFail($id);
 
         // Arahkan ke file blade baru (sesuaikan foldernya)
-        return view('Pembeli.foto_penawaran', compact('tawar'));
+        return view('pembeli.foto_penawaran', compact('tawar'));
     }
 }

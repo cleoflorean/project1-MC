@@ -14,14 +14,14 @@ class ProfilController extends Controller
     public function index() {
         $user = Auth::user();
         $profil = PembeliProfile::where('user_id', $user->id)->first();
-        return view('Pembeli.profilpembeli', compact('user', 'profil'));
+        return view('pembeli.profilpembeli', compact('user', 'profil'));
     }
 
     // Halaman Form Edit Profil (Terpisah)
     public function edit() {
         $user = Auth::user();
         $profil = PembeliProfile::where('user_id', $user->id)->first();
-        return view('Pembeli.editprofil', compact('user', 'profil')); 
+        return view('pembeli.editprofil', compact('user', 'profil')); 
     }
 
     // Aksi Simpan Perubahan Data Profil (Gabungan Logika Upload & Hapus Foto)

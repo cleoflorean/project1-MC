@@ -16,7 +16,7 @@ class LaporanController extends Controller
         // Tambah relasi petani untuk fitur komplain
         $dataKomplain = Komplain::with(['user', 'pembayaran.penawaran.petani'])->latest()->get(); 
         
-        return view('Admin.laporan', compact('dataLupaSandi', 'dataKomplain'));
+        return view('admin.laporan', compact('dataLupaSandi', 'dataKomplain'));
     }
 
     // Eksekusi Reset Password & Kirim Link WA

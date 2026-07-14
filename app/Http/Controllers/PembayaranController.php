@@ -46,7 +46,7 @@ class PembayaranController extends Controller
     // Karena sistem kamu 1 Admin, kita cukup panggil baris pertama dari tabel admin_profiles
     $admin = AdminProfile::first();
 
-    return view('Pembeli.pembayaran', compact('pembayaran', 'admin')); 
+    return view('pembeli.pembayaran', compact('pembayaran', 'admin')); 
 }
 
     public function uploadBukti(Request $request, $idPembayaran)
@@ -85,7 +85,7 @@ class PembayaranController extends Controller
             ->latest('idPembayaran')
             ->get();
 
-        return view('Pembeli.riwayat', compact('riwayat'));
+        return view('pembeli.riwayat', compact('riwayat'));
     }
 
     public function detailTransaksi($id)
@@ -93,7 +93,7 @@ class PembayaranController extends Controller
         $pesanan = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.petaniProfile'])
                                 ->findOrFail($id);
 
-        return view('Pembeli.detail', compact('pesanan'));
+        return view('pembeli.detail', compact('pesanan'));
     }
 
     public function pesananSelesai(Request $request, $id)

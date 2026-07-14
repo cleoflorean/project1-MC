@@ -17,7 +17,7 @@ class KomplainController extends Controller
     public function createKomplain($idPembayaran)
     {
         $pembayaran = Pembayaran::findOrFail($idPembayaran);
-        return view('Pembeli.komplain-form', compact('pembayaran')); 
+        return view('pembeli.komplain-form', compact('pembayaran')); 
     }
 
     // 2. Menyimpan data komplain
