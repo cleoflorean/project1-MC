@@ -28,7 +28,7 @@ use App\Http\Controllers\LaporanController;
 // =========================================================================
 
 Route::get('/', function () {
-    return view('Pembeli.beranda');
+    return view('pembeli.beranda');
 })->name('beranda');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
