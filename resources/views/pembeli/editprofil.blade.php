@@ -1,4 +1,4 @@
-@extends('Layouts.app22')
+@extends('layouts.app22')
 
 @section('content')
 <div class="container" style="padding: 30px; max-width: 1000px; margin: 0 auto; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; color: #334155;">

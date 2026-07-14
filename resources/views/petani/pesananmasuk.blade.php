@@ -52,13 +52,13 @@
 
             <div style="padding: 20px;">
                 <div id="tabBaru" class="tab-content" style="display: block;">
-                    @include('Petani.pesanan-list', ['dataPesanan' => $pesananBaru, 'tipeTab' => 'baru'])
+                    @include('petani.pesanan-list', ['dataPesanan' => $pesananBaru, 'tipeTab' => 'baru'])
                 </div>
                 <div id="tabProses" class="tab-content" style="display: none;">
-                    @include('Petani.pesanan-list', ['dataPesanan' => $pesananProses, 'tipeTab' => 'proses'])
+                    @include('petani.pesanan-list', ['dataPesanan' => $pesananProses, 'tipeTab' => 'proses'])
                 </div>
                 <div id="tabSelesai" class="tab-content" style="display: none;">
-                    @include('Petani.pesanan-list', ['dataPesanan' => $pesananSelesai, 'tipeTab' => 'selesai'])
+                    @include('petani.pesanan-list', ['dataPesanan' => $pesananSelesai, 'tipeTab' => 'selesai'])
                 </div>
             </div>
 
