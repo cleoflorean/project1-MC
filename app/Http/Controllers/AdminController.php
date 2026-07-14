@@ -35,7 +35,7 @@ class AdminController extends Controller
         $jumlahPetani = User::where('role', 'petani')->count();
 
         // 4. Kirim semua data ke view
-        return view('Admin.index', compact(
+        return view('admin.index', compact(
             'semuaTransaksi', 
             'semuaAkun',
             'totalEscrow', 
