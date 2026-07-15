@@ -26,9 +26,15 @@
             <div style="margin-bottom: 35px;">
                 <p style="margin: 0 0 16px 0; font-size: 0.85rem; font-weight: 700; color: #064e3b; letter-spacing: 0.5px; text-transform: uppercase;">Rincian Transaksi</p>
                 <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.95rem;">
+                    <!-- PISAH BARIS: Nama Tanaman -->
                     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px;">
-                        <span style="color: #6b7280;">Komoditas</span>
-                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->NamaTanaman }} ({{ $pembayaran->penawaran->Komoditas }})</span>
+                        <span style="color: #6b7280;">Nama Tanaman</span>
+                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->NamaTanaman }}</span>
+                    </div>
+                    <!-- PISAH BARIS: Komoditas -->
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px;">
+                        <span style="color: #6b7280;">Kategori Komoditas</span>
+                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->Komoditas }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px;">
                         <span style="color: #6b7280;">Harga Satuan</span>

@@ -3,85 +3,112 @@
 @section('title', 'Dashboard Pembeli')
 
 @section('content')
-<div class="dashboard-container" style="padding: 20px;">
+<div class="container py-2">
     
-    <header class="content-header" style="margin-bottom: 2rem;">
-        <h1>Selamat Datang Kembali</h1>
-        <p>Kelola permintaan pengadaan dan pantau penawaran secara real-time.</p>
+    <!-- HEADER WELCOME -->
+    <header class="mb-4">
+        <h1 class="h3 fw-bold text-dark">Selamat Datang Kembali</h1>
+        <p class="text-secondary mb-0">Kelola permintaan pengadaan dan pantau penawaran secara real-time.</p>
     </header>
 
-    <div class="dashboard-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+    <!-- GRID SISTEM BOOTSTRAP -->
+    <div class="row g-4">
         
-        <div class="primary-column">
-            <div class="card">
-                <div class="card-header-flex" style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
-                    <h3>Penawaran Terbaru Masuk</h3>
+        <!-- KOLOM UTAMA (PENAWARAN MASUK) -->
+        <div class="col-12 col-lg-12">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0 fw-bold text-dark">Penawaran Terbaru Masuk</h5>
                 </div>
-                <div class="table-container" style="padding: 15px;">
-                    <table class="data-table" style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="border-bottom: 2px solid #ddd;">
-                                <th style="padding: 10px; text-align: left;">Nama</th>
-                                <th style="padding: 10px; text-align: left;">Komoditas</th>
-                                <th style="padding: 10px; text-align: left;">Kapasitas</th>
-                                <th style="padding: 10px; text-align: left;">Harga</th>
-                                <th style="padding: 10px; text-align: left;">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($penawarans ?? [] as $tawar)
-                                <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 10px;">
-                                        <strong>{{ $tawar->petani?->petaniProfile?->NamaLengkap ?? $tawar->petani?->username ?? 'Petani Tidak Diketahui' }}</strong><br>
-                                        <small style="color: #666;">📝 {{ $tawar->permintaan->NamaTanaman ?? 'Permintaan #'.$tawar->idMinta }}</small>
-                                    </td>
-                                    <td style="padding: 10px;">{{ $tawar->permintaan->Komoditas ?? '-' }}</td>
-                                    <td style="padding: 10px;">{{ number_format($tawar->JumlahTawar, 0, ',', '.') }} kg</td>
-                                    <td style="padding: 10px; font-weight: 600; color: #2e7d32;">Rp {{ number_format($tawar->HargaTawar, 0, ',', '.') }}</td>
-                                    <td style="padding: 10px;">
-                                        @php
-                                            $bg = $tawar->Status === 'Pending' ? '#fff3cd' : ($tawar->Status === 'Setuju' ? '#d4edda' : '#f8d7da');
-                                            $color = $tawar->Status === 'Pending' ? '#856404' : ($tawar->Status === 'Setuju' ? '#155724' : '#721c24');
-                                        @endphp
-                                        <span style="background-color: {{ $bg }}; color: {{ $color }}; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: 500;">
-                                            {{ $tawar->Status }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" style="padding: 30px; text-align: center; color: #888;">
-                                        <i class="fas fa-inbox" style="font-size: 2rem; color: #ddd; margin-bottom: 10px;"></i><br>
-                                        Belum ada penawaran masuk untuk permintaan Anda.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                
+                <div class="card-body p-4">
+                    <div class="product-grid">
+                        @forelse($penawarans ?? [] as $tawar)
+                            <div class="product-card">
+                                <!-- Wrapper Image (Rasio Kotak 1:1) -->
+                                <div class="product-image-wrapper" style="position: relative; overflow: hidden; aspect-ratio: 1/1;">
+                                    
+                                    <!-- FOTO PRODUK DINAMIS (DARI CONTROLLER PETANI) -->
+                                    @if($tawar->Gambar && file_exists(public_path($tawar->Gambar)))
+                                        <!-- Menampilkan foto yang diupload petani -->
+                                        <img src="{{ asset($tawar->Gambar) }}" alt="{{ $tawar->permintaan->NamaTanaman ?? 'Komoditas' }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    @else
+                                        <!-- Default Placeholder jika petani tidak upload foto -->
+                                        <img src="https://placehold.co/400x400?text=Tidak+Ada+Foto" alt="No Image" style="width: 100%; height: 100%; object-fit: cover;">
+                                    @endif
+                                    
+                                    <!-- Badges Status -->
+                                    @php
+                                        $statusClass = '';
+                                        if($tawar->Status === 'Pending') $statusClass = 'status-pending';
+                                        elseif($tawar->Status === 'Setuju') $statusClass = 'status-setuju';
+                                        else $statusClass = 'status-tolak';
+                                    @endphp
+                                    <span class="status-badge {{ $statusClass }}">
+                                        {{ $tawar->Status }}
+                                    </span>
+                                </div>
+                                
+                                <!-- Detail Info Produk -->
+                                <div class="product-info-body">
+                                    <h4 class="product-title">
+                                        {{ $tawar->permintaan->NamaTanaman ?? 'Permintaan #'.$tawar->idMinta }}
+                                    </h4>
+                                    <p class="product-seller mb-1">
+                                        <i class="fas fa-store me-1" style="font-size: 0.75rem;"></i> 
+                                        {{ $tawar->petani?->petaniProfile?->NamaLengkap ?? $tawar->petani?->username ?? 'Petani Tidak Diketahui' }}
+                                    </p>
+                                    <p class="product-category mb-2">
+                                        {{ $tawar->permintaan->Komoditas ?? '-' }}
+                                    </p>
+                                    
+                                    <div class="product-meta-row">
+                                        <div class="product-price">
+                                            Rp {{ number_format($tawar->HargaTawar, 0, ',', '.') }}<span class="price-unit">/kg</span>
+                                        </div>
+                                        <div class="product-stock mt-1">
+                                            Stok: {{ number_format($tawar->JumlahTawar, 0, ',', '.') }} kg
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <!-- Tampilan Jika Data Kosong -->
+                            <div class="text-center py-5 w-100" style="grid-column: 1 / -1;">
+                                <i class="fas fa-box-open text-muted mb-3" style="font-size: 3rem;"></i>
+                                <p class="text-secondary mb-0">Belum ada penawaran masuk untuk permintaan Anda.</p>
+                            </div>
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="sidebar-column">
-            <div class="card" style="padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-                <h3 style="margin-bottom: 15px;">Buat Permintaan Pengadaan</h3>
+        {{-- =========================================================================
+             FORM BUAT PERMINTAAN PENGADAAN (DI-KOMENTARI / DISABLED)
+             ========================================================================= --}}
+        
+        {{-- 
+        <div class="col-12 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-3 p-4">
+                <h5 class="fw-bold text-dark mb-3">Buat Permintaan Pengadaan</h5>
                 
                 @if(session('success'))
-                    <div style="background: #d4edda; color: #155724; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+                    <div class="alert alert-success py-2 px-3 mb-3 fs-6" role="alert">
                         {{ session('success') }}
                     </div>
                 @endif
 
                 <form action="{{ route('permintaan.store') }}" method="POST">
                     @csrf
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px;">Nama Tanaman</label>
-                        <input type="text" name="NamaTanaman" class="form-control" style="width: 100%; padding: 8px;" placeholder="Contoh: Cabai Rawit" required>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary fw-semibold small">Nama Tanaman</label>
+                        <input type="text" name="NamaTanaman" class="form-control" placeholder="Contoh: Cabai Rawit" required>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px;">Komoditas</label>
-                        <select name="komoditas" class="form-control" style="width: 100%; padding: 8px;" required>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary fw-semibold small">Komoditas</label>
+                        <select name="komoditas" class="form-select" required>
                             <option value="">-- Pilih --</option>
                             <option value="Sayur">Sayur</option>
                             <option value="Kacang-Kacangan">Kacang-Kacangan</option>
@@ -89,27 +116,28 @@
                         </select>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px;">Volume (kg)</label>
-                        <input type="number" name="volume" class="form-control" style="width: 100%; padding: 8px;" placeholder="2500" required>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary fw-semibold small">Volume (kg)</label>
+                        <input type="number" name="volume" class="form-control" placeholder="2500" required>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px;">Harga Maksimal (Rp)</label>
-                        <input type="number" name="batas_harga" class="form-control" style="width: 100%; padding: 8px;" placeholder="30000" required>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary fw-semibold small">Harga Maksimal (Rp)</label>
+                        <input type="number" name="batas_harga" class="form-control" placeholder="30000" required>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px;">Batas Tanggal</label>
-                        <input type="date" name="batas_akhir" class="form-control" style="width: 100%; padding: 8px;" required>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary fw-semibold small">Batas Tanggal</label>
+                        <input type="date" name="batas_akhir" class="form-control" required>
                     </div>
 
-                    <button type="submit" style="width: 100%; padding: 10px; background: #2e7d32; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-semibold" style="border-radius: 6px;">
                         Kirim Permintaan
                     </button>
                 </form>
             </div>
         </div>
+        --}}
 
     </div>
 </div>
