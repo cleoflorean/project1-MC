@@ -102,8 +102,57 @@
 
 </main>
 
-<!-- MODAL TETAP SAMA SEPERTI SEBELUMNYA ... -->
-<!-- (Kode Modal disembunyikan agar tidak kepanjangan, tidak ada yang diubah) -->
+<!-- MODAL FORM BUAT PERMINTAAN -->
+    <div class="modal-overlay" id="formModalRequest" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 1050; justify-content: center; align-items: center; padding: 1rem;">
+        <div class="card border-0 shadow-lg p-4 text-start" style="width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; background: white; border-radius: 16px;">
+            
+            <!-- Header Modal -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="text-start">
+                    <h4 class="fw-bold text-dark m-0" style="font-size: 1.25rem;">Buat Permintaan Pengadaan</h4>
+                    <p class="text-secondary m-0" style="font-size: 0.8rem; margin-top: 3px;">Siarkan spesifikasi Anda ke ekosistem petani.</p>
+                </div>
+                <button type="button" onclick="closeModal('formModalRequest')" style="background: #f1f5f9; border: none; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; color: #64748b;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Body Form Modal -->
+            <form action="{{ route('permintaan.store') }}" method="POST">
+                @csrf
+                <div class="mb-3 text-start">
+                    <label class="form-label fw-semibold text-dark small mb-1">Nama Tanaman</label>
+                    <input type="text" name="NamaTanaman" class="form-control py-2" style="border-radius: 8px;" placeholder="Contoh: Cabai Rawit Dewata" required>
+                </div>
+                <div class="mb-3 text-start">
+                    <label class="form-label fw-semibold text-dark small mb-1">Pilih Komoditas</label>
+                    <select name="komoditas" class="form-select py-2" style="border-radius: 8px;" required>
+                        <option value="">-- Pilih Spesifikasi --</option>
+                        <option value="Sayur">Sayur</option>
+                        <option value="Kacang-Kacangan">Kacang-Kacangan</option>
+                        <option value="Buah-Buahan">Buah-Buahan</option>
+                    </select>
+                </div>
+                <div class="row g-3 mb-3 text-start">
+                    <div class="col-6">
+                        <label class="form-label fw-semibold text-dark small mb-1">Volume (kg)</label>
+                        <input type="number" name="volume" class="form-control py-2" style="border-radius: 8px;" placeholder="Contoh: 2500" required>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label fw-semibold text-dark small mb-1">Harga Maks (Rp/kg)</label>
+                        <input type="number" name="batas_harga" class="form-control py-2" style="border-radius: 8px;" placeholder="Contoh: 30000" required>
+                    </div>
+                </div>
+                <div class="mb-4 text-start">
+                    <label class="form-label fw-semibold text-dark small mb-1">Batas Akhir Penerimaan</label>
+                    <input type="date" name="batas_akhir" class="form-control py-2" style="border-radius: 8px;" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100 py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2" style="border-radius: 8px; background-color: #2e7d32; border: none;">
+                    <i class="fas fa-paper-plane"></i> Kirim Permintaan
+                </button>
+            </form>
+        </div>
+    </div> <!-- END OF MODAL -->
 
 <script>
     // Script Modal
