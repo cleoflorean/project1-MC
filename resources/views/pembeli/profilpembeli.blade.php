@@ -43,10 +43,6 @@
                 <div style="font-weight: 700; color: #1e293b; font-size: 1.1rem; line-height: 1.3; margin-bottom: 6px;">
                     {{ $profil->NamaLengkap ?? $user->username }}
                 </div>
-                <div style="font-size: 0.85rem; color: #64748b; font-weight: 500; margin-bottom: 12px;">
-                    ID Sistem: <span style="font-family: monospace; font-weight: 600; color: #334155;">#{{ str_pad($user->id, 5, '0', STR_PAD_LEFT) }}</span>
-                </div>
-                
                 <div style="background: #f1f5f9; border: 1px solid #e2e8f0; color: #334155; padding: 6px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
                     Hak Akses: {{ $user->role }}
                 </div>

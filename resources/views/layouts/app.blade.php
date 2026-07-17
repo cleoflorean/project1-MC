@@ -112,14 +112,6 @@
         {{-- Spacer mendorong elemen ke kanan --}}
         <div class="flex-grow-1"></div>
 
-        {{-- Notifikasi bell dengan badge (juga di navbar untuk akses cepat) --}}
-        <a href="#" class="tc-navbar-icon-btn me-2">
-            <i class="bi bi-bell-fill"></i>
-            @if(isset($notifikasiCount) && $notifikasiCount > 0)
-                <span class="tc-navbar-badge">5</span>
-            @endif
-        </a>
-
         {{-- Dropdown profil pengguna di pojok kanan navbar --}}
         <div class="dropdown">
             <button class="tc-navbar-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">

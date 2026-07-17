@@ -127,10 +127,10 @@
                 <div class="mb-3 text-start">
                     <label class="form-label fw-semibold text-dark small mb-1">Pilih Komoditas</label>
                     <select name="komoditas" class="form-select py-2" style="border-radius: 8px;" required>
-                        <option value="">-- Pilih Spesifikasi --</option>
-                        <option value="Sayur">Sayur</option>
-                        <option value="Kacang-Kacangan">Kacang-Kacangan</option>
-                        <option value="Buah-Buahan">Buah-Buahan</option>
+                        <option value="">-- Pilih Komoditas --</option>
+                        <option value="Tanaman Pangan">Tanaman Pangan (Biji-bijian, Umbi-umbian, Kacang-kacangan)</option>
+                        <option value="Hortikultura">Hortikultura (Sayuran, Buah-buahan, Tanaman Obat)</option>
+                        <option value="Perkebunan">Perkebunan (Tanaman Industri, Rempah-rempah)</option>
                     </select>
                 </div>
                 <div class="row g-3 mb-3 text-start">

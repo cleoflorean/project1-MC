@@ -5,88 +5,64 @@
 
 @section('content')
 
-{{-- BARIS 1: KARTU STATISTIK RINGKASAN --}}
-<div class="row g-4 mb-4">
-
-    {{-- Kartu: Total Penawaran Diajukan --}}
-    {{-- <div class="col-12 col-md-6 col-xl-4">
-        <div class="tc-card tc-stat-card">
-            <div class="tc-stat-icon tc-stat-icon--biru">
-                <i class="bi bi-tags-fill"></i>
-            </div>
-            <div class="tc-stat-body">
-                <div class="tc-stat-number">{{ $dashboard['pengajuan_tawar'] }}</div>
-                <div class="tc-stat-label">Total Penawaran</div>
-            </div>
-        </div>
-    </div> --}}
-
-    {{-- Kartu: Dalam Pengiriman --}}
-    {{-- <div class="col-12 col-md-6 col-xl-4">
-        <div class="tc-card tc-stat-card">
-            <div class="tc-stat-icon tc-stat-icon--oranye">
-                <i class="bi bi-truck"></i>
-            </div>
-            <div class="tc-stat-body">
-                <div class="tc-stat-number">{{ $dashboard['dalam_pengiriman'] }}</div>
-                <div class="tc-stat-label">Dalam Pengiriman</div>
-            </div>
-        </div>
-    </div> --}}
-
-    {{-- Kartu: Status Panen (Dikosongkan sesuai kesepakatan) --}}
-    {{-- <div class="col-12 col-md-6 col-xl-4">
-        <div class="tc-card tc-stat-card">
-            <div class="tc-stat-icon tc-stat-icon--hijau">
-                <i class="bi bi-basket3-fill"></i>
-            </div>
-            <div class="tc-stat-body">
-                <div class="tc-stat-number">{{ $dashboard['menuju_panen'] }}</div>
-                <div class="tc-stat-label">Jadwal Panen</div>
-            </div>
-        </div>
-    </div> --}}
-</div>
 
 {{-- BARIS 2: PERMINTAAN & PENGAJUAN TAWAR --}}
 <div class="row g-4 align-items-stretch">
 
-    {{-- Permintaan Terdekat (Dari Pembeli) --}}
+    {{-- KOLOM KIRI: PERMINTAAN TERBARU --}}
     <div class="col-12 col-lg-7">
-        <div class="tc-card h-100">
-            <div class="tc-card-header">
-                <h6 class="tc-card-title">
-                    <i class="bi bi-geo-alt-fill me-2 text-danger"></i> Permintaan Terbaru
-                </h6>
-                <a href="{{ route('petani.permintaan.index') }}" class="tc-link-kecil">Lihat Semua</a>
-            </div>
-            <div class="tc-card-body p-0">
-                @forelse($permintaanTerdekat as $req)
-                    <div class="tc-req-item" style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-                        <div class="tc-req-info" style="display: flex; gap: 15px; align-items: center;">
-                            <div class="tc-req-detail">
-                                <div class="tc-req-komoditas fw-bold text-success mb-1">
-                                    {{ $req->NamaTanaman }}
-                                </div>
-                                <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">
-                                    <i class="bi bi-box me-1"></i> {{ number_format($req->JumlahDibutuhkan, 0, ',', '.') }} Kg | 
-                                    <i class="bi bi-geo-alt me-1"></i>{{ $req->user->pembeliProfile->Alamat ?? 'Lokasi tidak diketahui' }}
-                                </div>
-                                <div class="tc-req-deadline text-danger" style="font-size: 12px;">
-                                    <i class="bi bi-clock me-1"></i> Batas: {{ \Carbon\Carbon::parse($req->BatasTanggal)->format('d M Y') }}
-                                </div>
+        <div class="card border-0 h-100 p-4" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); background-color: #fff;">
+        
+        {{-- Header Card --}}
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+            <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
+                <i class="bi bi-geo-alt-fill text-danger"></i> Permintaan Terbaru
+            </h6>
+            <a href="{{ route('petani.permintaan.index') }}" class="text-success text-decoration-none fw-semibold" style="font-size: 14px;">
+                Lihat Semua
+            </a>
+        </div>
+
+        {{-- List Permintaan --}}
+        <div class="d-flex flex-column gap-3">
+            @forelse($permintaanTerdekat as $req)
+                <div class="px-4 py-3" style="background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+                    
+                    {{-- BAGIAN ATAS: Nama, Volume (Kecil), dan Badge --}}
+                    <div class="d-flex flex-column align-items-start mb-3">
+                        <div class="d-flex align-items-baseline gap-2 mb-1">
+                            <h6 class="fw-bold text-dark mb-0 text-capitalize" style="font-size: 18px;">
+                                {{ $req->NamaTanaman }}
+                            </h6>
+                            <span class="text-muted" style="font-size: 13px;">
+                                {{ number_format($req->JumlahDibutuhkan, 0, ',', '.') }} kg
+                            </span>
+                        </div>
+                        <span class="badge" style="background-color: #d1fae5; color: #059669; border-radius: 20px; font-size: 10px; padding: 4px 12px; font-weight: 500;">
+                            Aktif
+                        </span>
+                    </div>
+
+                    {{-- BAGIAN BAWAH: Detail Memanjang Kiri - Kanan --}}
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3" style="border-top: 1px dashed #cbd5e1; font-size: 13px;">
+                        
+                        {{-- Info Kiri ( Harga Maks, Batas) --}}
+                        <div class="d-flex align-items-center flex-wrap gap-4">
+                            <div class="text-muted">
+                                <i class="bi bi-cash text-success me-1"></i> Harga Maks: 
+                                <span class="fw-bold text-success">Rp {{ number_format($req->HargaMaksimal, 0, ',', '.') }}/kg</span>
                             </div>
-                        </div>
-                        <div class="tc-req-harga text-end">
-                            <div class="fw-bold mb-2">Rp{{ number_format($req->HargaMaksimal, 0, ',', '.') }}/kg</div>
+                            <div class="text-muted">
+                                <i class="bi bi-clock text-success me-1"></i> Batas Waktu :
+                                <span class="fw-bold text-success">{{ \Carbon\Carbon::parse($req->BatasTanggal)->translatedFormat('d M Y') }}
+                            </div>
+                            
                         </div>
                     </div>
-                @empty
-                    <div class="tc-empty-state py-5 text-center text-muted">
-                        <i class="bi bi-shop display-4 opacity-50 mb-3"></i>
-                        <p>Belum ada permintaan pasar terbaru.</p>
-                    </div>
-                @endforelse
+                </div>
+            @empty
+                <div class="text-center py-4 text-muted">Belum ada permintaan pasar terbaru.</div>
+            @endforelse
             </div>
         </div>
     </div>

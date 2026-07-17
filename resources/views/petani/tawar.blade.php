@@ -14,9 +14,36 @@
             </div>
         @endif
 
-        <div class="row g-4 mt-2">
+        {{-- ================= HEADER & FILTER ================= --}}
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-2 mb-4 gap-3">
+            <h5 class="fw-bold text-success mb-0">
+                <i class="bi bi-clock-history me-2"></i>Riwayat Penawaran Panen
+            </h5>
+            
+            {{-- Tombol Filter --}}
+            <div class="nav-filter-custom d-flex gap-2 p-1 rounded-pill" style="background-color: #f1f5f9; border: 1px solid #e2e8f0; width: fit-content;">
+                <button class="btn filter-btn active rounded-pill px-4 py-2" data-filter="pending" style="font-size: 13px; font-weight: 600; border: none;">
+                    Pending
+                </button>
+                <button class="btn filter-btn rounded-pill px-4 py-2 text-secondary" data-filter="setuju" style="font-size: 13px; font-weight: 500; border: none; background: transparent;">
+                    Disetujui
+                </button>
+                <button class="btn filter-btn rounded-pill px-4 py-2 text-secondary" data-filter="tidak setuju" style="font-size: 13px; font-weight: 500; border: none; background: transparent;">
+                    Ditolak
+                </button>
+            </div>
+        </div>
+
+        {{-- ================= DAFTAR PENAWARAN ================= --}}
+        <div class="row g-4" id="data-container">
             @forelse($pengajuanTawar as $tawar)
-                <div class="col-12 col-md-6 col-lg-4">
+                @php
+                    // Normalisasi teks status menjadi huruf kecil untuk memudahkan filter JS
+                    $statusItem = strtolower($tawar->Status ?? 'pending');
+                @endphp
+
+                {{-- Tambahkan class filter-item dan data-status --}}
+                <div class="col-12 col-md-6 col-lg-4 filter-item d-none" data-status="{{ $statusItem }}">
                     <div class="card shadow-sm border-0 rounded-4 h-100 position-relative hover-card" style="transition: transform 0.2s; background: #fff;">
 
                         {{-- Badge Status di pojok kanan atas --}}
@@ -105,13 +132,104 @@
                     </div>
                 </div>
             @empty
-                <div class="col-12 text-center py-5">
+                {{-- State kosong original jika database memang tidak punya data sama sekali --}}
+                <div class="col-12 text-center py-5 filter-item d-none" data-status="empty-db">
                     <div class="text-muted display-5 mb-3"><i class="bi bi-inbox text-success opacity-40"></i></div>
                     <h5 class="fw-bold text-dark">Belum Ada Riwayat Penawaran</h5>
                     <p class="text-muted small">Silakan pilih permintaan pasar pembeli untuk mengirimkan penawaran panen Anda.</p>
                 </div>
             @endforelse
+
+            {{-- State Kosong untuk JS (Jika tab di-klik tapi tidak ada datanya) --}}
+            <div id="empty-state-filter" class="col-12 text-center py-5 d-none bg-white rounded-4 shadow-sm">
+                <div class="text-muted display-5 mb-3"><i class="bi bi-inbox opacity-40"></i></div>
+                <h5 class="fw-bold text-dark">Data Penawaran Kosong</h5>
+                <p class="text-muted small mb-0" id="empty-state-text">Belum ada penawaran panen dengan status ini.</p>
+            </div>
+
         </div>
     </div>
 </div>
+
+{{-- CSS Tambahan --}}
+<style>
+    .hover-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 .5rem 1.5rem rgba(40, 167, 69, 0.15) !important;
+    }
+    
+    /* Styling khusus saat tombol filter aktif */
+    .filter-btn.active {
+        background-color: #198754 !important; /* Warna success Bootstrap */
+        color: white !important;
+        box-shadow: 0 4px 6px -1px rgba(25, 135, 84, 0.2);
+    }
+</style>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const filterItems = document.querySelectorAll('.filter-item');
+    const emptyState = document.getElementById('empty-state-filter');
+    const emptyStateText = document.getElementById('empty-state-text');
+
+    function filterCards(statusTarget) {
+        let visibleCount = 0;
+
+        filterItems.forEach(item => {
+            // Kita skip d-none untuk yg empty dari forelse
+            if(item.getAttribute('data-status') === 'empty-db') {
+                return;
+            }
+
+            const itemStatus = item.getAttribute('data-status');
+            
+            if (itemStatus === statusTarget) {
+                item.classList.remove('d-none');
+                visibleCount++;
+            } else {
+                item.classList.add('d-none');
+            }
+        });
+
+        // Menampilkan pesan kosong jika tidak ada card yang muncul
+        if (visibleCount === 0 && filterItems.length > 0) {
+            emptyState.classList.remove('d-none');
+            // Ganti nama label agar lebih enak dibaca (Setuju jadi Disetujui, Tidak Setuju jadi Ditolak)
+            let statusLabel = statusTarget;
+            if(statusTarget === 'setuju') statusLabel = 'disetujui';
+            if(statusTarget === 'tidak setuju') statusLabel = 'ditolak';
+            
+            emptyStateText.textContent = `Belum ada riwayat penawaran yang ${statusLabel}.`;
+        } else {
+            emptyState.classList.add('d-none');
+        }
+    }
+
+    // 1. Tampilkan status Pending secara otomatis saat pertama buka web
+    filterCards('pending');
+
+    // 2. Klik pada tombol filter
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Reset style semua tombol
+            filterBtns.forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('text-secondary');
+                b.style.background = 'transparent';
+            });
+
+            // Set style untuk tombol yang sedang diklik
+            this.classList.add('active');
+            this.classList.remove('text-secondary');
+
+            // Ambil data-filter ('pending', 'setuju', atau 'tidak setuju') dan eksekusi
+            const target = this.getAttribute('data-filter');
+            filterCards(target);
+        });
+    });
+});
+</script>
+@endpush
