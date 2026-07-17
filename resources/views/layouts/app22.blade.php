@@ -21,7 +21,8 @@
         <div class="container">
             <!-- Logo -->
             <a class="navbar-brand d-flex align-items-center fw-bold text-success" href="#" style="font-size: 1.3rem;">
-                <i class="fas fa-leaf me-2"></i> TaniHarvest
+                <img src="{{ asset('images/logo.jpeg') }}" alt="TaniHarvest Logo" style="height: 40px; width: auto; margin-right: 12px; object-fit: contain;">
+                TaniHarvest
             </a>
 
             <!-- Toggle Button for Mobile -->

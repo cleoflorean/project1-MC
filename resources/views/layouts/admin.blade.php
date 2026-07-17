@@ -54,7 +54,7 @@
 
     <div class="sidebar">
         <div class="sidebar-brand">
-            <div class="brand-icon"><i class="fas fa-leaf"></i></div>
+            <img src="{{ asset('images/logo.jpeg') }}" alt="TaniHarvest Logo" style="height: 55px; width: auto; margin-bottom: 15px; object-fit: contain;">
             <h1 class="brand-text">TaniHarvest</h1>
             <span class="brand-sub">ADMIN PANEL</span>
         </div>
