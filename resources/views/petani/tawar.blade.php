@@ -6,25 +6,6 @@
 @section('content')
 <div class="container-fluid">
     <div class="container py-3">
-        <div class="justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-sm border-0 rounded-4 mb-4" style="background: #e8f5e9; border-left: 5px solid #28a745;">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center">
-                            <div class="bg-success text-white p-2 rounded-3 me-3">
-                                <i class="bi bi-info-circle-fill fs-5"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold text-success mb-1" style="font-size: 14px;">Merespon Permintaan Pasar</h5>
-                                <p class="text-muted small mb-0" style="font-size: 13px;">
-                                    Anda sedang menawarkan hasil panen untuk komoditas yang dicari oleh pembeli. pastikan kualitas tanaman Anda sesuai standar.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm" role="alert">

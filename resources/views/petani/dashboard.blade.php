@@ -64,9 +64,6 @@
                 @forelse($permintaanTerdekat as $req)
                     <div class="tc-req-item" style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
                         <div class="tc-req-info" style="display: flex; gap: 15px; align-items: center;">
-                            <div class="tc-req-icon" style="background: #f1f5f9; padding: 15px; border-radius: 8px; color: #2e7d32;">
-                                <i class="bi bi-shop fs-4"></i>
-                            </div>
                             <div class="tc-req-detail">
                                 <div class="tc-req-komoditas fw-bold text-success mb-1">
                                     {{ $req->NamaTanaman }}
@@ -82,7 +79,6 @@
                         </div>
                         <div class="tc-req-harga text-end">
                             <div class="fw-bold mb-2">Rp{{ number_format($req->HargaMaksimal, 0, ',', '.') }}/kg</div>
-                            <a href="{{ route('tawar.create', ['idMinta' => $req->idPermintaan, 'NamaTanaman' => $req->NamaTanaman, 'Komoditas' => $req->Komoditas]) }}" class="btn btn-success btn-sm" style="border-radius: 6px;">Tawar</a>
                         </div>
                     </div>
                 @empty

@@ -8,9 +8,6 @@
     <div class="container position-relative z-index-1">
         <div class="row align-items-center justify-content-center min-vh-75 py-5">
             <div class="col-lg-10 text-center">
-                <span class="badge bg-success-subtle text-success px-4 py-2 rounded-pill mb-4 fw-bold animate-fade-in-up shadow-sm" style="animation-delay: 0.1s; border: 1px solid rgba(46, 125, 50, 0.2);">
-                    Platform Pengadaan Pertanian No. 1
-                </span>
                 <h1 class="display-3 fw-extrabold text-dark mb-4 animate-fade-in-up" style="animation-delay: 0.2s; letter-spacing: -1px;">
                     Dapatkan Komoditas Pertanian Terbaik <span class="text-gradient">Langsung dari Petani</span>
                 </h1>

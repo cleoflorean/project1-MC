@@ -37,8 +37,8 @@
     <div class="tc-sidebar-logo d-flex align-items-center" style="padding: 15px;">
         <img src="{{ asset('images/logo.jpeg') }}" alt="TaniHarvest Logo" style="height: 40px; width: auto; margin-right: 15px; object-fit: contain;">
         <div class="tc-logo-text-container">
-            <div class="tc-logo-name" style="font-weight: 800; font-size: 1.25rem; color: #1e293b; line-height: 1.2;">TaniHarvest</div>
-            <div class="tc-logo-sub" style="font-weight: 800; font-size: 0.75rem; letter-spacing: 1.5px; color: #2e7d32;">PETANI</div>
+            <div class="tc-logo-name" style="font-weight: 800; font-size: 1.25rem; color: #2e7d32; line-height: 1.2;">TaniHarvest</div>
+            <div class="tc-logo-sub" style="font-weight: 800; font-size: 0.75rem; letter-spacing: 1.5px; color: #1e293b;">PETANI</div>
         </div>
     </div>
 
