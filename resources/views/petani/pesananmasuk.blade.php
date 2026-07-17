@@ -29,20 +29,20 @@
         <div style="background: white; border-radius: 8px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 30px;">
             
             {{-- NAVIGASI TAB --}}
-            <div class="d-flex" style="border-bottom: 1px solid #e0e0e0; overflow-x: auto; white-space: nowrap;">
-                <button class="tab-btn active-tab" onclick="openTab(event, 'tabBaru')">
+            <div class="d-flex w-100" style="border-bottom: 1px solid #e0e0e0; overflow-x: auto; white-space: nowrap;">
+                <button class="tab-btn active-tab flex-fill text-center" onclick="openTab(event, 'tabBaru')">
                     Menunggu Admin 
                     @if($pesananBaru->count() > 0)
                         <span style="background: #ef4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; margin-left: 5px;">{{ $pesananBaru->count() }}</span>
                     @endif
                 </button>
-                <button class="tab-btn" onclick="openTab(event, 'tabProses')">
+                <button class="tab-btn flex-fill text-center" onclick="openTab(event, 'tabProses')">
                     Diproses & Dikirim
                     @if($pesananProses->count() > 0)
                         <span style="background: #f59e0b; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; margin-left: 5px;">{{ $pesananProses->count() }}</span>
                     @endif
                 </button>
-                <button class="tab-btn" onclick="openTab(event, 'tabSelesai')">
+                <button class="tab-btn flex-fill text-center" onclick="openTab(event, 'tabSelesai')">
                     Selesai
                     @if($pesananSelesai->count() > 0)
                         <span style="background: #10b981; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; margin-left: 5px;">{{ $pesananSelesai->count() }}</span>
