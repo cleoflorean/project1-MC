@@ -61,15 +61,22 @@ class AdminController extends Controller
      */
     public function updateProfil(Request $request)
     {
+        // 1. Tambahkan validasi untuk password
         $request->validate([
             'NamaLengkap' => 'required|string|max:100',
             'NamaBank'    => 'required|string|max:50',
             'NoRekening'  => 'required|numeric',
             'NamaPemilik' => 'required|string|max:100',
+            'password'    => 'required|current_password', // Validasi password admin saat ini
+        ], [
+            // 2. Custom pesan error agar lebih mudah dipahami (opsional)
+            'password.required' => 'Password harus diisi untuk mengonfirmasi keamanan.',
+            'password.current_password' => 'Password yang Anda masukkan salah!',
         ]);
 
         $user = Auth::user();
 
+        // 3. Jika password benar, proses simpan ke database dijalankan
         AdminProfile::updateOrCreate(
             ['user_id' => $user->id],
             [
