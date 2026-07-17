@@ -1,6 +1,6 @@
 @extends('layouts.app22')
 
-@section('title', 'Beranda - TaniHarvest')
+@section('title', 'Beranda - Tani Harvest')
 
 @section('content')
 <!-- Hero Section -->
@@ -117,7 +117,7 @@
         <div class="cta-box bg-dark text-white rounded-5 p-5 text-center position-relative overflow-hidden shadow-lg" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
             <div class="position-relative z-index-1">
                 <h2 class="display-6 fw-bold mb-3 text-white">Siap Mendapatkan Pasokan Terbaik?</h2>
-                <p class="lead mb-4 text-white-50">Bergabunglah dengan ribuan pembeli lainnya di TaniHarvest.</p>
+                <p class="lead mb-4 text-white-50">Bergabunglah dengan ribuan pembeli lainnya di Tani Harvest.</p>
                 @guest
                     <a href="{{ route('register') }}" class="btn btn-premium btn-lg px-5 py-3 fw-bold rounded-pill">
                         Daftar Gratis Sekarang

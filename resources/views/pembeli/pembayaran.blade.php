@@ -10,9 +10,6 @@
         {{-- BAGIAN ATAS: HERO HEADER (TEMA TANUB PREMIUM EDITIONS) --}}
         <div style="background: linear-gradient(135deg, #064e3b 0%, #022c22 100%); padding: 45px 40px; text-align: center; color: #ffffff;">
             {{-- IKON 1: Logo Tema Pertanian/Aplikasi --}}
-            <div style="width: 45px; height: 45px; background: rgba(255, 255, 255, 0.08); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; color: #34d399; font-size: 1.2rem;">
-                <i class="fas fa-leaf"></i>
-            </div>
             <p style="margin: 0 0 6px 0; font-size: 0.75rem; font-weight: 600; color: #a7f3d0; letter-spacing: 1.5px; text-transform: uppercase;">Total Tagihan Pembayaran</p>
             <h2 style="margin: 0; font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; color: #ffffff;">
                 Rp{{ number_format($pembayaran->TotalBayar, 0, ',', '.') }}
@@ -67,7 +64,7 @@
                             {{ $admin->NoRekening ?? '-' }}
                         </p>
                         <p style="margin: 0; font-size: 0.85rem; color: #6b7280; font-weight: 500;">
-                            a.n. {{ $admin->NamaPemilik ?? 'Admin TaniHarvest' }}
+                            a.n. {{ $admin->NamaPemilik ?? 'Admin Tani Harvest' }}
                         </p>
                     </div>
                     </div>

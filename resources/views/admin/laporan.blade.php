@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Pusat Laporan - TaniHarvest')
+@section('title', 'Pusat Laporan - Tani Harvest')
 @section('header_title', 'Pusat Resolusi & Laporan')
 
 @section('content')
@@ -93,7 +93,7 @@
                                             <div class="d-flex flex-column align-items-center gap-2">
                                                 <small class="text-muted fw-bold">Sandi Baru: <code class="fs-6 text-dark bg-light px-2 py-1 rounded border">{{ $lupa->password_sementara }}</code></small>
                                                 
-                                                <a href="https://wa.me/{{ $noWaLupa }}?text=Halo%20*{{ urlencode($namaUser) }}*,%20permintaan%20reset%20kata%20sandi%20akun%20TaniHarvest%20Anda%20telah%20berhasil.%0A%0AIni%20password%20baru%20kamu:%20*{{ $lupa->password_sementara }}*%0A%0ASilakan%20login%20kembali%20dan%20jangan%20lupa%20langsung%20ganti%20password%20ya!" 
+                                                <a href="https://wa.me/{{ $noWaLupa }}?text=Halo%20*{{ urlencode($namaUser) }}*,%20permintaan%20reset%20kata%20sandi%20akun%20Tani Harvest%20Anda%20telah%20berhasil.%0A%0AIni%20password%20baru%20kamu:%20*{{ $lupa->password_sementara }}*%0A%0ASilakan%20login%20kembali%20dan%20jangan%20lupa%20langsung%20ganti%20password%20ya!" 
                                                    target="_blank" 
                                                    class="btn btn-sm btn-success w-100 fw-bold shadow-sm mt-1">
                                                     <i class="fab fa-whatsapp"></i> Kirim Sandi via WA

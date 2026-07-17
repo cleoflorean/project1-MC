@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Kelola Pengguna - TaniHarvest')
+@section('title', 'Kelola Pengguna - Tani Harvest')
 @section('header_title', 'Manajemen Akun Pengguna')
 
 @section('content')

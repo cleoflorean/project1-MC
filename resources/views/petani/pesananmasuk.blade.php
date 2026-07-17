@@ -20,12 +20,6 @@
         
         <h3 style="font-weight: 700; color: #212121; margin-bottom: 20px;">Daftar Pesanan Masuk</h3>
 
-        @if(session('success'))
-            <div class="alert alert-success" style="border-radius: 8px;">
-                <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-            </div>
-        @endif
-
         <div style="background: white; border-radius: 8px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 30px;">
             
             {{-- NAVIGASI TAB --}}

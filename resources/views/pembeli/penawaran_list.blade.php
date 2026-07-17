@@ -25,11 +25,11 @@
 
     <!-- ALERT SUCCESS -->
     @if(session('success'))
-        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; color: #166534; padding: 14px 20px; border-radius: 8px; margin-bottom: 25px; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 2px 4px rgba(22, 163, 74, 0.05);">
-            <i class="fas fa-check-circle" style="color: #16a34a; font-size: 1.1rem;"></i>
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
+            <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
     <div style="display: flex; flex-direction: column; gap: 20px;">
         {{-- Loop semua data penawaran --}}
@@ -60,15 +60,28 @@
                         </div>
 
                         <div>
-                            <h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 700;">
-                                {{ $tawar->petani->petaniProfile->NamaLengkap ?? 'Nama Tidak Diketahui' }}
-                                <span style="font-size: 0.8rem; font-weight: 500; color: #64748b; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; margin-left: 4px;">Admin/Mitra</span>
-                            </h4>
-                            <span style="font-size: 0.85rem; color: #64748b; display: flex; align-items: center; gap: 6px; margin-top: 4px;">
-                                <i class="fas fa-map-marker-alt" style="color: #ef4444;"></i> 
-                                {{ $tawar->petani->petaniProfile->Alamat ?? 'Alamat belum diatur' }}
-                            </span>
-                        </div>
+    {{-- Container Flex agar Username dan Tombol Info Petani sejajar --}}
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 700;">
+            {{ $tawar->petani->username ?? 'Nama Tidak Diketahui' }}
+        </h4>
+        
+        @if(isset($tawar->petani))
+            <a href="{{ route('pembeli.petani.show', $tawar->petani->id) }}" 
+               style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 12px; background: #e0f2fe; color: #0369a1; text-decoration: none; font-size: 0.75rem; font-weight: 600; border: 1px solid #bae6fd; transition: all 0.2s;"
+               onmouseover="this.style.background='#0284c7'; this.style.color='#ffffff'; this.style.borderColor='#0284c7';"
+               onmouseout="this.style.background='#e0f2fe'; this.style.color='#0369a1'; this.style.borderColor='#bae6fd';">
+                <i class="fas fa-store" style="font-size: 0.7rem;"></i> Info Petani
+            </a>
+        @endif
+    </div>
+
+    {{-- Alamat tetap berada di bawahnya --}}
+    <span style="font-size: 0.85rem; color: #64748b; display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+        <i class="fas fa-map-marker-alt" style="color: #ef4444;"></i> 
+        {{ $tawar->petani->petaniProfile->Alamat ?? 'Alamat belum diatur' }}
+    </span>
+</div>
                     </div>
 
                     <!-- BADGE STATUS -->

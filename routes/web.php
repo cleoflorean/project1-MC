@@ -60,6 +60,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/permintaan/{id}/penawaran', [PembeliPermintaanController::class, 'lihatPenawaran'])->name('permintaan.penawaran');
         Route::patch('/penawaran/{id}/update-status', [PembeliPermintaanController::class, 'updateStatusPenawaran'])->name('pembeli.penawaran.update-status');
         Route::get('/pembeli/penawaran/{id}/foto', [PembeliPermintaanController::class, 'lihatFoto'])->name('pembeli.penawaran.foto');
+        // Route untuk Info Petani
+        Route::get('/pembeli/petani/{id}/info', [PembeliPermintaanController::class, 'showPetani'])->name('pembeli.petani.show');
       
         Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
         Route::get('/profil/edit', [ProfilController::class, 'edit'])->name('profil.edit');

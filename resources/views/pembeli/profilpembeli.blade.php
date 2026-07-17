@@ -47,20 +47,6 @@
                     Hak Akses: {{ $user->role }}
                 </div>
             </div>
-
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-                <h4 style="margin: 0 0 12px 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">Status</h4>
-                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem;">
-                    <div style="display: flex; justify-content: space-between;">
-                        <span style="color: #64748b;">Verifikasi ID</span>
-                        <span style="color: #166534; font-weight: 600;"><i class="fas fa-check-shield"></i> Aktif</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span style="color: #64748b;">Tipe Akun</span>
-                        <span style="color: #334155; font-weight: 600;">Mitra Pembeli</span>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div style="flex: 2; min-width: 450px; display: flex; flex-direction: column; gap: 25px;">

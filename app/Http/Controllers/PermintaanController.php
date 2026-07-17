@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Permintaan;
 use App\Models\Penawaran;
 use App\Models\Pembayaran;
+use App\Models\User;
+use App\Models\Ulasan; // <-- Tambahkan ini untuk memanggil model User
 
 class PermintaanController extends Controller
 {
@@ -20,7 +22,7 @@ class PermintaanController extends Controller
 
     public function index(Request $request)
     {
-        // Panggil relasi penawarans agar kita bisa cek apakah ada yang disetujui[cite: 1]
+        // Panggil relasi penawarans agar kita bisa cek apakah ada yang disetujui
         $permintaans = $request->user()->permintaans()->with('penawarans')->latest()->get(); 
         return view('pembeli.permintaan', compact('permintaans')); 
     }
@@ -29,7 +31,7 @@ class PermintaanController extends Controller
     {
         $permintaan = Permintaan::with('penawarans')->findOrFail($id);
         
-        // Cek apakah ada penawaran yang sudah "Setuju"[cite: 1]
+        // Cek apakah ada penawaran yang sudah "Setuju"
         $hasApproved = $permintaan->penawarans->where('Status', 'Setuju')->count() > 0;
         
         if ($hasApproved) {
@@ -104,7 +106,7 @@ class PermintaanController extends Controller
 
         return back()->with('success', 'Status penawaran berhasil diperbarui.');
     }
-    // Tambahkan fungsi ini di dalam PermintaanController
+    
     public function lihatFoto($id)
     {
         // Cari data penawaran beserta relasi ke petani
@@ -112,5 +114,55 @@ class PermintaanController extends Controller
 
         // Arahkan ke file blade baru (sesuaikan foldernya)
         return view('pembeli.foto_penawaran', compact('tawar'));
+    }
+
+    // ==========================================
+    // METHOD BARU: Menampilkan Informasi Petani
+    // ==========================================
+    public function showPetani($id)
+    {
+        // 1. Cari user petani beserta relasi profilnya
+        $petaniUser = User::with('petaniProfile')->findOrFail($id);
+        
+        // 2. Ambil data profil petaninya
+        $petani = $petaniUser->petaniProfile;
+        
+        if (!$petani) {
+            return back()->with('error', 'Petani ini belum melengkapi data profilnya.');
+        }
+
+        // Menyisipkan data user ke dalam variabel profil
+        $petani->setRelation('user', $petaniUser);
+
+        // 3. Hitung Statistik Transaksi Berhasil (Pesanan Selesai)
+        $totalKontrak = Pembayaran::whereIn('StatusPesanan', ['Pesanan Selesai', 'Selesai'])
+            ->whereHas('penawaran', function ($query) use ($id) {
+                $query->where('idPetani', $id);
+            })->count();
+
+        // 4. Hitung Rating & Total Ulasan Asli
+        $rataRataRating = Ulasan::whereHas('pembayaran.penawaran', function ($query) use ($id) {
+            $query->where('idPetani', $id); 
+        })->avg('Rating');
+        $rataRataRating = $rataRataRating ? round($rataRataRating, 1) : 0;
+
+        $totalUlasan = Ulasan::whereHas('pembayaran.penawaran', function ($query) use ($id) {
+            $query->where('idPetani', $id);
+        })->count();
+
+        // 5. Ambil Daftar Ulasan Lengkap beserta relasinya
+        $daftarUlasan = Ulasan::with('pembayaran.penawaran.permintaan.user')
+            ->whereHas('pembayaran.penawaran', function ($query) use ($id) {
+                $query->where('idPetani', $id); 
+            })->latest()->get();
+
+        // 6. Kirim data ke view
+        return view('pembeli.infopetani', compact(
+            'petani', 
+            'totalKontrak', 
+            'rataRataRating', 
+            'totalUlasan',
+            'daftarUlasan' // <-- Variabel baru untuk rincian ulasan
+        ));
     }
 }

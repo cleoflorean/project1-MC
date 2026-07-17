@@ -4,20 +4,24 @@
 @section('content')
 <div style="background-color: #f4f7f6; min-height: 100vh; padding-bottom: 90px; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
     
-    {{-- HEADER KEMBALI --}}
-    <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 16px 20px; display: flex; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 50; border-bottom: 1px solid #eaeaea;">
-        <a href="{{ route('pembeli.riwayat') }}" style="color: #2a7a43; font-size: 1.2rem; text-decoration: none; padding: 5px;">
-            <i class="fas fa-arrow-left"></i>
-        </a>
-        <h1 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #1f2937;">Rincian Pesanan</h1>
+    {{-- HEADER KEMBALI (Background menyatu dengan halaman, tetap sticky saat di-scroll) --}}
+    <div style="background-color: #f4f7f6; position: sticky; top: 0; z-index: 50; padding-top: 0">
+        {{-- Padding bottom di-set 15px agar jarak ke kotak di bawahnya sama persis dengan jarak antar kotak --}}
+        <div style="max-width: 600px; margin: 0 auto; padding: 0 15px 15px 15px; display: flex; align-items: center; gap: 15px;">
+            <a href="{{ route('pembeli.riwayat') }}" style="color: #065f46; font-size: 1.25rem; text-decoration: none;">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 style="margin: 0; font-size: 1.2rem; font-weight: 700; color: #111827;">Rincian Pesanan</h1>
+        </div>
     </div>
 
-    <div style="max-width: 600px; margin: 0 auto; padding: 15px;">
+    {{-- MAIN CONTENT --}}
+    <div style="max-width: 600px; margin: 0 auto; padding: 0 15px 15px 15px;">
         
-        {{-- BANNER STATUS PESANAN (SUDAH DIPERBAIKI SESUAI ALUR REKBER) --}}
+        {{-- BANNER STATUS PESANAN --}}
         <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: space-between;">
             <div>
-                <h3 style="margin: 0 0 5px 0; font-size: 1.1rberem; color: #111827; font-weight: 700;">Status Transaksi</h3>
+                <h3 style="margin: 0 0 5px 0; font-size: 1.1rem; color: #111827; font-weight: 700;">Status Transaksi</h3>
                 
                 @if(empty($pesanan->BuktiTransfer))
                     <p style="margin: 0; color: #ef4444; font-size: 0.9rem; font-weight: 600;">Menunggu Pembayaran</p>
@@ -39,10 +43,10 @@
         {{-- ALAMAT PENGIRIMAN --}}
         <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
             <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                <i class="fas fa-map-marker-alt" style="color: #2a7a43; font-size: 1.2rem; margin-top: 2px;"></i>
+                <i class="fas fa-map-marker-alt" style="color: #10b981; font-size: 1.2rem; margin-top: 2px;"></i>
                 <div>
                     <h4 style="margin: 0 0 5px 0; font-size: 1rem; color: #1f2937; font-weight: 700;">Alamat Pengiriman</h4>
-                    <p style="margin: 0 0 5px 0; font-size: 0.95rem; font-weight: 600; color: #374151;">{{ auth()->user()->username }} | {{ auth()->user()->pembeliProfile->NoTlp ?? '-' }}</p>
+                    <p style="margin: 0 0 5px 0; font-size: 0.95rem; font-weight: 600; color: #374151;">{{ auth()->user()->pembeliProfile->NamaLengkap }} | {{ auth()->user()->pembeliProfile->NoTlp ?? '-' }}</p>
                     <p style="margin: 0; font-size: 0.9rem; color: #6b7280; line-height: 1.5;">{{ auth()->user()->pembeliProfile->Alamat ?? 'Alamat belum diatur' }}</p>
                 </div>
             </div>
@@ -122,7 +126,6 @@
         <h4 style="margin: 0 0 10px 0; color: #1f2937; font-weight: 700;">Pesanan Diterima</h4>
         <p style="margin: 0 0 20px 0; font-size: 0.95rem; color: #6b7280;">Beri penilaian untuk kualitas komoditas ini</p>
         
-        {{-- KARENA INI DETAIL, ACTION ROUTENYA HARUS MEMAKAI PEMBELI.PESANAN.SELESAI --}}
         <form action="{{ route('pembeli.pesanan.selesai', $pesanan->idPembayaran) }}" method="POST">
             @csrf
             
@@ -161,10 +164,10 @@
             
             starsDetail.forEach(s => {
                 if (s.getAttribute('data-value') <= value) {
-                    s.style.color = '#fbbf24'; // Warna kuning saat aktif
+                    s.style.color = '#fbbf24'; 
                     s.style.transform = 'scale(1.1)'; 
                 } else {
-                    s.style.color = '#e5e7eb'; // Abu-abu default
+                    s.style.color = '#e5e7eb'; 
                     s.style.transform = 'scale(1)';
                 }
             });

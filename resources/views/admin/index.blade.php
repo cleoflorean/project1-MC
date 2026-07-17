@@ -12,20 +12,17 @@
             <h2 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #1e293b;">🛡️ Ringkasan Sistem</h2>
             <p style="margin: 4px 0 0 0; color: #64748b; font-size: 0.85rem;">Sistem Pengawasan Transaksi & Kelola Pengguna</p>
         </div>
-        <span style="background: white; padding: 6px 14px; border-radius: 30px; font-weight: 600; font-size: 0.75rem; color: #334155; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-            Role: Super Administrator
-        </span>
     </div>
 
     {{-- ALERT NOTIFIKASI --}}
     @if(session('success'))
         <div style="background: #e8f5e9; border-left: 4px solid #2e7d32; color: #1b5e20; padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; font-weight: 500; font-size: 0.85rem;">
-            ✅ {{ session('success') }}
+            {{ session('success') }}
         </div>
     @endif
     @if(session('error'))
         <div style="background: #ffebee; border-left: 4px solid #c62828; color: #b71c1c; padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; font-weight: 500; font-size: 0.85rem;">
-            ⚠️ {{ session('error') }}
+            {{ session('error') }}
         </div>
     @endif
 
@@ -70,7 +67,7 @@
                 <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
                     <thead>
                         <tr style="background: #f8fafc; color: #475569; font-weight: 700; border-bottom: 1px solid #e2e8f0;">
-                            <th style="padding: 12px 20px;">ID & Komoditas</th>
+                            <th style="padding: 12px 20px;">Komoditas</th>
                             <th style="padding: 12px 20px;">Aktor (Pembeli -> Petani)</th>
                             <th style="padding: 12px 20px;">Nominal</th>
                             <th style="padding: 12px 20px;">Status Pembayaran</th>
@@ -82,7 +79,6 @@
                         @forelse($semuaTransaksi as $trx)
                         <tr style="border-bottom: 1px solid #f1f5f9;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
                             <td style="padding: 12px 20px;">
-                                <span style="font-weight: 700; color: #1e293b; display: block;">#{{ $trx->idPembayaran }}</span>
                                 <small style="color: #64748b;">{{ $trx->penawaran->Komoditas ?? 'Tanaman' }}</small>
                             </td>
                             <td style="padding: 12px 20px;">
@@ -153,7 +149,6 @@
                 <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
                     <thead>
                         <tr style="background: #f8fafc; color: #475569; font-weight: 700; border-bottom: 1px solid #e2e8f0;">
-                            <th style="padding: 12px 20px;">ID</th>
                             <th style="padding: 12px 20px;">Username</th>
                             <th style="padding: 12px 20px;">Email</th>
                             <th style="padding: 12px 20px;">Role / Peran</th>
@@ -163,7 +158,6 @@
                     <tbody>
                         @foreach($semuaAkun as $akun)
                         <tr style="border-bottom: 1px solid #f1f5f9;">
-                            <td style="padding: 12px 20px; font-weight: 600;">#{{ $akun->id }}</td>
                             <td style="padding: 12px 20px; font-weight: 700; color: #1e293b;">{{ $akun->username }}</td>
                             <td style="padding: 12px 20px;">{{ $akun->email }}</td>
                             <td style="padding: 12px 20px;">

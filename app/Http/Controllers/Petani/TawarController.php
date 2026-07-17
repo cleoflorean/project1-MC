@@ -31,7 +31,7 @@ class TawarController extends Controller
             'JumlahTawar' => 'required|integer|min:1',
             'HargaTawar'  => 'required|numeric|min:1',
             'Catatan'     => 'required|string',
-            'Gambar'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Typo pnhg & spasi diperbaiki
+            'Gambar'      => 'required|image|mimes:jpeg,png,jpg|max:2048', // Typo pnhg & spasi diperbaiki
         ]);
 
         // Instansiasi Model Tawar untuk simpan ke database

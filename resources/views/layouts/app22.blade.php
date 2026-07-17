@@ -21,8 +21,8 @@
         <div class="container">
             <!-- Logo -->
             <a class="navbar-brand d-flex align-items-center fw-bold text-success" href="#" style="font-size: 1.3rem;">
-                <img src="{{ asset('images/logo.jpeg') }}" alt="TaniHarvest Logo" style="height: 40px; width: auto; margin-right: 12px; object-fit: contain;">
-                TaniHarvest
+                <img src="{{ asset('images/logo.jpeg') }}" alt="Tani Harvest Logo" style="height: 40px; width: auto; margin-right: 12px; object-fit: contain;">
+                Tani Harvest
             </a>
 
             <!-- Toggle Button for Mobile -->
@@ -143,8 +143,8 @@
     <!-- SIMPEL FOOTER -->
     <footer class="bg-white border-top py-4 text-center text-secondary">
         <div class="container">
-            <span class="fw-semibold text-success"><i class="fas fa-leaf me-1"></i> TaniHarvest</span>
-            <p class="mb-0 mt-1" style="font-size: 0.85rem;">&copy; {{ date('Y') }} TaniHarvest. Hak Cipta Dilindungi.</p>
+            <span class="fw-semibold text-success">Tani Harvest</span>
+            <p class="mb-0 mt-1" style="font-size: 0.85rem;">&copy; {{ date('Y') }} Tani Harvest. Hak Cipta Dilindungi.</p>
         </div>
     </footer>
 

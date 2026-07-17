@@ -72,10 +72,6 @@
                     <table class="table table-borderless mb-4">
                         <tbody>
                             <tr>
-                                <th class="text-muted w-25">ID Pengguna</th>
-                                <td class="fw-bold text-dark">: #{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</td>
-                            </tr>
-                            <tr>
                                 <th class="text-muted">Username</th>
                                 <td class="fw-semibold text-dark">: {{ $user->username }}</td>
                             </tr>
@@ -86,10 +82,6 @@
                             <tr>
                                 <th class="text-muted">Tanggal Bergabung</th>
                                 <td class="fw-semibold text-dark">: {{ $user->created_at ? $user->created_at->format('d F Y - H:i') : 'Tidak diketahui' }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-muted">Status Keamanan</th>
-                                <td class="fw-semibold text-dark">: <span class="badge bg-success-subtle text-success border border-success-subtle">Aktif (Verified)</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -165,7 +157,7 @@
                     
                     @if(session('success'))
                         <div class="alert alert-success fw-bold p-3 rounded-3 shadow-sm" style="font-size: 0.95rem;">
-                            ✅ {{ session('success') }}
+                            {{ session('success') }}
                             <br><small class="text-dark fw-normal mt-1 d-block">Silakan berikan password sementara di atas kepada user. Arahkan user untuk segera menggantinya setelah berhasil Login.</small>
                         </div>
                     @endif
@@ -178,11 +170,6 @@
                                 <i class="fas fa-key me-1"></i> Reset Password Sementara
                             </button>
                         </form>
-
-                        {{-- Tombol Blokir --}}
-                        <button class="btn btn-outline-danger fw-semibold" onclick="alert('Fitur blokir sedang dalam pengembangan.')">
-                            <i class="fas fa-ban me-1"></i> Suspend Akun
-                        </button>
                     </div>
                 </div>
             </div>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Admin Panel - TaniHarvest')</title>
+    <title>@yield('title', 'Admin Panel - Tani Harvest')</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -54,8 +54,8 @@
 
     <div class="sidebar">
         <div class="sidebar-brand">
-            <img src="{{ asset('images/logo.jpeg') }}" alt="TaniHarvest Logo" style="height: 55px; width: auto; margin-bottom: 15px; object-fit: contain;">
-            <h1 class="brand-text">TaniHarvest</h1>
+            <img src="{{ asset('images/logo.jpeg') }}" alt="Tani Harvest Logo" style="height: 55px; width: auto; margin-bottom: 15px; object-fit: contain;">
+            <h1 class="brand-text">Tani Harvest</h1>
             <span class="brand-sub">ADMIN PANEL</span>
         </div>
 
@@ -92,8 +92,6 @@
                 <h4 class="navbar-title">@yield('header_title', 'Dashboard Admin')</h4>
             </div>
             <div class="nav-right-actions">
-                <a href="#" class="btn-notification"><i class="fas fa-bell"></i></a>
-
                 <div class="dropdown">
                     <div class="profile-trigger" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="https://ui-avatars.com/api/?name=Admin&background=f0fdf4&color=2e7d32&rounded=true" alt="Admin" class="profile-avatar">

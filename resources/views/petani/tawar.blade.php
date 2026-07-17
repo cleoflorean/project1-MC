@@ -7,13 +7,6 @@
 <div class="container-fluid">
     <div class="container py-3">
 
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
         {{-- ================= HEADER & FILTER ================= --}}
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-2 mb-4 gap-3">
             <h5 class="fw-bold text-success mb-0">
