@@ -18,13 +18,16 @@ class AdminController extends Controller
         // 1. Ambil data Transaksi (Dibutuhkan di index.blade.php)
         $semuaTransaksi = Pembayaran::with(['penawaran.permintaan.user', 'penawaran.petani'])
                                     ->latest('idPembayaran')
+                                    ->take(5)
                                     ->get();
                                     
         // 2. Ambil semua data Akun (Dibutuhkan di index.blade.php)
-        $semuaAkun = User::latest()->get();
+        $semuaAkun = User::latest()
+                        ->take(5)
+                        ->get();
 
         // 3. Hitung Statistik Utama
-        $totalEscrow = Pembayaran::where('StatusPembayaran', 'Lunas')
+        $totalDanaAdmin = Pembayaran::where('StatusPembayaran', 'Lunas')
                                  ->where('StatusPesanan', '!=', 'Pesanan Selesai')
                                  ->sum('TotalBayar');
                                  
@@ -38,7 +41,7 @@ class AdminController extends Controller
         return view('admin.index', compact(
             'semuaTransaksi', 
             'semuaAkun',
-            'totalEscrow', 
+            'totalDanaAdmin', 
             'menungguVerifikasi', 
             'totalTransaksiSukses', 
             'jumlahPetani'
@@ -95,6 +98,8 @@ class AdminController extends Controller
      */
     public function konfirmasi()
     {
+        // Ambil SEMUA transaksi tanpa filter, agar Admin bisa
+        // melakukan Verifikasi maupun Pencairan Dana di satu tempat.
         $semuaTransaksi = Pembayaran::with(['penawaran.permintaan.user', 'penawaran.petani'])
                                     ->latest('idPembayaran')
                                     ->get();
@@ -164,5 +169,23 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'Dana berhasil dicairkan ke Petani dan Pesanan ditandai Selesai.');
+    }
+
+    /**
+     * 8. AKSI TOLAK PEMBAYARAN OLEH ADMIN
+     */
+    public function tolakPembayaran($id)
+    {
+        // Cari data pembayaran berdasarkan ID
+        $pembayaran = \App\Models\Pembayaran::findOrFail($id);
+        
+        // Ubah status pembayaran menjadi Ditolak dan Pesanan dibatalkan
+        $pembayaran->update([
+            'StatusPembayaran' => 'Ditolak',
+            'StatusPesanan'    => 'Dibatalkan'
+        ]);
+
+        // Kembalikan ke halaman sebelumnya dengan pesan error (berwarna merah)
+        return back()->with('error', 'Bukti pembayaran ditolak! Transaksi dibatalkan.');
     }
 }

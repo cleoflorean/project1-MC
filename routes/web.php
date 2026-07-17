@@ -136,7 +136,8 @@ Route::middleware(['auth'])->group(function () {
 
         // 4. Halaman Konfirmasi Pembayaran
         Route::get('/konfirmasi', [AdminController::class, 'konfirmasi'])->name('admin.konfirmasi');
-
+        Route::post('/admin/transaksi/{id}/tolak', [App\Http\Controllers\AdminController::class, 'tolakPembayaran'])->name('admin.transaksi.tolak');
+        
         // 5. Aksi Admin Resolusi Transaksi (Verifikasi, Refund, Cairkan)
         Route::post('/transaksi/{id}/verifikasi', [AdminController::class, 'verifikasiPembayaran'])->name('admin.transaksi.verifikasi');
         Route::post('/transaksi/{id}/refund', [AdminController::class, 'refundKePembeli'])->name('admin.transaksi.refund');

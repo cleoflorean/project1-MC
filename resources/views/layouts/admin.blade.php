@@ -72,7 +72,7 @@
             </li>
             <li>
                 <a href="{{ route('admin.konfirmasi') }}" class="{{ request()->routeIs('admin.konfirmasi') ? 'active' : '' }}">
-                    <i class="fas fa-file-invoice-dollar"></i> Konfirmasi Pembayaran
+                    <i class="fas fa-file-invoice-dollar"></i>Verifikasi Pembayaran
                 </a>
             </li>
             <li>
