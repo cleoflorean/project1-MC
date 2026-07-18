@@ -94,7 +94,7 @@
                         {{-- 1. Transaksi Info --}}
                         <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;">
                             <div style="font-weight: 800; color: #0f172a; font-size: 0.9rem; margin-bottom: 4px;">Rp {{ number_format($trx->TotalBayar, 0, ',', '.') }}</div>
-                            <div style="color: #94a3b8; font-size: 0.75rem;"><span style="color:#64748b; font-weight: 600;">#{{ $trx->idPembayaran }}</span> &bull; {{ $trx->created_at ? $trx->created_at->format('d M Y') : '-' }}</div>
+                            <div style="color: #94a3b8; font-size: 0.75rem;"><span style="color:#64748b; font-weight: 600;"></span> &bull; {{ $trx->created_at ? $trx->created_at->format('d M Y') : '-' }}</div>
                         </td>
                         
                         {{-- 2. Pembeli & Komoditas --}}

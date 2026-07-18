@@ -15,7 +15,7 @@ return new class extends Migration
             // MURNI FINANSIAL
             $table->decimal('TotalBayar',15,2);
             $table->string('BuktiTransfer',255)->nullable();
-            $table->string('StatusPembayaran',15)->default('Belum Bayar');
+            $table->string('StatusPembayaran',50)->default('Belum Bayar');
             $table->timestamp('WaktuBayar')->nullable();
             
             // Kolom StatusPesanan, WaktuKirim, WaktuSelesai sudah DIHAPUS dari sini

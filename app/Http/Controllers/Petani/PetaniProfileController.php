@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class profileController extends Controller
+class PetaniProfileController extends Controller
 {
     // 1. HALAMAN UTAMA PROFIL PETANI
    public function index() {
