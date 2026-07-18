@@ -179,7 +179,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Kata Sandi</label>
-                    <input type="password" id="password" name="password" class="form-input" required placeholder="Minimal 6 karakter">
+                    <input type="password" id="password" name="password" class="form-input" required placeholder="Minimal 8 karakter">
                 </div>
 
                 <div class="form-group" style="margin-bottom: 1.5rem;">
