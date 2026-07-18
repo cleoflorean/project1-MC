@@ -33,16 +33,16 @@
                 $isExpired = \Carbon\Carbon::parse($item->BatasTanggal)->endOfDay()->isPast();
             @endphp
             
-            <!-- KARTU UTAMA: Tambahkan class 'request-card' dan data-status -->
-            <div class="card request-card border-0 shadow-sm rounded-3 p-4 mb-3 text-start" data-status="{{ $isExpired ? 'expired' : 'active' }}">
+            <!-- KARTU UTAMA -->
+            <div class="card request-card border-0 p-4 mb-3 text-start" data-status="{{ $isExpired ? 'expired' : 'active' }}" style="background: #ffffff; border: 1px solid #e2e8f0 !important; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 15px -3px rgba(0,0,0,0.05)'; this.style.borderColor='#cbd5e1';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.02)'; this.style.borderColor='#e2e8f0';">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
                     
                     <!-- SISI KIRI (INFORMASI SPESIFIKASI) -->
                     <div class="flex-grow-1 text-start">
                         <!-- Judul dan Badge Status -->
                         <div class="d-flex align-items-center gap-2 mb-3 text-start">
-                            <h4 class="m-0 fw-bold text-dark" style="font-size: 1.25rem;">{{ $item->NamaTanaman }}</h4>
-                            <span class="badge {{ $isExpired ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success' }} px-2.5 py-1" style="font-size: 0.75rem; font-weight: 600; border-radius: 6px;">
+                            <h4 class="m-0 fw-bold text-dark" style="font-size: 1.25rem; color: #0f172a !important;">{{ $item->NamaTanaman }}</h4>
+                            <span class="px-2 py-1" style="font-size: 0.7rem; font-weight: 600; border-radius: 6px; {{ $isExpired ? 'background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;' : 'background: #ecfdf5; color: #047857; border: 1px solid #d1fae5;' }}">
                                 {{ $isExpired ? 'Kadaluarsa' : 'Aktif' }}
                             </span>
                         </div>
@@ -70,7 +70,7 @@
 
                     <!-- SISI KANAN (TOMBOL AKSI) -->
                     <div class="d-flex flex-column gap-2 text-center" style="min-width: 180px;">
-                        <a href="{{ route('permintaan.penawaran', $item->idPermintaan) }}" class="btn btn-success fw-bold py-2 d-flex align-items-center justify-content-center gap-2" style="background-color: #2e7d32; border-radius: 8px; font-size: 0.9rem;">
+                        <a href="{{ route('permintaan.penawaran', $item->idPermintaan) }}" class="fw-bold py-2 d-flex align-items-center justify-content-center gap-2" style="background-color: #00764fff; color: white; border-radius: 8px; font-size: 0.85rem; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
                             <i class="fas fa-envelope-open-text"></i> Cek Tawaran
                         </a>
                         
@@ -78,7 +78,7 @@
                             <form action="{{ route('permintaan.destroy', $item->idPermintaan) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus permintaan ini?');" class="m-0 w-100">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-outline-danger fw-bold py-2 w-100 d-flex align-items-center justify-content-center gap-2" style="border-radius: 8px; font-size: 0.9rem;">
+                                <button type="submit" class="fw-bold py-2 w-100 d-flex align-items-center justify-content-center gap-2" style="background: white; color: #ef4444; border: 1px solid #fecaca; border-radius: 8px; font-size: 0.85rem; transition: all 0.2s;" onmouseover="this.style.background='#fef2f2'; this.style.borderColor='#ef4444';" onmouseout="this.style.background='white'; this.style.borderColor='#fecaca';">
                                     <i class="fas fa-trash"></i> Hapus
                                 </button>
                             </form>

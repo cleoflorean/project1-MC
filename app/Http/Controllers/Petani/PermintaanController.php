@@ -14,14 +14,14 @@ class PermintaanController extends Controller
         $today = Carbon::now()->toDateString();
 
         // 1. Ambil semua Permintaan Pasar yang MASIH AKTIF (Batas tanggal belum terlewat)
-        $permintaanAktif = Permintaan::with('user.pembeliProfile')
+        $permintaanAktif = Permintaan::with('user.profile')
                                     ->where('Status', 'Aktif')
                                     ->whereDate('BatasTanggal', '>=', $today)
                                     ->orderBy('BatasTanggal', 'asc')
                                     ->get();
 
         // 2. Ambil semua Permintaan Pasar yang SUDAH KADALUARSA (Batas tanggal sudah lewat)
-        $permintaanKadaluarsa = Permintaan::with('user.pembeliProfile')
+        $permintaanKadaluarsa = Permintaan::with('user.profile')
                                         ->where('Status', 'Aktif')
                                         ->whereDate('BatasTanggal', '<', $today)
                                         ->orderBy('BatasTanggal', 'desc')

@@ -29,12 +29,7 @@ class LupaSandiController extends Controller
         }
 
         // Ambil No WA otomatis dari profil database
-        $noWa = null;
-        if ($user->role === 'pembeli') {
-            $noWa = $user->pembeliProfile ? $user->pembeliProfile->NoTlp : null;
-        } elseif ($user->role === 'petani') {
-            $noWa = $user->petaniProfile ? $user->petaniProfile->NoTlp : null;
-        }
+        $noWa = $user->profile ? $user->profile->NoWhatsApp : null;
 
         if (!$noWa) {
             return back()->with('error', 'Akun ditemukan, silakan hubungi Admin langsung karena Anda belum mengatur nomor telepon di profil.');

@@ -75,7 +75,7 @@
                                     <input type="file" name="FotoProfile" id="input-foto" style="display: none;" onchange="batalHapusFoto(this)">
                                 </label>
                                 
-                                @if($profil && $profil->FotoProfile)
+                                @if($profil && $profil->FotoProfil)
                                 <button type="button" id="btn-hapus-foto" onclick="triggerHapusFoto()" style="font-size: 0.75rem; font-weight: 700; color: #dc2626; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; background: #fef2f2; padding: 6px 12px; border-radius: 4px; border: 1px solid #fca5a5;">
                                     <i class="fas fa-trash-alt" style="margin-right: 5px;"></i> Hapus
                                 </button>
@@ -106,8 +106,8 @@
                             <input type="text" name="NamaLengkap" value="{{ old('NamaLengkap', $profil->NamaLengkap ?? '') }}" style="width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; color: #1e293b; box-sizing: border-box; background: #ffffff;" required>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Nomor Telepon / Jalur WhatsApp <span style="color: #dc2626;">*</span></label>
-                            <input type="text" name="NoTlp" value="{{ old('NoTlp', $profil->NoTlp ?? '') }}" style="width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; color: #1e293b; box-sizing: border-box; background: #ffffff;" required>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Nomor Telepon / No WhatsApp <span style="color: #dc2626;">*</span></label>
+                            <input type="text" name="NoWhatsApp" value="{{ old('NoWhatsApp', $profil->NoWhatsApp ?? '') }}" style="width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; color: #1e293b; box-sizing: border-box; background: #ffffff;" required>
                         </div>
                     </div>
 
@@ -118,7 +118,7 @@
 
                     <div>
                         <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Alamat Fisik / Lokasi Lahan & Gudang Utama <span style="color: #dc2626;">*</span></label>
-                        <textarea name="Alamat" style="width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; color: #1e293b; height: 95px; box-sizing: border-box; resize: vertical; background: #ffffff;" required>{{ old('Alamat', $profil->Alamat ?? '') }}</textarea>
+                        <textarea name="Alamat" style="width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; color: #1e293b; height: 95px; box-sizing: border-box; resize: vertical; background: #ffffff;" required>{{ old('Alamat', $profil->Alamat ?? '-') }}</textarea>
                     </div>
 
                 </div>

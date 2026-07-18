@@ -12,9 +12,9 @@ class Penawaran extends Model
     protected $primaryKey = 'idTawar';
     public $timestamps = true;
     
+    // Hapus 'NamaTanaman' dan 'Komoditas' dari sini
     protected $fillable =[
-        'idPetani', 'idMinta', 'NamaTanaman', 'Komoditas', 
-        'JumlahTawar', 'HargaTawar', 'Status', 'Catatan', 'Gambar'
+        'idPetani', 'idMinta', 'JumlahTawar', 'HargaTawar', 'Status', 'Catatan', 'Gambar'
     ];
 
     public function permintaan()
@@ -22,7 +22,6 @@ class Penawaran extends Model
         return $this->belongsTo(Permintaan::class, 'idMinta', 'idPermintaan');
     }
 
-    // FUNGSI INI WAJIB ADA DAN DI-SAVE!
     public function petani()
     {
         return $this->belongsTo(User::class, 'idPetani', 'id');

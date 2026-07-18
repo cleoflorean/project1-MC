@@ -14,12 +14,15 @@
             
             $filteredRiwayat = $riwayat->filter(function($pesanan) use ($currentStatus) {
                 $sudahUpload = !empty($pesanan->BuktiTransfer);
-                $statusPesanan = trim($pesanan->StatusPesanan);
+                
+                // PERBAIKAN: Pisahkan status pembayaran dan pengiriman
+                $statPembayaran = trim($pesanan->StatusPembayaran);
+                $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
 
-                if ($currentStatus == 'belum-bayar') return in_array($statusPesanan, ['Menunggu Pembayaran', 'Belum Bayar']) || !$sudahUpload;
-                if ($currentStatus == 'diproses') return $sudahUpload && in_array($statusPesanan, ['Menunggu Verifikasi Admin', 'Petani Menyiapkan Barang']);
-                if ($currentStatus == 'dikirim') return $statusPesanan == 'Dikirim';
-                if ($currentStatus == 'selesai') return in_array($statusPesanan, ['Pesanan Selesai', 'Selesai']);
+                if ($currentStatus == 'belum-bayar') return in_array($statPembayaran, ['Menunggu Pembayaran', 'Belum Bayar', 'Belum Dibayar']) || !$sudahUpload;
+                if ($currentStatus == 'diproses') return $statPembayaran == 'Menunggu Verifikasi Admin' || $statPengiriman == 'Petani Menyiapkan Barang';
+                if ($currentStatus == 'dikirim') return $statPengiriman == 'Dikirim';
+                if ($currentStatus == 'selesai') return in_array($statPengiriman, ['Pesanan Selesai', 'Selesai']);
                 return true; 
             });
         @endphp
@@ -41,6 +44,13 @@
 
         <!-- DAFTAR TRANSAKSI -->
         @forelse($filteredRiwayat as $pesanan)
+        
+        @php 
+            // Ambil status di awal agar mudah dipanggil di bawah
+            $statPembayaran = trim($pesanan->StatusPembayaran);
+            $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
+        @endphp
+
         <div class="card border-0 shadow-sm mb-3 rounded-0">
             
             <!-- Header Toko & Status -->
@@ -51,15 +61,11 @@
                     
                     <!-- Fitur Chat Ke WhatsApp -->
                     @php
-                        // Ambil nomor HP dari relasi petani, ubah 'no_hp' sesuai field database kamu
                         $noTelp = $pesanan->penawaran->petani->no_hp ?? ''; 
-                        
-                        // Ubah angka 0 di depan menjadi 62 (Kode Negara Indonesia)
                         if(strpos($noTelp, '0') === 0) {
                             $noTelp = '62' . substr($noTelp, 1);
                         }
-                        
-                        $namaKomoditas = $pesanan->penawaran->Komoditas ?? 'produk ini';
+                        $namaKomoditas = $pesanan->penawaran->permintaan->Komoditas ?? $pesanan->penawaran->permintaan->NamaTanaman ?? 'produk ini';
                         $pesanWA = "Halo, saya ingin bertanya mengenai pesanan saya untuk {$namaKomoditas}.";
                     @endphp
 
@@ -69,21 +75,24 @@
                 </div>
 
                 <div class="d-flex align-items-center">
-                    @php $stat = trim($pesanan->StatusPesanan); @endphp
-                    @if(in_array($stat, ['Menunggu Pembayaran', 'Belum Bayar']) || empty($pesanan->BuktiTransfer))
+                    <!-- PERBAIKAN LOGIKA STATUS UNTUK LABEL -->
+                    @if(in_array($statPembayaran, ['Menunggu Pembayaran', 'Belum Bayar', 'Belum Dibayar']) || empty($pesanan->BuktiTransfer))
                         <span class="text-danger me-2"><i class="fas fa-exclamation-circle"></i> Menunggu Pembayaran.</span>
                         <span class="text-danger fw-bold border-start border-2 ps-2">BELUM BAYAR</span>
-                    @elseif($stat === 'Menunggu Verifikasi Admin')
+                    @elseif($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Dikirim', 'Pesanan Selesai', 'Selesai']))
                         <span class="text-warning text-dark me-2"><i class="fas fa-clock"></i> Sedang dicek oleh Admin.</span>
                         <span class="text-warning fw-bold border-start border-2 ps-2">DIPROSES</span>
-                    @elseif($stat === 'Dikirim')
-                        <span class="text-success me-2"><i class="fas fa-truck"></i> Pesanan sedang dalam perjalanan. <i class="far fa-question-circle text-muted"></i></span>
+                    @elseif($statPengiriman === 'Petani Menyiapkan Barang')
+                        <span class="text-primary me-2"><i class="fas fa-box"></i> Petani menyiapkan pesanan.</span>
+                        <span class="text-primary fw-bold border-start border-2 ps-2">DIKEMAS</span>
+                    @elseif($statPengiriman === 'Dikirim')
+                        <span class="text-success me-2"><i class="fas fa-truck"></i> Pesanan dalam perjalanan. <i class="far fa-question-circle text-muted"></i></span>
                         <span class="text-success fw-bold border-start border-2 ps-2">DIKIRIM</span>
-                    @elseif(in_array($stat, ['Pesanan Selesai', 'Selesai']))
-                        <span class="text-success me-2"><i class="fas fa-truck"></i> Pesanan tiba di alamat tujuan. <i class="far fa-question-circle text-muted"></i></span>
+                    @elseif(in_array($statPengiriman, ['Pesanan Selesai', 'Selesai']))
+                        <span class="text-success me-2"><i class="fas fa-check-circle"></i> Pesanan tiba di alamat tujuan.</span>
                         <span class="text-success fw-bold border-start border-2 ps-2">SELESAI</span>
                     @else
-                        <span class="text-secondary fw-bold">{{ strtoupper($stat) }}</span>
+                        <span class="text-secondary fw-bold">{{ strtoupper($statPengiriman ?: $statPembayaran) }}</span>
                     @endif
                 </div>
             </div>
@@ -104,7 +113,7 @@
                     
                     <!-- Detail Produk -->
                     <div class="flex-grow-1">
-                        <h6 class="mb-1 text-dark fs-6">{{ $pesanan->penawaran->NamaTanaman ?? 'Nama Tanaman Terhapus' }}</h6>
+                        <h6 class="mb-1 text-dark fs-6">{{ $pesanan->penawaran->permintaan->NamaTanaman ?? 'Nama Tanaman Terhapus' }}</h6>
                         <p class="text-muted mb-0 small">Kuantitas: {{ $pesanan->penawaran->JumlahTawar ?? 0 }} Kg</p>
                     </div>
 
@@ -125,16 +134,17 @@
                 <div class="d-flex justify-content-end gap-2">
                     <a href="{{ route('detail', $pesanan->idPembayaran) }}" class="btn btn-outline-secondary px-4">Tampilkan Rincian</a>
 
-                    @if(in_array(trim($pesanan->StatusPesanan), ['Menunggu Pembayaran', 'Belum Bayar']) || empty($pesanan->BuktiTransfer))
+                    <!-- PERBAIKAN LOGIKA STATUS UNTUK TOMBOL AKSI -->
+                    @if(in_array($statPembayaran, ['Menunggu Pembayaran', 'Belum Bayar', 'Belum Dibayar']) || empty($pesanan->BuktiTransfer))
                         <a href="{{ route('pembayaran.show', $pesanan->idTawar) }}" class="btn btn-success px-5 fw-bold">Bayar Sekarang</a>
 
-                    @elseif(trim($pesanan->StatusPesanan) === 'Dikirim')
+                    @elseif($statPengiriman === 'Dikirim')
                         <form action="{{ route('pembeli.pesanan.selesai', $pesanan->idPembayaran) }}" method="POST" class="m-0" onsubmit="return confirm('Selesaikan pesanan ini?')">
                             @csrf
                             <button type="submit" class="btn btn-success px-5 fw-bold">Pesanan Diterima</button>
                         </form>
 
-                    @elseif(in_array(trim($pesanan->StatusPesanan), ['Pesanan Selesai', 'Selesai']))
+                    @elseif(in_array($statPengiriman, ['Pesanan Selesai', 'Selesai']))
                         @if(!$pesanan->ulasan)
                             <button type="button" class="btn btn-success px-5 fw-bold" data-bs-toggle="modal" data-bs-target="#modalUlasan-{{ $pesanan->idPembayaran }}">
                                 Nilai
@@ -149,7 +159,7 @@
         </div>
 
         <!-- Modal Ulasan Bootstrap -->
-        @if(in_array(trim($pesanan->StatusPesanan), ['Pesanan Selesai', 'Selesai']) && !$pesanan->ulasan)
+        @if(in_array($statPengiriman, ['Pesanan Selesai', 'Selesai']) && !$pesanan->ulasan)
         <div class="modal fade" id="modalUlasan-{{ $pesanan->idPembayaran }}" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content rounded-0">

@@ -12,16 +12,17 @@ class Ulasan extends Model
     protected $table = 'ulasans';
     protected $primaryKey = 'idUlasan';
 
+    // PERBAIKAN: idPembayaran diganti jadi idTawar
     protected $fillable = [
-        'idPembayaran', 
+        'idTawar', 
         'Rating', 
         'Ulasan',
         'MediaUlasan'
     ];
 
-    // Kebalikan relasi ke tabel Pembayaran
-    public function pembayaran()
+    // PERBAIKAN: Kebalikan relasi mengarah ke Penawaran, bukan Pembayaran
+    public function penawaran()
     {
-        return $this->belongsTo(Pembayaran::class, 'idPembayaran', 'idPembayaran');
+        return $this->belongsTo(Penawaran::class, 'idTawar', 'idTawar');
     }
 }

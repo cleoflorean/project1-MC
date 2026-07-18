@@ -39,30 +39,6 @@
     <div class="hero-shape hero-shape-2"></div>
 </section>
 
-<!-- Stats Section -->
-<section class="py-4 bg-white border-bottom border-top">
-    <div class="container">
-        <div class="row text-center justify-content-center g-4">
-            <div class="col-md-3 col-6">
-                <h3 class="fw-bold text-dark mb-1">5.000+</h3>
-                <p class="text-secondary mb-0 small fw-medium">Petani Terdaftar</p>
-            </div>
-            <div class="col-md-3 col-6">
-                <h3 class="fw-bold text-dark mb-1">10.000+</h3>
-                <p class="text-secondary mb-0 small fw-medium">Transaksi Sukses</p>
-            </div>
-            <div class="col-md-3 col-6">
-                <h3 class="fw-bold text-dark mb-1">50+</h3>
-                <p class="text-secondary mb-0 small fw-medium">Jenis Komoditas</p>
-            </div>
-            <div class="col-md-3 col-6">
-                <h3 class="fw-bold text-dark mb-1">24/7</h3>
-                <p class="text-secondary mb-0 small fw-medium">Dukungan</p>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Cara Kerja Section -->
 <section id="cara-kerja" class="py-5 bg-light">
     <div class="container py-5">

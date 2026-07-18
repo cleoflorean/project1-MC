@@ -67,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/profil/edit', [ProfilController::class, 'edit'])->name('profil.edit');
         Route::put('/profil/update', [ProfilController::class, 'update'])->name('profil.update');
         Route::post('/profil/password', [ProfilController::class, 'updatePassword'])->name('profil.password');
+        Route::post('/profil/rekening', [ProfilController::class, 'updateRekening'])->name('profil.rekening');
 
         Route::get('/pembayaran/{idTawar}', [PembayaranController::class, 'show'])->name('pembayaran.show');
         Route::post('/pembayaran/upload/{id}', [PembayaranController::class, 'uploadBukti'])->name('pembayaran.upload');

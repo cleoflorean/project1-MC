@@ -4,10 +4,18 @@
 @section('content')
 @php
     $pembeli = $pesanan->penawaran->permintaan->user ?? null;
-    $profilPembeli = $pembeli ? $pembeli->pembeliProfile : null;
+    $profilPembeli = $pembeli ? $pembeli->profile : null;
     
-    // Melakukan trim agar tidak ada spasi tidak sengaja yang merusak kondisi if
-    $statusPesanan = trim($pesanan->StatusPesanan);
+    // 1. Ambil status dari tabel yang benar
+    $statPembayaran = trim($pesanan->StatusPembayaran);
+    $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
+
+    // 2. Gabungkan logika ke dalam variabel $statusPesanan
+    if ($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Petani Menyiapkan Barang', 'Dikirim', 'Pesanan Selesai', 'Selesai'])) {
+        $statusPesanan = 'Menunggu Verifikasi Admin';
+    } else {
+        $statusPesanan = $statPengiriman ?: $statPembayaran;
+    }
 
     // 1. Pembayaran Dikonfirmasi (aktif jika status telah melewati proses menunggu pembayaran)
     $isConfirmed = !in_array($statusPesanan, ['Menunggu Pembayaran', 'Menunggu Verifikasi Admin', 'Belum Dibayar']);
@@ -31,6 +39,7 @@
 
     <div style="max-width: 768px; margin: 0 auto; padding: 0 20px;">
         
+
         {{-- CARD STATUS (Gaya Minimalis Premium) --}}
         <div style="background: #FFFFFF; border-radius: 20px; padding: 32px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; border: 1px solid #F1F5F9; box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.03);">
             <div>
@@ -39,7 +48,7 @@
                     @elseif($statusPesanan === 'Petani Menyiapkan Barang') Siap Dikirim
                     @elseif(in_array($statusPesanan, ['Dikirim', 'Dalam Pengiriman'])) Sedang Diproses
                     @elseif(in_array($statusPesanan, ['Pesanan Selesai', 'Selesai'])) Transaksi Selesai
-                    @else {{ $pesanan->StatusPesanan }}
+                    @else {{ $statusPesanan }}
                     @endif
                 </h2>
                 <p style="margin: 0; font-size: 0.95rem; color: #475569;">
@@ -74,7 +83,7 @@
                 </h3>
                 <div style="font-size: 1rem; margin-bottom: 8px;">
                     <span style="font-weight: 700; color: #1E293B;">{{ $profilPembeli->NamaLengkap ?? $pembeli->username ?? 'Nama Pembeli' }}</span> 
-                    <span style="color: #64748B; font-size: 0.9rem; margin-left: 8px;">{{ $profilPembeli->NoTlp ? '(+62) ' . ltrim($profilPembeli->NoTlp, '0') : '' }}</span>
+                    <span style="color: #64748B; font-size: 0.9rem; margin-left: 8px;">{{ $profilPembeli->NoWhatsApp ? '(+62) ' . ltrim($profilPembeli->NoWhatsApp, '0') : '' }}</span>
                 </div>
                 <p style="margin: 0; line-height: 1.6; color: #475569; font-size: 0.95rem;">{{ $profilPembeli->Alamat ?? 'Alamat belum dilengkapi.' }}</p>
             </div>
@@ -148,10 +157,10 @@
                     <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; justify-content: center;">
                         <div style="display: flex; gap: 8px; margin-bottom: 6px;">
                             <span style="background: #ECFDF5; color: #059669; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
-                                {{ $pesanan->penawaran->Komoditas }}
+                                {{ $pesanan->penawaran->permintaan->Komoditas }}
                             </span>
                         </div>
-                        <h4 style="margin: 0 0 8px 0; font-size: 1.25rem; color: #0F172A; font-weight: 700;">{{ $pesanan->penawaran->NamaTanaman }}</h4>
+                        <h4 style="margin: 0 0 8px 0; font-size: 1.25rem; color: #0F172A; font-weight: 700;">{{ $pesanan->penawaran->permintaan->NamaTanaman }}</h4>
                         
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; flex-wrap: wrap; gap: 8px;">
                             <span style="color: #64748B; font-size: 0.95rem; font-weight: 500;">

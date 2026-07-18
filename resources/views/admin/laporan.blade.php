@@ -28,12 +28,6 @@
                         <span class="badge bg-danger ms-2">{{ $dataLupaSandi->where('status', 'Menunggu')->count() }}</span>
                     </button>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link fw-bold px-4 py-3 text-secondary" id="komplain-tab" data-bs-toggle="tab" data-bs-target="#komplain" type="button" role="tab">
-                        <i class="fas fa-box-open me-1"></i> Komplain Transaksi
-                        <span class="badge bg-danger ms-2">{{ $dataKomplain->where('status', 'Menunggu')->count() }}</span>
-                    </button>
-                </li>
             </ul>
         </div>
 
@@ -43,35 +37,44 @@
                 {{-- TAB 1: ISI TABEL LUPA KATA SANDI --}}
                 <div class="tab-pane fade show active p-0" id="sandi" role="tabpanel" aria-labelledby="sandi-tab">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light text-muted fw-bold" style="font-size: 0.85rem;">
-                                <tr>
-                                    <th class="ps-4 py-3">Waktu</th>
-                                    <th class="py-3">Pemilik Akun</th>
-                                    <th class="py-3">No. WhatsApp</th>
-                                    <th class="py-3">Status</th>
-                                    <th class="text-center py-3">Aksi Admin</th>
+                        <table style="width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 0.85rem;">
+                            <thead>
+                                <tr style="background: #f8fafc; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.5px;">
+                                    <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0; border-top-left-radius: 8px;">Waktu</th>
+                                    <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Pemilik Akun</th>
+                                    <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">No. WhatsApp</th>
+                                    <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Status</th>
+                                    <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0; border-top-right-radius: 8px; text-align: center;">Aksi Admin</th>
                                 </tr>
                             </thead>
-                            <tbody style="font-size: 0.9rem;">
+                            <tbody style="color: #334155;">
                                 @forelse($dataLupaSandi as $lupa)
-                                <tr>
-                                    <td class="ps-4 text-muted">{{ $lupa->created_at->translatedFormat('d M, H:i') }}</td>
-                                    <td>
-                                        <span class="fw-bold text-dark d-block">{{ $lupa->user->username ?? 'User Dihapus' }}</span>
-                                        <small class="text-muted">{{ $lupa->user->email ?? '-' }}</small>
+                                <tr style="transition: all 0.2s ease; border-bottom: 1px solid #f1f5f9;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.transform='translateY(-1px)';" onmouseout="this.style.backgroundColor='transparent'; this.style.transform='none';">
+                                    <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 0.8rem;">
+                                        <i class="far fa-clock" style="margin-right: 4px;"></i> {{ $lupa->created_at->translatedFormat('d M, H:i') }}
                                     </td>
-                                    <td><span class="badge bg-success-subtle text-success"><i class="fab fa-whatsapp"></i> {{ $lupa->no_whatsapp }}</span></td>
-                                    <td>
+                                    <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;">
+                                        <div style="font-weight: 700; color: #0f172a; font-size: 0.85rem;">{{ $lupa->user->username ?? 'User Dihapus' }}</div>
+                                        <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">{{ $lupa->user->email ?? '-' }}</div>
+                                    </td>
+                                    <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;">
+                                        <span style="background: #ecfdf5; color: #047857; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #d1fae5; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i class="fab fa-whatsapp"></i> {{ $lupa->no_whatsapp }}
+                                        </span>
+                                    </td>
+                                    <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;">
                                         @if($lupa->status === 'Menunggu')
-                                            <span class="badge bg-danger-subtle text-danger rounded-pill">📂 Menunggu</span>
+                                            <span style="background: #fef2f2; color: #991b1b; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #fecaca; display: inline-flex; align-items: center; gap: 4px;">
+                                                <i class="fas fa-folder-open"></i> Menunggu
+                                            </span>
                                         @else
-                                            <span class="badge bg-success-subtle text-success rounded-pill">✅ Selesai</span>
+                                            <span style="background: #f0fdf4; color: #166534; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #bbf7d0; display: inline-flex; align-items: center; gap: 4px;">
+                                                <i class="fas fa-check-circle"></i> Selesai
+                                            </span>
                                         @endif
                                     </td>
-                                    <td class="text-center">
+                                    <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9; text-align: center;">
                                         @php
-                                            // Format nomor WA agar depannya jadi 62
                                             $noWaLupa = $lupa->no_whatsapp;
                                             if (substr($noWaLupa, 0, 1) == '0') {
                                                 $noWaLupa = '62' . substr($noWaLupa, 1);
@@ -80,22 +83,20 @@
                                         @endphp
 
                                         @if($lupa->status === 'Menunggu')
-                                            {{-- 1. SAAT MENUNGGU: TOMBOL PROSES RESET --}}
-                                            <form action="{{ route('admin.lupasandi.proses', $lupa->idLupaSandi) }}" method="POST" onsubmit="return confirm('Yakin ingin mereset sandi pengguna ini?')">
+                                            <form action="{{ route('admin.lupasandi.proses', $lupa->idLupaSandi) }}" method="POST" onsubmit="return confirm('Yakin ingin mereset sandi pengguna ini?')" style="margin: 0;">
                                                 @csrf
-                                                <button type="submit" class="btn btn-sm btn-warning w-100 fw-bold shadow-sm text-dark">
+                                                <button type="submit" style="background: #f59e0b; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; width: 100%; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#d97706'" onmouseout="this.style.background='#f59e0b'">
                                                     <i class="fas fa-key"></i> Proses Reset Sandi
                                                 </button>
                                             </form>
-
                                         @else
-                                            {{-- 2. SETELAH SELESAI: MUNCUL SANDI BARU & TOMBOL WA YANG SUDAH ADA ISI PASSWORDNYA --}}
-                                            <div class="d-flex flex-column align-items-center gap-2">
-                                                <small class="text-muted fw-bold">Sandi Baru: <code class="fs-6 text-dark bg-light px-2 py-1 rounded border">{{ $lupa->password_sementara }}</code></small>
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                                <div style="font-size: 0.7rem; color: #64748b; font-weight: 600;">Sandi Baru: <code style="font-size: 0.75rem; color: #0f172a; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">{{ $lupa->password_sementara }}</code></div>
                                                 
                                                 <a href="https://wa.me/{{ $noWaLupa }}?text=Halo%20*{{ urlencode($namaUser) }}*,%20permintaan%20reset%20kata%20sandi%20akun%20Tani Harvest%20Anda%20telah%20berhasil.%0A%0AIni%20password%20baru%20kamu:%20*{{ $lupa->password_sementara }}*%0A%0ASilakan%20login%20kembali%20dan%20jangan%20lupa%20langsung%20ganti%20password%20ya!" 
                                                    target="_blank" 
-                                                   class="btn btn-sm btn-success w-100 fw-bold shadow-sm mt-1">
+                                                   style="display: block; width: 100%; background: #10b981; color: white; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; transition: background 0.2s;"
+                                                   onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
                                                     <i class="fab fa-whatsapp"></i> Kirim Sandi via WA
                                                 </a>
                                             </div>
@@ -103,95 +104,19 @@
                                     </td>
                                 </tr>
                                 @empty
-                                <tr><td colspan="5" class="text-center py-5 text-muted">Belum ada pengaduan lupa kata sandi.</td></tr>
+                                <tr>
+                                    <td colspan="5" style="padding: 60px 20px; text-align: center; color: #94a3b8;">
+                                        <i class="fas fa-inbox" style="font-size: 2.5rem; color: #e2e8f0; margin-bottom: 12px; display: block;"></i>
+                                        <div style="font-size: 0.9rem; font-weight: 500;">Belum ada pengaduan lupa kata sandi.</div>
+                                    </td>
+                                </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                {{-- TAB 2: ISI TABEL KOMPLAIN TRANSAKSI BARANG --}}
-                <div class="tab-pane fade p-0" id="komplain" role="tabpanel" aria-labelledby="komplain-tab">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light text-muted fw-bold" style="font-size: 0.85rem;">
-                                <tr>
-                                    <th class="ps-4 py-3">Pelapor</th>
-                                    <th class="py-3">ID Pembayaran</th>
-                                    <th class="py-3">Alasan Komplain</th>
-                                    <th class="py-3">Bukti</th>
-                                    <th class="py-3">Status</th>
-                                    <th class="text-center py-3">Tindakan Admin</th>
-                                </tr>
-                            </thead>
-                            <tbody style="font-size: 0.9rem;">
-                                @forelse($dataKomplain as $komplain)
-                                <tr>
-                                    <td class="ps-4">
-                                        <strong class="text-dark">{{ $komplain->user->username ?? 'User Dihapus' }}</strong><br>
-                                        <small class="text-muted"><i class="fab fa-whatsapp text-success"></i> {{ $komplain->no_whatsapp }}</small>
-                                    </td>
-                                    <td><span class="badge bg-secondary">#{{ $komplain->idPembayaran }}</span></td>
-                                    <td style="max-width: 250px;">
-                                        <div class="text-wrap text-truncate" style="font-size: 0.85rem;">{{ $komplain->alasan_komplain }}</div>
-                                    </td>
-                                    <td>
-                                        @if($komplain->bukti_pendukung)
-                                            <a href="{{ asset('storage/' . $komplain->bukti_pendukung) }}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem;">Lihat Foto</a>
-                                        @else
-                                            <span class="text-muted small">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <span class="badge {{ $komplain->status == 'Menunggu' ? 'bg-danger' : ($komplain->status == 'Diproses' ? 'bg-warning' : ($komplain->status == 'Selesai' ? 'bg-success' : 'bg-dark')) }}">
-                                            {{ $komplain->status }}
-                                        </span>
-                                    </td>
-                                    
-                                    <td class="text-center">
-                                        @if($komplain->status == 'Menunggu' || $komplain->status == 'Diproses')
-                                            
-                                            {{-- TOMBOL CHAT PETANI --}}
-                                            @php
-                                                $noPetani = $komplain->pembayaran->penawaran->petani->telepon ?? ''; 
-                                                if (substr($noPetani, 0, 1) == '0') { $noPetani = '62' . substr($noPetani, 1); }
-                                            @endphp
-                                            <a href="https://wa.me/{{ $noPetani }}?text=Halo%20Petani,%20ada%20komplain%20dari%20pembeli%20untuk%20ID%20Pesanan%20%23{{ $komplain->idPembayaran }}.%20Mohon%20penjelasannya." 
-                                               target="_blank" class="btn btn-sm btn-info mb-2 w-100 text-white fw-bold">
-                                                <i class="fab fa-whatsapp"></i> Chat Petani
-                                            </a>
 
-                                            {{-- TOMBOL TINDAK TEGAS --}}
-                                            <form action="{{ route('admin.komplain.tindak', $komplain->idKomplain) }}" method="POST" onsubmit="return confirm('Tindakan ini akan membatalkan pesanan, MENGEMBALIKAN DANA ke pembeli, dan MEMBLOKIR akun petani. Lanjutkan?')">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-danger w-100 fw-bold mb-2">
-                                                    <i class="fas fa-gavel"></i> Valid (Refund & Blokir)
-                                                </button>
-                                            </form>
-                                            
-                                            <hr class="my-1">
-                                        @endif
-
-                                        {{-- UPDATE STATUS MANUAL BIASA --}}
-                                        <form action="{{ route('admin.komplain.update', $komplain->idKomplain) }}" method="POST" class="d-flex justify-content-center gap-1">
-                                            @csrf
-                                            <select name="status" class="form-select form-select-sm" style="width: 110px;">
-                                                <option value="Menunggu" {{ $komplain->status == 'Menunggu' ? 'selected' : '' }}>Menunggu</option>
-                                                <option value="Diproses" {{ $komplain->status == 'Diproses' ? 'selected' : '' }}>Diproses</option>
-                                                <option value="Selesai" {{ $komplain->status == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                                                <option value="Ditolak" {{ $komplain->status == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
-                                            </select>
-                                            <button type="submit" class="btn btn-sm btn-primary">Simpan</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr><td colspan="6" class="text-center py-5 text-muted">Belum ada komplain barang yang diajukan.</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
 
             </div>
         </div>

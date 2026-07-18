@@ -14,8 +14,10 @@ return new class extends Migration {
             $table->foreign('idMinta')->references('idPermintaan')->on('permintaans')->onDelete('cascade');
             $table->foreign('idPetani')->references('id')->on('users')->onDelete('cascade');
             
-            $table->string('NamaTanaman');
-            $table->string('Komoditas');
+            // PENGHAPUSAN ANOMALI: 
+            // $table->string('NamaTanaman'); -> Dihapus!
+            // $table->string('Komoditas'); -> Dihapus!
+            
             $table->integer('JumlahTawar');
             $table->decimal('HargaTawar', 15, 2);
             $table->text('Catatan')->nullable();

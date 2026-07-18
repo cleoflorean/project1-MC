@@ -9,7 +9,7 @@
         <div>
             <h1 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: #0f172a; letter-spacing: -0.5px;">Foto Kondisi Barang</h1>
             <p style="margin: 6px 0 0 0; color: #64748b; font-size: 0.95rem;">
-                Komoditas: <span style="background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; margin-left: 4px;">{{ $tawar->Komoditas ?? $tawar->NamaTanaman }}</span>
+                Komoditas: <span style="background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; margin-left: 4px;">{{ $tawar->permintaan->Komoditas ?? $tawar->permintaan->NamaTanaman }}</span>
             </p>
         </div>
         <div>
@@ -49,7 +49,7 @@
                 <div>
                     <span style="display: block; font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 4px;">Petani Pengirim</span>
                     <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a;">
-                        {{ $tawar->petani->petaniProfile->NamaLengkap ?? 'Nama Tidak Diketahui' }} 
+                        {{ $tawar->petani->profile->NamaLengkap ?? 'Nama Tidak Diketahui' }} 
                     </div>
                     <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 2px;">
                         Username: {{ $tawar->petani->username ?? 'Mitra Petani' }}
@@ -79,7 +79,7 @@
                     <span style="display: block; font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Alamat Lengkap</span>
                     <div style="font-size: 0.95rem; font-weight: 500; color: #334155; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;">
                         <i class="fas fa-map-marker-alt" style="color: #ef4444; margin-top: 4px;"></i>
-                        <span>{{ $tawar->petani->petaniProfile->Alamat ?? 'Alamat tidak tersedia. Silakan hubungi petani untuk detail lokasi.' }}</span>
+                        <span>{{ $tawar->petani->profile->Alamat ?? 'Alamat tidak tersedia. Silakan hubungi petani untuk detail lokasi.' }}</span>
                     </div>
                 </div>
 
@@ -95,13 +95,13 @@
 
             <!-- PERSIAPAN LINK WHATSAPP -->
             @php
-                $noWa = $tawar->petani->petaniProfile->NoTlp ?? null;
+                $noWa = $tawar->petani->profile->NoWhatsApp ?? null;
                 // Ubah format 08xx menjadi 628xx
                 if($noWa && substr($noWa, 0, 1) == '0') {
                     $noWa = '62' . substr($noWa, 1);
                 }
                 
-                $namaKomoditas = $tawar->Komoditas ?? $tawar->NamaTanaman ?? 'komoditas';
+                $namaKomoditas = $tawar->permintaan->Komoditas ?? $tawar->permintaan->NamaTanaman ?? 'komoditas';
                 $pesanWa = "Halo, saya melihat foto barang untuk penawaran " . $namaKomoditas . " Anda di sistem. Boleh saya berdiskusi lebih lanjut mengenai kondisinya?";
             @endphp
 

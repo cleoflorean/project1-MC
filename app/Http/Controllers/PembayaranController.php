@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\Pembayaran;
 use App\Models\Penawaran;
 use App\Models\Ulasan;
-use App\Models\User; // <-- TAMBAHKAN INI UNTUK MEMANGGIL DATA ADMIN
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
-use App\Models\AdminProfile;
+use App\Models\Profile;
+use App\Models\Rekening;
+use App\Models\Pengiriman; // <-- PERBAIKAN 1: Tambahkan model Pengiriman
 
 class PembayaranController extends Controller
 {
@@ -27,7 +29,7 @@ class PembayaranController extends Controller
             'idTawar'          => $idTawar,
             'TotalBayar'       => $totalBayar,
             'StatusPembayaran' => 'Belum Bayar', 
-            'StatusPesanan'    => 'Menunggu Pembayaran'
+            // Kolom StatusPesanan dihapus dari sini karena sudah dipindah ke tabel pengirimans
         ]);
 
         $penawaran->update(['Status' => 'Setuju']);
@@ -37,17 +39,16 @@ class PembayaranController extends Controller
     }
 
     public function show($idTawar)
-{
-    $pembayaran = Pembayaran::with(['penawaran.petani.petaniProfile'])
+    {
+        $pembayaran = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.profile'])
                             ->where('idTawar', $idTawar)
                             ->firstOrFail();
 
-    // UBAH BAGIAN INI: 
-    // Karena sistem kamu 1 Admin, kita cukup panggil baris pertama dari tabel admin_profiles
-    $admin = AdminProfile::first();
+        $adminUser = User::where('role', 'admin')->first();
+        $admin = $adminUser ? Rekening::where('user_id', $adminUser->id)->first() : null;
 
-    return view('pembeli.pembayaran', compact('pembayaran', 'admin')); 
-}
+        return view('pembeli.pembayaran', compact('pembayaran', 'admin')); 
+    }
 
     public function uploadBukti(Request $request, $idPembayaran)
     {
@@ -65,8 +66,8 @@ class PembayaranController extends Controller
             $pembayaran->update([
                 'BuktiTransfer'    => $path,
                 'StatusPembayaran' => 'Menunggu Verifikasi Admin', 
-                'StatusPesanan'    => 'Menunggu Verifikasi Admin',
                 'WaktuBayar'       => now() 
+                // StatusPesanan juga dihapus dari sini
             ]);
 
             return redirect()->route('pembeli.riwayat')
@@ -78,7 +79,7 @@ class PembayaranController extends Controller
 
     public function riwayatTransaksi(Request $request)
     {
-        $riwayat = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.petaniProfile', 'ulasan'])
+        $riwayat = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.profile', 'ulasan'])
             ->whereHas('penawaran.permintaan', function ($query) use ($request) {
                 $query->where('user_id', $request->user()->id);
             })
@@ -90,7 +91,7 @@ class PembayaranController extends Controller
 
     public function detailTransaksi($id)
     {
-        $pesanan = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.petaniProfile'])
+        $pesanan = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.profile'])
                                 ->findOrFail($id);
 
         return view('pembeli.detail', compact('pesanan'));
@@ -100,10 +101,15 @@ class PembayaranController extends Controller
     {
         $pembayaran = Pembayaran::findOrFail($id);
         
-        $pembayaran->update([
-            'StatusPesanan' => 'Selesai',
-            'WaktuSelesai'  => now()
-        ]);
+        // PERBAIKAN 2: Kita update StatusPesanan di tabel Pengiriman, bukan Pembayaran
+        $pengiriman = Pengiriman::where('idTawar', $pembayaran->idTawar)->first();
+        
+        if ($pengiriman) {
+            $pengiriman->update([
+                'StatusPesanan' => 'Selesai',
+                'WaktuSelesai'  => now()
+            ]);
+        }
 
         return back()->with('success', 'Pesanan telah diterima! Silakan berikan penilaian Anda.');
     }
@@ -122,8 +128,12 @@ class PembayaranController extends Controller
             $path = $file->storeAs('media_ulasan', $filename, 'public');
         }
 
+        // Cari data pembayaran untuk mendapatkan idTawar
+        $pembayaran = Pembayaran::findOrFail($id);
+
+        // PERBAIKAN 3: Simpan menggunakan idTawar
         Ulasan::create([
-            'idPembayaran' => $id,
+            'idTawar'      => $pembayaran->idTawar, 
             'Rating'       => $request->Rating,
             'Ulasan'       => $request->Ulasan ?? '',
             'MediaUlasan'  => $path

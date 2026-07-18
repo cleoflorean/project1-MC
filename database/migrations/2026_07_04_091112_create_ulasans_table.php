@@ -11,16 +11,17 @@ return new class extends Migration
         Schema::create('ulasans', function (Blueprint $table) {
             $table->id('idUlasan'); // Primary Key
             
-            // Relasi ke tabel pembayaran (Foreign Key)
-            $table->unsignedBigInteger('idPembayaran');
-            $table->foreign('idPembayaran')->references('idPembayaran')->on('pembayarans')->onDelete('cascade');
+            // PERBAIKAN: Relasi ke tabel penawaran (idTawar), bukan pembayaran
+            $table->unsignedBigInteger('idTawar');
+            $table->foreign('idTawar')->references('idTawar')->on('penawaran')->onDelete('cascade');
             
-            // Menggunakan UNIQUE constraint agar 1 transaksi benar-benar HANYA BISA diberi 1 rating saja (Aturan ERD 1-to-1)
-            $table->unique('idPembayaran'); 
+            // 1 Deal/Order (Penawaran) HANYA BISA diberi 1 rating
+            $table->unique('idTawar'); 
             
             // Data Konten Ulasan
-            $table->integer('Rating'); // Nilai 1 sampai 5
-            $table->text('Ulasan')->nullable(); // Komentar tertulis dari pembeli
+            $table->integer('Rating'); 
+            $table->text('Ulasan')->nullable(); 
+            $table->string('MediaUlasan')->nullable(); // Langsung digabung ke sini
             
             $table->timestamps();
         });

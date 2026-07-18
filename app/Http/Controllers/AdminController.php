@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Pembayaran;
 use App\Models\User;
-use App\Models\AdminProfile; // <-- TAMBAHAN BARU
+use App\Models\Profile; 
+use App\Models\Rekening;
+use App\Models\Pengiriman; // <-- WAJIB DITAMBAHKAN AGAR BISA AKSES STATUS PESANAN
 
 class AdminController extends Controller
 {
@@ -15,25 +17,31 @@ class AdminController extends Controller
      */
     public function index()
     {
-        // 1. Ambil data Transaksi (Dibutuhkan di index.blade.php)
-        $semuaTransaksi = Pembayaran::with(['penawaran.permintaan.user', 'penawaran.petani'])
+        // 1. Ambil data Transaksi
+        $semuaTransaksi = Pembayaran::with(['penawaran.permintaan.user', 'penawaran.petani', 'pengiriman'])
                                     ->latest('idPembayaran')
                                     ->take(5)
                                     ->get();
                                     
-        // 2. Ambil semua data Akun (Dibutuhkan di index.blade.php)
+        // 2. Ambil semua data Akun
         $semuaAkun = User::latest()
                         ->take(5)
                         ->get();
 
         // 3. Hitung Statistik Utama
+        // Hitung dana admin: Pembayaran Lunas, tapi pengiriman belum selesai
         $totalDanaAdmin = Pembayaran::where('StatusPembayaran', 'Lunas')
-                                 ->where('StatusPesanan', '!=', 'Pesanan Selesai')
-                                 ->sum('TotalBayar');
+            ->whereDoesntHave('pengiriman', function ($query) {
+                $query->whereIn('StatusPesanan', ['Pesanan Selesai', 'Selesai']);
+            })
+            ->sum('TotalBayar');
                                  
         $menungguVerifikasi = Pembayaran::where('StatusPembayaran', 'Menunggu Verifikasi Admin')->count();
         
-        $totalTransaksiSukses = Pembayaran::where('StatusPesanan', 'Pesanan Selesai')->sum('TotalBayar');
+        // Hitung transaksi sukses: Pengiriman sudah selesai
+        $totalTransaksiSukses = Pembayaran::whereHas('pengiriman', function ($query) {
+            $query->whereIn('StatusPesanan', ['Pesanan Selesai', 'Selesai']);
+        })->sum('TotalBayar');
         
         $jumlahPetani = User::where('role', 'petani')->count();
 
@@ -54,39 +62,39 @@ class AdminController extends Controller
     public function profil()
     {
         $user = Auth::user();
-        $profile = $user->adminProfile ?? new AdminProfile();
         
-        return view('admin.profil', compact('user', 'profile'));
+        $profile = Profile::firstOrNew(['user_id' => $user->id]);
+        $rekening = Rekening::firstOrNew(['user_id' => $user->id]);
+        
+        return view('admin.profil', compact('user', 'profile', 'rekening'));
     }
 
-    /**
-     * FITUR BARU: Proses Update Profil & Rekening Admin
-     */
     public function updateProfil(Request $request)
     {
-        // 1. Tambahkan validasi untuk password
         $request->validate([
             'NamaLengkap' => 'required|string|max:100',
             'NamaBank'    => 'required|string|max:50',
             'NoRekening'  => 'required|numeric',
             'NamaPemilik' => 'required|string|max:100',
-            'password'    => 'required|current_password', // Validasi password admin saat ini
+            'password'    => 'required|current_password', 
         ], [
-            // 2. Custom pesan error agar lebih mudah dipahami (opsional)
             'password.required' => 'Password harus diisi untuk mengonfirmasi keamanan.',
             'password.current_password' => 'Password yang Anda masukkan salah!',
         ]);
 
         $user = Auth::user();
 
-        // 3. Jika password benar, proses simpan ke database dijalankan
-        AdminProfile::updateOrCreate(
+        Profile::updateOrCreate(
+            ['user_id' => $user->id],
+            ['NamaLengkap' => $request->NamaLengkap]
+        );
+
+        Rekening::updateOrCreate(
             ['user_id' => $user->id],
             [
-                'NamaLengkap' => $request->NamaLengkap,
-                'NamaBank'    => $request->NamaBank,
-                'NoRekening'  => $request->NoRekening,
-                'NamaPemilik' => $request->NamaPemilik,
+                'NamaBank'   => $request->NamaBank,
+                'NoRekening' => $request->NoRekening,
+                'AtasNama'   => $request->NamaPemilik, 
             ]
         );
 
@@ -94,13 +102,11 @@ class AdminController extends Controller
     }
 
     /**
-     * 2. Menampilkan Halaman Konfirmasi Pembayaran (Menu Konfirmasi)
+     * 2. Menampilkan Halaman Konfirmasi Pembayaran
      */
     public function konfirmasi()
     {
-        // Ambil SEMUA transaksi tanpa filter, agar Admin bisa
-        // melakukan Verifikasi maupun Pencairan Dana di satu tempat.
-        $semuaTransaksi = Pembayaran::with(['penawaran.permintaan.user', 'penawaran.petani'])
+        $semuaTransaksi = Pembayaran::with(['penawaran.permintaan.user', 'penawaran.petani', 'pengiriman'])
                                     ->latest('idPembayaran')
                                     ->get();
                                     
@@ -108,22 +114,20 @@ class AdminController extends Controller
     }
 
     /**
-     * 3. Menampilkan Halaman Data Pengguna (Menu Data Pengguna)
+     * 3. Menampilkan Halaman Data Pengguna
      */
     public function pengguna()
     {
         $semuaAkun = User::latest()->get();
-        
         return view('admin.pengguna', compact('semuaAkun'));
     }
 
     /**
-     * 4. Menampilkan Detail Spesifik 1 Pengguna (Saat tombol Detail diklik)
+     * 4. Menampilkan Detail Spesifik 1 Pengguna
      */
     public function detailPengguna($id)
     {
         $user = User::findOrFail($id);
-        
         return view('admin.detail_pengguna', compact('user'));
     }
 
@@ -134,10 +138,16 @@ class AdminController extends Controller
     {
         $pembayaran = Pembayaran::findOrFail($id);
         
+        // 1. Update status uang (di tabel pembayarans)
         $pembayaran->update([
-            'StatusPembayaran' => 'Lunas',
-            'StatusPesanan'    => 'Petani Menyiapkan Barang'
+            'StatusPembayaran' => 'Lunas'
         ]);
+
+        // 2. Buat/Update status barang (di tabel pengirimans)
+        Pengiriman::updateOrCreate(
+            ['idTawar' => $pembayaran->idTawar],
+            ['StatusPesanan' => 'Petani Menyiapkan Barang']
+        );
 
         return back()->with('success', 'Bukti pembayaran SAH! Petani sekarang akan menyiapkan dan mengirim komoditas.');
     }
@@ -150,23 +160,28 @@ class AdminController extends Controller
         $pembayaran = Pembayaran::findOrFail($id);
         
         $pembayaran->update([
-            'StatusPembayaran' => 'Ditolak',
-            'StatusPesanan'    => 'Dibatalkan'
+            'StatusPembayaran' => 'Ditolak'
         ]);
+
+        Pengiriman::updateOrCreate(
+            ['idTawar' => $pembayaran->idTawar],
+            ['StatusPesanan' => 'Dibatalkan']
+        );
 
         return back()->with('success', 'Transaksi dibatalkan. Dana berhasil dikembalikan ke pembeli.');
     }
 
     /**
-     * 7. AKSI CAIRKAN DANA KE PETANI (Jika pembeli lupa klik selesai)
+     * 7. AKSI CAIRKAN DANA KE PETANI
      */
     public function cairkanKePetani($id)
     {
         $pembayaran = Pembayaran::findOrFail($id);
         
-        $pembayaran->update([
-            'StatusPesanan' => 'Pesanan Selesai'
-        ]);
+        Pengiriman::updateOrCreate(
+            ['idTawar' => $pembayaran->idTawar],
+            ['StatusPesanan' => 'Pesanan Selesai', 'WaktuSelesai' => now()]
+        );
 
         return back()->with('success', 'Dana berhasil dicairkan ke Petani dan Pesanan ditandai Selesai.');
     }
@@ -176,16 +191,17 @@ class AdminController extends Controller
      */
     public function tolakPembayaran($id)
     {
-        // Cari data pembayaran berdasarkan ID
-        $pembayaran = \App\Models\Pembayaran::findOrFail($id);
+        $pembayaran = Pembayaran::findOrFail($id);
         
-        // Ubah status pembayaran menjadi Ditolak dan Pesanan dibatalkan
         $pembayaran->update([
-            'StatusPembayaran' => 'Ditolak',
-            'StatusPesanan'    => 'Dibatalkan'
+            'StatusPembayaran' => 'Ditolak'
         ]);
 
-        // Kembalikan ke halaman sebelumnya dengan pesan error (berwarna merah)
+        Pengiriman::updateOrCreate(
+            ['idTawar' => $pembayaran->idTawar],
+            ['StatusPesanan' => 'Dibatalkan']
+        );
+
         return back()->with('error', 'Bukti pembayaran ditolak! Transaksi dibatalkan.');
     }
 }

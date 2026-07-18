@@ -19,10 +19,10 @@
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
                 <div class="card-body text-center p-5">
                     {{-- TAMPILAN FOTO PROFIL (Menggunakan Foto Asli Jika Ada) --}}
-                    @if($user->role === 'petani' && $user->petaniProfile && $user->petaniProfile->FotoProfile)
-                        <img src="{{ asset($user->petaniProfile->FotoProfile) }}" class="rounded-circle mb-3 shadow-sm border" style="width: 120px; height: 120px; object-fit: cover;">
-                    @elseif($user->role === 'pembeli' && $user->pembeliProfile && $user->pembeliProfile->FotoProfile)
-                        <img src="{{ asset($user->pembeliProfile->FotoProfile) }}" class="rounded-circle mb-3 shadow-sm border" style="width: 120px; height: 120px; object-fit: cover;">
+                    @if($user->role === 'petani' && $user->profile && $user->profile->FotoProfile)
+                        <img src="{{ asset($user->profile->FotoProfile) }}" class="rounded-circle mb-3 shadow-sm border" style="width: 120px; height: 120px; object-fit: cover;">
+                    @elseif($user->role === 'pembeli' && $user->profile && $user->profile->FotoProfile)
+                        <img src="{{ asset($user->profile->FotoProfile) }}" class="rounded-circle mb-3 shadow-sm border" style="width: 120px; height: 120px; object-fit: cover;">
                     @else
                         {{-- Default Inisial Nama jika belum upload foto --}}
                         <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 120px; height: 120px; font-size: 3rem; text-transform: uppercase;">
@@ -32,9 +32,9 @@
 
                     <h4 class="fw-bold text-dark mb-1">
                         @if($user->role === 'petani')
-                            {{ $user->petaniProfile->NamaLengkap ?? $user->username }}
+                            {{ $user->profile->NamaLengkap ?? $user->username }}
                         @elseif($user->role === 'pembeli')
-                            {{ $user->pembeliProfile->NamaLengkap ?? $user->username }}
+                            {{ $user->profile->NamaLengkap ?? $user->username }}
                         @else
                             {{ $user->username }}
                         @endif
@@ -50,10 +50,10 @@
                     @endif
 
                     {{-- Menampilkan Bio Ringkas --}}
-                    @if($user->role === 'petani' && $user->petaniProfile && $user->petaniProfile->Bio)
-                        <p class="text-secondary small mt-4 fst-italic">" {{ $user->petaniProfile->Bio }} "</p>
-                    @elseif($user->role === 'pembeli' && $user->pembeliProfile && $user->pembeliProfile->Bio)
-                        <p class="text-secondary small mt-4 fst-italic">" {{ $user->pembeliProfile->Bio }} "</p>
+                    @if($user->role === 'petani' && $user->profile && $user->profile->Bio)
+                        <p class="text-secondary small mt-4 fst-italic">" {{ $user->profile->Bio }} "</p>
+                    @elseif($user->role === 'pembeli' && $user->profile && $user->profile->Bio)
+                        <p class="text-secondary small mt-4 fst-italic">" {{ $user->profile->Bio }} "</p>
                     @endif
                 </div>
             </div>
@@ -94,15 +94,15 @@
                             <tbody>
                                 <tr>
                                     <th class="text-muted w-25">Nama Lengkap</th>
-                                    <td class="fw-semibold text-dark">: {{ $user->petaniProfile->NamaLengkap ?? 'Belum diisi' }}</td>
+                                    <td class="fw-semibold text-dark">: {{ $user->profile->NamaLengkap ?? 'Belum diisi' }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-muted">No. Telepon / WA</th>
-                                    <td class="fw-semibold text-dark">: {{ $user->petaniProfile->NoTlp ?? 'Belum diisi' }}</td>
+                                    <td class="fw-semibold text-dark">: {{ $user->profile->NoWhatsApp ?? 'Belum diisi' }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-muted">Alamat Rumah/Lahan</th>
-                                    <td class="fw-semibold text-dark">: {{ $user->petaniProfile->Alamat ?? 'Belum diisi' }}</td>
+                                    <td class="fw-semibold text-dark">: {{ $user->profile->Alamat ?? 'Belum diisi' }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -114,15 +114,15 @@
                             <tbody>
                                 <tr>
                                     <th class="text-muted w-25">Nama Bank</th>
-                                    <td class="fw-bold text-primary">: {{ $user->petaniProfile->NamaBank ?? 'Belum diatur' }}</td>
+                                    <td class="fw-bold text-primary">: {{ $user->profile->NamaBank ?? 'Belum diatur' }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-muted">Nomor Rekening</th>
-                                    <td class="fw-bold text-dark">: {{ $user->petaniProfile->NoRekening ?? 'Belum diatur' }}</td>
+                                    <td class="fw-bold text-dark">: {{ $user->profile->NoRekening ?? 'Belum diatur' }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-muted">Nama Pemilik</th>
-                                    <td class="fw-semibold text-dark">: {{ $user->petaniProfile->NamaPemilik ?? 'Belum diatur' }}</td>
+                                    <td class="fw-semibold text-dark">: {{ $user->profile->NamaPemilik ?? 'Belum diatur' }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -136,15 +136,15 @@
                             <tbody>
                                 <tr>
                                     <th class="text-muted w-25">Nama Lengkap</th>
-                                    <td class="fw-semibold text-dark">: {{ $user->pembeliProfile->NamaLengkap ?? 'Belum diisi' }}</td>
+                                    <td class="fw-semibold text-dark">: {{ $user->profile->NamaLengkap ?? 'Belum diisi' }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-muted">No. Telepon</th>
-                                    <td class="fw-semibold text-dark">: {{ $user->pembeliProfile->NoTlp ?? 'Belum diisi' }}</td>
+                                    <td class="fw-semibold text-dark">: {{ $user->profile->NoWhatsApp ?? 'Belum diisi' }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-muted">Alamat Pengiriman</th>
-                                    <td class="fw-semibold text-dark">: {{ $user->pembeliProfile->Alamat ?? 'Belum diisi' }}</td>
+                                    <td class="fw-semibold text-dark">: {{ $user->profile->Alamat ?? 'Belum diisi' }}</td>
                                 </tr>
                             </tbody>
                         </table>

@@ -26,12 +26,12 @@
                     <!-- PISAH BARIS: Nama Tanaman -->
                     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px;">
                         <span style="color: #6b7280;">Nama Tanaman</span>
-                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->NamaTanaman }}</span>
+                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->permintaan->NamaTanaman }}</span>
                     </div>
                     <!-- PISAH BARIS: Komoditas -->
                     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px;">
-                        <span style="color: #6b7280;">Kategori Komoditas</span>
-                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->Komoditas }}</span>
+                        <span style="color: #6b7280;">Komoditas</span>
+                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->permintaan->Komoditas }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px;">
                         <span style="color: #6b7280;">Harga Satuan</span>
@@ -43,7 +43,7 @@
                     </div>
                     <div style="display: flex; justify-content: space-between; padding-bottom: 4px;">
                         <span style="color: #6b7280;">Mitra Petani</span>
-                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->petani->petaniProfile->NamaLengkap ?? $pembayaran->penawaran->petani->username }}</span>
+                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->petani->profile->NamaLengkap ?? $pembayaran->penawaran->petani->username }}</span>
                     </div>
                 </div>
             </div>

@@ -45,8 +45,8 @@
             
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 25px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
                 <div style="margin-bottom: 15px; display: flex; justify-content: center;">
-                    @if(!empty($profil->FotoProfile))
-                        <img src="{{ asset($profil->FotoProfile) }}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1; padding: 4px; background: #fff;">
+                    @if(!empty($profil->FotoProfil))
+                        <img src="{{ asset($profil->FotoProfil) }}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1; padding: 4px; background: #fff;">
                     @else
                         <div style="width: 150px; height: 150px; border-radius: 50%; background: #15803d; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; font-weight: bold; margin: 0 auto; border: 1px solid #cbd5e1;">
                             {{ strtoupper(substr($profil->NamaLengkap ?? $user->name, 0, 2)) }}
@@ -110,7 +110,7 @@
                         </tr>
                         <tr style="border-bottom: 1px solid #f1f5f9;">
                             <th style="padding: 14px 20px; color: #64748b; font-weight: 500; background: #fafafa;">No. Telepon / WhatsApp</th>
-                            <td style="padding: 14px 20px; color: #334155; font-weight: 500;">{{ $profil->NoTlp ?? 'Belum diatur' }}</td>
+                            <td style="padding: 14px 20px; color: #334155; font-weight: 500;">{{ $profil->NoWhatsApp ?? 'Belum diatur' }}</td>
                         </tr>
                         <tr>
                             <th style="padding: 14px 20px; color: #64748b; font-weight: 500; background: #fafafa;">Alamat</th>
@@ -147,14 +147,14 @@
                         <label style="display: block; font-weight: 600; color: #334155; margin-bottom: 8px; font-size: 0.9rem;">Nama Bank / E-Wallet</label>
                         <div style="position: relative;">
                             <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"><i class="fas fa-university"></i></span>
-                            <input type="text" name="NamaBank" value="{{ $profil->NamaBank ?? '' }}" required placeholder="Contoh: BCA / DANA" style="width: 100%; padding: 10px 10px 10px 40px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; color: #1e293b;">
+                            <input type="text" name="NamaBank" value="{{ $user->rekening->NamaBank ?? '' }}" required placeholder="Contoh: BCA / DANA" style="width: 100%; padding: 10px 10px 10px 40px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; color: #1e293b;">
                         </div>
                     </div>
                     <div>
                         <label style="display: block; font-weight: 600; color: #334155; margin-bottom: 8px; font-size: 0.9rem;">Nomor Rekening / E-Wallet</label>
                         <div style="position: relative;">
                             <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"><i class="fas fa-hashtag"></i></span>
-                            <input type="text" name="NoRekening" value="{{ $profil->NoRekening ?? '' }}" required placeholder="Contoh: 1234567890" style="width: 100%; padding: 10px 10px 10px 40px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; color: #1e293b;">
+                            <input type="text" name="NoRekening" value="{{ $user->rekening->NoRekening ?? '' }}" required placeholder="Contoh: 1234567890" style="width: 100%; padding: 10px 10px 10px 40px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; color: #1e293b;">
                         </div>
                     </div>
                 </div>
@@ -163,7 +163,7 @@
                     <label style="display: block; font-weight: 600; color: #334155; margin-bottom: 8px; font-size: 0.9rem;">Atas Nama (Pemilik Rekening)</label>
                     <div style="position: relative;">
                         <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"><i class="fas fa-user-circle"></i></span>
-                        <input type="text" name="NamaPemilik" value="{{ $profil->NamaPemilik ?? '' }}" required placeholder="Sesuai buku tabungan / akun e-wallet" style="width: 100%; padding: 10px 10px 10px 40px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; color: #1e293b;">
+                        <input type="text" name="NamaPemilik" value="{{ $user->rekening->AtasNama ?? '' }}" required placeholder="Sesuai buku tabungan / akun e-wallet" style="width: 100%; padding: 10px 10px 10px 40px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; color: #1e293b;">
                     </div>
                 </div>
 

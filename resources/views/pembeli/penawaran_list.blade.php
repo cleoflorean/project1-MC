@@ -10,7 +10,7 @@
         <div>
             <h1 style="margin: 0; font-size: 1.75rem; font-weight: 800; color: #0f172a; letter-spacing: -0.5px;">Evaluasi Penawaran Masuk</h1>
             <p style="margin: 6px 0 0 0; color: #64748b; font-size: 0.95rem;">
-                Permintaan Komoditas: <span style="background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; margin-left: 4px;">{{ $permintaan->NamaTanaman }}</span>
+                Permintaan: <span style="background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; margin-left: 4px;">{{ $permintaan->NamaTanaman }}</span>
             </p>
         </div>
         <div>
@@ -52,8 +52,8 @@
                         
                         {{-- FOTO PROFIL PETANI --}}
                         <div style="width: 52px; height: 52px; background: #e2e8f0; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; color: #94a3b8; border: 2px solid #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0;">
-                            @if(!empty($tawar->petani->petaniProfile->FotoProfile))
-                                <img src="{{ asset($tawar->petani->petaniProfile->FotoProfile) }}" alt="Foto Petani" style="width: 100%; height: 100%; object-fit: cover;">
+                            @if(!empty($tawar->petani->profile->FotoProfil))
+                                <img src="{{ asset($tawar->petani->profile->FotoProfil) }}" alt="Foto Petani" style="width: 100%; height: 100%; object-fit: cover;">
                             @else
                                 <i class="fas fa-user-tie" style="font-size: 1.2rem;"></i>
                             @endif
@@ -79,7 +79,7 @@
     {{-- Alamat tetap berada di bawahnya --}}
     <span style="font-size: 0.85rem; color: #64748b; display: flex; align-items: center; gap: 6px; margin-top: 4px;">
         <i class="fas fa-map-marker-alt" style="color: #ef4444;"></i> 
-        {{ $tawar->petani->petaniProfile->Alamat ?? 'Alamat belum diatur' }}
+        {{ $tawar->petani->profile->Alamat ?? 'Alamat belum diatur' }}
     </span>
 </div>
                     </div>
@@ -182,11 +182,11 @@
                         </div>
                         <div style="display: flex; gap: 12px;">
                             @php
-                                $noWa = $tawar->petani->petaniProfile->NoTlp ?? null;
+                                $noWa = $tawar->petani->profile->NoWhatsApp ?? null;
                                 if($noWa && substr($noWa, 0, 1) == '0') {
                                     $noWa = '62' . substr($noWa, 1);
                                 }
-                                $pesanWa = "Halo, saya pembeli komoditas " . $tawar->Komoditas . ". Penawaran Anda telah saya setujui. Mari berdiskusi mengenai teknis pengiriman.";
+                                $pesanWa = "Halo, saya pembeli komoditas " . ($tawar->permintaan->Komoditas ?? $tawar->permintaan->NamaTanaman) . ". Penawaran Anda telah saya setujui. Mari berdiskusi mengenai teknis pengiriman.";
                             @endphp
 
                             @if($noWa)

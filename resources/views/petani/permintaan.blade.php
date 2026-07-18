@@ -31,11 +31,11 @@
                             </div>
                             <div>
                                 <h6 class="fw-bold text-dark mb-0" style="font-size: 15px;">
-                                    {{ $item->user->pembeliProfile->NamaLengkap ?? $item->user->username ?? 'Pembeli' }}
+                                    {{ $item->user->profile->NamaLengkap ?? $item->user->username ?? 'Pembeli' }}
                                 </h6>
                                 <span class="text-muted small" style="font-size: 12px;">
                                     <i class="bi bi-geo-alt-fill me-1 text-danger"></i> 
-                                    {{ $item->user->pembeliProfile->Alamat ?? 'Lokasi belum diatur' }}
+                                    {{ $item->user->profile->Alamat ?? 'Lokasi belum diatur' }}
                                 </span>
                             </div>
                         </div>
@@ -103,11 +103,11 @@
                             </div>
                             <div>
                                 <h6 class="fw-bold text-dark mb-0" style="font-size: 15px;">
-                                    {{ $item->user->pembeliProfile->NamaLengkap ?? $item->user->username ?? 'Pembeli' }}
+                                    {{ $item->user->profile->NamaLengkap ?? $item->user->username ?? 'Pembeli' }}
                                 </h6>
                                 <span class="text-muted small" style="font-size: 12px;">
                                     <i class="bi bi-geo-alt-fill me-1 text-danger"></i> 
-                                    {{ $item->user->pembeliProfile->Alamat ?? 'Lokasi belum diatur' }}
+                                    {{ $item->user->profile->Alamat ?? 'Lokasi belum diatur' }}
                                 </span>
                             </div>
                         </div>

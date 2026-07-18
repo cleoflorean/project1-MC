@@ -36,7 +36,6 @@
                 <table class="table table-hover align-middle mb-0" id="tabelPetani">
                     <thead class="table-light text-muted fw-bold" style="font-size: 0.85rem;">
                         <tr>
-                            <th class="ps-4">ID</th>
                             <th>Username</th>
                             <th>Email</th>
                             <th>Tanggal Daftar</th>
@@ -46,7 +45,6 @@
                     <tbody style="font-size: 0.9rem;">
                         @forelse($petani as $user)
                         <tr>
-                            <td class="ps-4 fw-bold text-secondary">#{{ $user->id }}</td>
                             <td class="fw-bold text-dark">{{ $user->username }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->created_at ? $user->created_at->format('d M Y') : '-' }}</td>
@@ -74,7 +72,6 @@
                 <table class="table table-hover align-middle mb-0" id="tabelPembeli">
                     <thead class="table-light text-muted fw-bold" style="font-size: 0.85rem;">
                         <tr>
-                            <th class="ps-4">ID</th>
                             <th>Username</th>
                             <th>Email</th>
                             <th>Tanggal Daftar</th>
@@ -84,7 +81,6 @@
                     <tbody style="font-size: 0.9rem;">
                         @forelse($pembeli as $user)
                         <tr>
-                            <td class="ps-4 fw-bold text-secondary">#{{ $user->id }}</td>
                             <td class="fw-bold text-dark">{{ $user->username }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->created_at ? $user->created_at->format('d M Y') : '-' }}</td>

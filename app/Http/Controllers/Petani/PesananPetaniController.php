@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Petani;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pembayaran;
+use App\Models\Pengiriman; // WAJIB DITAMBAHKAN AGAR BISA UPDATE STATUS
 
 class PesananPetaniController extends Controller
 {
@@ -15,15 +16,15 @@ class PesananPetaniController extends Controller
     {
         $idPetaniLogin = auth()->id();
 
-        // Mengambil pesanan yang HANYA milik petani yang sedang login
-        $pesanans = Pembayaran::with(['penawaran.permintaan.user', 'ulasan'])
+        // PERBAIKAN 1 & 2: Tambah 'pengiriman' dan ubah nama variabel jadi $dataPesanan
+        $dataPesanan = Pembayaran::with(['penawaran.permintaan.user', 'ulasan', 'pengiriman'])
             ->whereHas('penawaran', function($query) use ($idPetaniLogin) {
                 $query->where('idPetani', $idPetaniLogin);
             })
             ->latest()
             ->get();
         
-        return view('petani.pesananmasuk', compact('pesanans'));
+        return view('petani.pesananmasuk', compact('dataPesanan'));
     }
 
     /**
@@ -37,10 +38,11 @@ class PesananPetaniController extends Controller
             $query->where('idPetani', auth()->id());
         })->findOrFail($id);
         
-        // FIX: WaktuKirim dihapus agar tidak memicu error "Unknown column"
-        $pesanan->update([
-            'StatusPesanan' => 'Dikirim'
-        ]);
+        // PERBAIKAN 3: Update StatusPesanan ke tabel pengirimans, bukan pembayarans
+        Pengiriman::updateOrCreate(
+            ['idTawar' => $pesanan->idTawar],
+            ['StatusPesanan' => 'Dikirim']
+        );
 
         return redirect()->back()->with('success', 'Berhasil! Status pesanan telah diperbarui menjadi Sedang Dikirim.');
     }
@@ -50,8 +52,8 @@ class PesananPetaniController extends Controller
      */
     public function detailPesanan($id)
     {
-        // Proteksi: Pastikan detail yang dibuka adalah miliknya
-        $pesanan = Pembayaran::with(['penawaran.permintaan.user.pembeliProfile', 'ulasan'])
+        // PERBAIKAN: Jangan lupa tambahkan 'pengiriman' di sini juga
+        $pesanan = Pembayaran::with(['penawaran.permintaan.user.profile', 'ulasan', 'pengiriman'])
             ->whereHas('penawaran', function($query) {
                 $query->where('idPetani', auth()->id());
             })

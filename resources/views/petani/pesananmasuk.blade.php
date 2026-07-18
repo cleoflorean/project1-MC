@@ -2,16 +2,36 @@
 @section('content')
 
 @php
-    $pesananBaru = $pesanans->filter(function($p) {
-        return trim($p->StatusPesanan) === 'Menunggu Verifikasi Admin';
+    // PERBAIKAN: Menggunakan $dataPesanan dari controller dan mengecek status di tabel yang benar
+    
+    $pesananBaru = $dataPesanan->filter(function($p) {
+        $statPembayaran = trim($p->StatusPembayaran);
+        $statPengiriman = trim(optional($p->pengiriman)->StatusPesanan);
+        
+        // Masuk tab ini JIKA pembayaran sedang diverifikasi admin dan barang belum diproses
+        return $statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Petani Menyiapkan Barang', 'Dikirim', 'Pesanan Selesai', 'Selesai']);
     });
     
-    $pesananProses = $pesanans->filter(function($p) {
-        return in_array(trim($p->StatusPesanan), ['Petani Menyiapkan Barang', 'Dikirim']);
+    $pesananProses = $dataPesanan->filter(function($p) {
+        $statPengiriman = trim(optional($p->pengiriman)->StatusPesanan);
+        
+        // Masuk tab ini JIKA status pengiriman sedang disiapkan atau dikirim
+        return in_array($statPengiriman, ['Petani Menyiapkan Barang', 'Dikirim']);
     });
     
-    $pesananSelesai = $pesanans->filter(function($p) {
-        return in_array(trim($p->StatusPesanan), ['Pesanan Selesai', 'Selesai']);
+    $pesananSelesai = $dataPesanan->filter(function($p) {
+        $statPengiriman = trim(optional($p->pengiriman)->StatusPesanan);
+        
+        // Masuk tab ini JIKA status pengiriman sudah selesai
+        return in_array($statPengiriman, ['Pesanan Selesai', 'Selesai']);
+    });
+
+    $pesananBatal = $dataPesanan->filter(function($p) {
+        $statPengiriman = trim(optional($p->pengiriman)->StatusPesanan);
+        $statPembayaran = trim($p->StatusPembayaran);
+        
+        // Masuk tab ini JIKA dibatalkan
+        return in_array($statPengiriman, ['Dibatalkan']) || in_array($statPembayaran, ['Ditolak', 'Dibatalkan']);
     });
 @endphp
 
@@ -42,6 +62,12 @@
                         <span style="background: #10b981; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; margin-left: 5px;">{{ $pesananSelesai->count() }}</span>
                     @endif
                 </button>
+                <button class="tab-btn flex-fill text-center" onclick="openTab(event, 'tabBatal')">
+                    Dibatalkan
+                    @if($pesananBatal->count() > 0)
+                        <span style="background: #ef4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; margin-left: 5px;">{{ $pesananBatal->count() }}</span>
+                    @endif
+                </button>
             </div>
 
             <div style="padding: 20px;">
@@ -53,6 +79,9 @@
                 </div>
                 <div id="tabSelesai" class="tab-content" style="display: none;">
                     @include('petani.pesanan-list', ['dataPesanan' => $pesananSelesai, 'tipeTab' => 'selesai'])
+                </div>
+                <div id="tabBatal" class="tab-content" style="display: none;">
+                    @include('petani.pesanan-list', ['dataPesanan' => $pesananBatal, 'tipeTab' => 'batal'])
                 </div>
             </div>
 
@@ -106,7 +135,7 @@
         evt.currentTarget.className += " active-tab";
     }
 
-    // JAVASCRIPT UNTUK ATUR MODAL POPUPsecara Otomatis
+    // JAVASCRIPT UNTUK ATUR MODAL POPUP secara Otomatis
     function bukaModalRating(element) {
         const rating = parseFloat(element.getAttribute('data-rating'));
         const ulasan = element.getAttribute('data-ulasan');

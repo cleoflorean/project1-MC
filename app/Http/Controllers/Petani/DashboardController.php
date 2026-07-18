@@ -21,12 +21,11 @@ class DashboardController extends Controller
 
         $dashboard = [
             'pengajuan_tawar'  => $totalPenawaran,
-            'dalam_pengiriman' => $dalamPengiriman,
-            'menuju_panen'     => '-', 
+            'dalam_pengiriman' => $dalamPengiriman, 
         ];
 
         // 3. Ambil data Permintaan Pasar Terbaru (Hanya yang Aktif & Belum Kadaluarsa)
-        $permintaanTerdekat = Permintaan::with('user.pembeliProfile')
+        $permintaanTerdekat = Permintaan::with('user.profile')
                                         ->where('Status', 'Aktif')
                                         ->whereDate('BatasTanggal', '>=', Carbon::now()->toDateString())
                                         ->latest()
@@ -34,7 +33,7 @@ class DashboardController extends Controller
                                         ->get();
 
         // 4. Riwayat Penawaran Petani (Tawaran yang sudah diajukan petani ini)
-        $pengajuanTawar = Penawaran::with('permintaan.user.pembeliProfile')
+        $pengajuanTawar = Penawaran::with('permintaan.user.profile')
                                    ->where('idPetani', $petaniId)
                                    ->latest()
                                    ->take(5)

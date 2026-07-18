@@ -16,10 +16,10 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'username', // Mengaktifkan kolom username agar bisa disimpan
+        'username', 
         'email',
         'password',
-        'role',     // Mengaktifkan kolom role agar bisa disimpan
+        'role',     
     ];
 
     /**
@@ -42,16 +42,29 @@ class User extends Authenticatable
     ];
 
     // ====================================================================
-    // RELASI UNTUK PEMBELI
+    // RELASI DATA PENGGUNA (UNIVERSAL)
     // ====================================================================
 
     /**
-     * Relasi One-to-One ke profil pembeli
+     * Relasi One-to-One ke profil universal (Biodata untuk Petani & Pembeli)
      */
-    public function pembeliProfile()
+    public function profile()
     {
-        return $this->hasOne(PembeliProfile::class, 'user_id', 'id');
+        return $this->hasOne(Profile::class, 'user_id', 'id');
     }
+
+    /**
+     * Relasi One-to-One ke rekening universal (Untuk Admin, Petani, dan Pembeli)
+     */
+    public function rekening()
+    {
+        return $this->hasOne(Rekening::class, 'user_id', 'id');
+    }
+
+
+    // ====================================================================
+    // RELASI TRANSAKSI
+    // ====================================================================
 
     /**
      * Relasi One-to-Many ke permintaan (Barang yang dicari pembeli)
@@ -61,37 +74,11 @@ class User extends Authenticatable
         return $this->hasMany(Permintaan::class, 'user_id');
     }
 
-    // ====================================================================
-    // RELASI UNTUK PETANI
-    // ====================================================================
-
-    /**
-     * Relasi One-to-One ke profil petani
-     */
-    public function petaniProfile()
-    {
-        // Parameter pertama: Nama kolom foreign key di tabel petani_profiles (user_id)
-        // Parameter kedua: Nama kolom primary key di tabel users (id)
-        return $this->hasOne(PetaniProfile::class, 'user_id', 'id');
-    }
-
     /**
      * Relasi One-to-Many ke penawaran (Barang yang ditawarkan petani)
      */
     public function penawarans()
     {
         return $this->hasMany(Penawaran::class, 'idPetani', 'id');
-    }
-
-    // ====================================================================
-    // RELASI UNTUK ADMIN
-    // ====================================================================
-
-    /**
-     * Relasi One-to-One ke profil admin
-     */
-    public function adminProfile()
-    {
-        return $this->hasOne(AdminProfile::class, 'user_id', 'id');
     }
 }

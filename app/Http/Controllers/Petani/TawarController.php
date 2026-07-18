@@ -21,49 +21,47 @@ class TawarController extends Controller
     }
 
     // 2. Memproses Data Saat Tombol "Kirim Penawaran" Diklik
-    public function store(Request $request)
-    {
-        // Proses Validasi Data Inputan Petani
-        $request->validate([
-            'idMinta'     => 'required|integer',
-            'NamaTanaman' => 'required|string',
-            'Komoditas'   => 'required|string', // Menyesuaikan input name="Komoditas"
-            'JumlahTawar' => 'required|integer|min:1',
-            'HargaTawar'  => 'required|numeric|min:1',
-            'Catatan'     => 'required|string',
-            'Gambar'      => 'required|image|mimes:jpeg,png,jpg|max:2048', // Typo pnhg & spasi diperbaiki
-        ]);
+    public function store(Request $request) {
+    // 1. Validasi input yang dikirim dari form
+    $request->validate([
+        'idMinta'     => 'required',
+        'JumlahTawar' => 'required|numeric',
+        'HargaTawar'  => 'required|numeric',
+        'Catatan'     => 'nullable|string',
+        'Gambar'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
 
-        // Instansiasi Model Tawar untuk simpan ke database
-        $penawaran = new Penawaran();
-        $penawaran->idMinta     = $request->idMinta;
-        $penawaran->idPetani     = auth()->id(); // OTOMATIS NGAMBIL ID PETANI
-        $penawaran->NamaTanaman = $request->NamaTanaman; 
-        $penawaran->Komoditas   = $request->Komoditas;    
-        $penawaran->JumlahTawar = $request->JumlahTawar;
-        $penawaran->HargaTawar  = $request->HargaTawar;
-        $penawaran->Catatan     = $request->Catatan;
-        $penawaran->Status      = 'Pending'; 
+    // 2. Buat objek penawaran baru
+    $penawaran = new Penawaran();
+    $penawaran->idMinta     = $request->idMinta;
+    $penawaran->idPetani    = auth()->id();
+    $penawaran->JumlahTawar = $request->JumlahTawar;
+    $penawaran->HargaTawar  = $request->HargaTawar;
+    $penawaran->Catatan     = $request->Catatan;
+    $penawaran->Status      = 'Pending';
 
-        // ... kode upload gambar dan save ...
-        // Logika upload Gambar jika petani memasukkan foto
-        if ($request->hasFile('Gambar')) {
-            $file = $request->file('Gambar');
-            $namaGambar = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/penawaran'), $namaGambar);
-            
-            $penawaran->Gambar = 'uploads/penawaran/' . $namaGambar;
-        }
+    // === HAPUS ATAU JANGAN SIMPAN BARIS DI BAWAH INI ===
+    // $penawaran->NamaTanaman = $request->NamaTanaman; <-- INI YANG BIKIN ERROR
+    // $penawaran->Komoditas   = $request->Komoditas;   <-- INI JUGA HAPUS AGAR AMAN
+    // ===================================================
 
-        $penawaran->save();
-
-        // Alihkan halaman ke index penawaran (Atau sesuaikan ke rute halaman riwayat yang kamu inginkan)
-        return redirect()->route('tawar.index')->with('success', 'Penawaran panen berhasil dikirim!');
+    // 3. Logika Upload Gambar (Kodememu yang sudah ada)
+    if ($request->hasFile('Gambar')) {
+        $file = $request->file('Gambar');
+        $namaGambar = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('uploads/penawaran'), $namaGambar);
+        
+        $penawaran->Gambar = 'uploads/penawaran/' . $namaGambar;
     }
 
+    // 4. Simpan ke database
+    $penawaran->save();
+
+    return redirect()->route('tawar.index')->with('success', 'Penawaran panen berhasil dikirim!');
+}
     public function index() {
         // Menggunakan where agar hanya mengambil data milik petani yang sedang login
-        $pengajuanTawar = Penawaran::with('permintaan.user.pembeliProfile')
+        $pengajuanTawar = Penawaran::with('permintaan.user.profile')
                         ->where('idPetani', auth()->id())
                         ->get();
         

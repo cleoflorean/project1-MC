@@ -12,16 +12,12 @@ class Pembayaran extends Model
     protected $table = 'pembayarans';
     protected $primaryKey = 'idPembayaran';
 
-    // PERBAIKAN: Tambahkan WaktuBayar, WaktuKirim, dan WaktuSelesai ke sini
     protected $fillable = [
         'idTawar', 
         'TotalBayar', 
         'BuktiTransfer', 
         'StatusPembayaran', 
-        'StatusPesanan',
-        'WaktuBayar',      // <- Ditambahkan
-        'WaktuKirim',      // <- Ditambahkan
-        'WaktuSelesai'     // <- Ditambahkan
+        'WaktuBayar'
     ];
 
     // Relasi ke tabel penawaran
@@ -29,10 +25,15 @@ class Pembayaran extends Model
     {
         return $this->belongsTo(Penawaran::class, 'idTawar', 'idTawar');
     }
-
-    // RELASI: One-to-One ke tabel Ulasan
+    
+    // INI ADALAH KODE YANG BIKIN ERROR-NYA HILANG
     public function ulasan()
     {
-        return $this->hasOne(Ulasan::class, 'idPembayaran', 'idPembayaran');
+        return $this->hasOne(Ulasan::class, 'idTawar', 'idTawar');
     }
+    public function pengiriman()
+{
+    // Menyambungkan pembayaran dan pengiriman lewat idTawar
+    return $this->hasOne(Pengiriman::class, 'idTawar', 'idTawar');
+}
 }

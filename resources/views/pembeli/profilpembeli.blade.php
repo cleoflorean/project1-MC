@@ -22,14 +22,21 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px 20px; border-radius: 6px; margin-bottom: 25px; font-size: 0.95rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-exclamation-triangle" style="color: #dc2626;"></i>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
     <div style="display: flex; gap: 30px; flex-wrap: wrap;">
         
         <div style="flex: 1; min-width: 280px; max-width: 320px; display: flex; flex-direction: column; gap: 25px;">
             
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 25px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
                 <div style="margin-bottom: 15px; display: flex; justify-content: center;">
-                    @if($profil && $profil->FotoProfile)
-                        <img src="{{ asset($profil->FotoProfile) }}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1; padding: 4px; background: #fff;">
+                    @if($profil && $profil->FotoProfil)
+                        <img src="{{ asset($profil->FotoProfil) }}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1; padding: 4px; background: #fff;">
                     @else
                         {{-- TAMPILAN FOTO DEFAULT ALA WHATSAPP --}}
                         <div style="width: 150px; height: 150px; border-radius: 50%; background: #cbd5e1; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; border: 3px solid #f8fafc; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
@@ -93,7 +100,7 @@
                         </tr>
                         <tr style="border-bottom: 1px solid #f1f5f9;">
                             <th style="padding: 14px 20px; color: #64748b; font-weight: 500; background: #fafafa;">No. Telepon / WhatsApp</th>
-                            <td style="padding: 14px 20px; color: #334155; font-weight: 500;">{{ $profil->NoTlp ?? '-' }}</td>
+                            <td style="padding: 14px 20px; color: #334155; font-weight: 500;">{{ $profil->NoWhatsApp ?? '-' }}</td>
                         </tr>
                         <tr>
                             <th style="padding: 14px 20px; color: #64748b; font-weight: 500; background: #fafafa;">Alamat</th>
@@ -107,6 +114,64 @@
                 </table>
             </div>
 
+        </div>
+    </div>
+
+    {{-- KOTAK FORM PENGATURAN REKENING (Tampilan Baru) --}}
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-top: 30px; width: 100%;">
+        <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 15px 20px;">
+            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-wallet" style="color: #15803d;"></i> Pengaturan Rekening / Pengembalian Dana
+            </h3>
+        </div>
+        
+        <div style="padding: 25px;">
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 0; margin-bottom: 25px;">
+                <i class="fas fa-info-circle" style="color: #94a3b8; margin-right: 4px;"></i> Informasi ini bersifat rahasia dan hanya digunakan oleh Admin untuk proses pengembalian dana (refund) jika transaksi dibatalkan.
+            </p>
+
+            <form action="{{ route('profil.rekening') }}" method="POST">
+                @csrf
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #334155; margin-bottom: 8px; font-size: 0.9rem;">Nama Bank / E-Wallet</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"><i class="fas fa-university"></i></span>
+                            <input type="text" name="NamaBank" value="{{ $user->rekening->NamaBank ?? '' }}" required placeholder="Contoh: BCA / DANA" style="width: 100%; padding: 10px 10px 10px 40px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; color: #1e293b;">
+                        </div>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #334155; margin-bottom: 8px; font-size: 0.9rem;">Nomor Rekening / E-Wallet</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"><i class="fas fa-hashtag"></i></span>
+                            <input type="text" name="NoRekening" value="{{ $user->rekening->NoRekening ?? '' }}" required placeholder="Contoh: 1234567890" style="width: 100%; padding: 10px 10px 10px 40px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; color: #1e293b;">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; font-weight: 600; color: #334155; margin-bottom: 8px; font-size: 0.9rem;">Atas Nama (Pemilik Rekening)</label>
+                    <div style="position: relative;">
+                        <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"><i class="fas fa-user-circle"></i></span>
+                        <input type="text" name="NamaPemilik" value="{{ $user->rekening->AtasNama ?? '' }}" required placeholder="Sesuai buku tabungan / akun e-wallet" style="width: 100%; padding: 10px 10px 10px 40px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; color: #1e293b;">
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-sizing: border-box;">
+                    <label style="display: block; font-weight: 600; color: #334155; margin-bottom: 6px; font-size: 0.95rem;">
+                        <i class="fas fa-shield-alt" style="color: #64748b; margin-right: 5px;"></i> Konfirmasi Keamanan
+                    </label>
+                    <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 12px;">Untuk menyimpan perubahan rekening, mohon masukkan password akun Anda.</p>
+                    <div style="position: relative; max-width: 400px;">
+                        <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"><i class="fas fa-lock"></i></span>
+                        <input type="password" name="password" required placeholder="Masukkan password saat ini..." style="width: 100%; padding: 10px 10px 10px 40px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem;">
+                    </div>
+                </div>
+
+                <button type="submit" style="background: #15803d; color: white; padding: 10px 24px; border: none; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s;">
+                    <i class="fas fa-save"></i> Simpan Rekening
+                </button>
+            </form>
         </div>
     </div>
 </div>

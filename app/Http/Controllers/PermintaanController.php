@@ -6,15 +6,16 @@ use Illuminate\Http\Request;
 use App\Models\Permintaan;
 use App\Models\Penawaran;
 use App\Models\Pembayaran;
+use App\Models\Pengiriman; // <-- Tambahkan ini untuk menghitung total kontrak
 use App\Models\User;
-use App\Models\Ulasan; // <-- Tambahkan ini untuk memanggil model User
+use App\Models\Ulasan; 
 
 class PermintaanController extends Controller
 {
     public function dashboard(Request $request)
     {
         $idPermintaans = $request->user()->permintaans()->pluck('idPermintaan');
-        $penawarans = Penawaran::with(['petani', 'permintaan']) 
+        $penawarans = Penawaran::with(['petani.profile', 'permintaan']) // <-- FIX: profile jadi profile
             ->whereIn('idMinta', $idPermintaans)->latest()->take(5)->get(); 
 
         return view('pembeli.pembeli', compact('penawarans'));
@@ -22,7 +23,6 @@ class PermintaanController extends Controller
 
     public function index(Request $request)
     {
-        // Panggil relasi penawarans agar kita bisa cek apakah ada yang disetujui
         $permintaans = $request->user()->permintaans()->with('penawarans')->latest()->get(); 
         return view('pembeli.permintaan', compact('permintaans')); 
     }
@@ -31,7 +31,6 @@ class PermintaanController extends Controller
     {
         $permintaan = Permintaan::with('penawarans')->findOrFail($id);
         
-        // Cek apakah ada penawaran yang sudah "Setuju"
         $hasApproved = $permintaan->penawarans->where('Status', 'Setuju')->count() > 0;
         
         if ($hasApproved) {
@@ -64,13 +63,18 @@ class PermintaanController extends Controller
         return redirect()->route('permintaan.index')->with('success', 'Permintaan berhasil dibuat.');
     }
 
-    // FIX NAMA VIEW BERDASARKAN FOTOMU: daftartawaran
     public function lihatPenawaran($id)
     {
-        $permintaan = Permintaan::with(['penawarans.petani.petaniProfile'])->findOrFail($id);
+        $permintaan = Permintaan::with(['penawarans.petani.profile'])->findOrFail($id); // <-- FIX: profile jadi profile
         $penawarans = $permintaan->penawarans;
 
         return view('pembeli.penawaran_list', compact('permintaan', 'penawarans'));
+    }
+
+    public function lihatFoto($id)
+    {
+        $tawar = Penawaran::with(['petani.profile', 'permintaan'])->findOrFail($id);
+        return view('pembeli.foto_penawaran', compact('tawar'));
     }
 
     public function updateStatusPenawaran(Request $request, $id)
@@ -83,17 +87,23 @@ class PermintaanController extends Controller
             $permintaan = Permintaan::findOrFail($penawaran->idMinta);
             $totalBayar = $penawaran->JumlahTawar * $penawaran->HargaTawar;
             
-            // Buat tagihan saat itu juga
+            // 1. Buat tagihan pembayaran (TANPA StatusPesanan)
             Pembayaran::updateOrCreate(
                 ['idTawar' => $penawaran->idTawar],
                 [
                     'TotalBayar'       => $totalBayar,
-                    'StatusPembayaran' => 'Belum Dibayar',
-                    'StatusPesanan'    => 'Menunggu Pembayaran'
+                    'StatusPembayaran' => 'Belum Dibayar'
                 ]
             );
 
-            // Cek akumulasi volume
+            // 2. PERBAIKAN: Buat data pengiriman awal agar StatusPesanan bisa dilacak
+            Pengiriman::updateOrCreate(
+                ['idTawar' => $penawaran->idTawar],
+                [
+                    'StatusPesanan' => 'Menunggu Pembayaran'
+                ]
+            );
+
             $totalVolumeTerkumpul = Penawaran::where('idMinta', $penawaran->idMinta)
                                              ->where('Status', 'Setuju')->sum('JumlahTawar');
 
@@ -106,53 +116,43 @@ class PermintaanController extends Controller
 
         return back()->with('success', 'Status penawaran berhasil diperbarui.');
     }
-    
-    public function lihatFoto($id)
-    {
-        // Cari data penawaran beserta relasi ke petani
-        $tawar = Penawaran::with(['petani.petaniProfile'])->findOrFail($id);
-
-        // Arahkan ke file blade baru (sesuaikan foldernya)
-        return view('pembeli.foto_penawaran', compact('tawar'));
-    }
 
     // ==========================================
-    // METHOD BARU: Menampilkan Informasi Petani
+    // METHOD PROFIL PETANI (SUDAH DISINKRONKAN)
     // ==========================================
     public function showPetani($id)
     {
-        // 1. Cari user petani beserta relasi profilnya
-        $petaniUser = User::with('petaniProfile')->findOrFail($id);
+        // 1. FIX: Cari user petani menggunakan relasi profile universal
+        $petaniUser = User::with('profile')->findOrFail($id);
         
         // 2. Ambil data profil petaninya
-        $petani = $petaniUser->petaniProfile;
+        $petani = $petaniUser->profile;
         
         if (!$petani) {
             return back()->with('error', 'Petani ini belum melengkapi data profilnya.');
         }
 
-        // Menyisipkan data user ke dalam variabel profil
         $petani->setRelation('user', $petaniUser);
 
-        // 3. Hitung Statistik Transaksi Berhasil (Pesanan Selesai)
-        $totalKontrak = Pembayaran::whereIn('StatusPesanan', ['Pesanan Selesai', 'Selesai'])
+        // 3. FIX: StatusPesanan sekarang mengacu ke tabel pengirimans agar sinkron dengan sisi petani
+        $totalKontrak = Pengiriman::whereIn('StatusPesanan', ['Pesanan Selesai', 'Selesai'])
             ->whereHas('penawaran', function ($query) use ($id) {
                 $query->where('idPetani', $id);
             })->count();
 
-        // 4. Hitung Rating & Total Ulasan Asli
-        $rataRataRating = Ulasan::whereHas('pembayaran.penawaran', function ($query) use ($id) {
+        // 4. FIX: Ulasan sekarang terhubung langsung ke penawaran (tanpa lewat pembayaran)
+        $rataRataRating = Ulasan::whereHas('penawaran', function ($query) use ($id) {
             $query->where('idPetani', $id); 
         })->avg('Rating');
         $rataRataRating = $rataRataRating ? round($rataRataRating, 1) : 0;
 
-        $totalUlasan = Ulasan::whereHas('pembayaran.penawaran', function ($query) use ($id) {
+        $totalUlasan = Ulasan::whereHas('penawaran', function ($query) use ($id) {
             $query->where('idPetani', $id);
         })->count();
 
-        // 5. Ambil Daftar Ulasan Lengkap beserta relasinya
-        $daftarUlasan = Ulasan::with('pembayaran.penawaran.permintaan.user')
-            ->whereHas('pembayaran.penawaran', function ($query) use ($id) {
+        // 5. FIX: Menyesuaikan rantai relasi untuk daftar rincian ulasan
+        $daftarUlasan = Ulasan::with('penawaran.permintaan.user.profile')
+            ->whereHas('penawaran', function ($query) use ($id) {
                 $query->where('idPetani', $id); 
             })->latest()->get();
 
@@ -162,7 +162,7 @@ class PermintaanController extends Controller
             'totalKontrak', 
             'rataRataRating', 
             'totalUlasan',
-            'daftarUlasan' // <-- Variabel baru untuk rincian ulasan
+            'daftarUlasan'
         ));
     }
 }

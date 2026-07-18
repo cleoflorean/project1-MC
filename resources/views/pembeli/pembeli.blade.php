@@ -56,7 +56,7 @@
                                     </h4>
                                     <p class="product-seller mb-1">
                                         <i class="fas fa-store me-1" style="font-size: 0.75rem;"></i> 
-                                        {{ $tawar->petani?->petaniProfile?->NamaLengkap ?? $tawar->petani?->username ?? 'Petani Tidak Diketahui' }}
+                                        {{ $tawar->petani?->profile?->NamaLengkap ?? $tawar->petani?->username ?? 'Petani Tidak Diketahui' }}
                                     </p>
                                     <p class="product-category mb-2">
                                         {{ $tawar->permintaan->Komoditas ?? '-' }}

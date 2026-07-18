@@ -8,18 +8,15 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('pembayarans', function (Blueprint $table) {
-            $table->id('idPembayaran');
+        Schema::create('pengirimans', function (Blueprint $table) {
+            $table->id('idPengiriman');
             $table->unsignedBigInteger('idTawar'); // Berelasi ke Penawaran
             
-            // MURNI FINANSIAL
-            $table->integer('TotalBayar');
-            $table->string('BuktiTransfer')->nullable();
-            $table->string('StatusPembayaran')->default('Belum Bayar');
-            $table->timestamp('WaktuBayar')->nullable();
+            // MURNI LOGISTIK / OPERASIONAL
+            $table->string('StatusPesanan')->default('Menyiapkan Barang');
+            $table->timestamp('WaktuKirim')->nullable();
+            $table->timestamp('WaktuSelesai')->nullable();
             
-            // Kolom StatusPesanan, WaktuKirim, WaktuSelesai sudah DIHAPUS dari sini
-
             $table->timestamps();
 
             // Relasi
@@ -29,6 +26,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('pembayarans');
+        Schema::dropIfExists('pengirimans');
     }
 };

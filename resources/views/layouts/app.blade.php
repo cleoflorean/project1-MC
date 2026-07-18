@@ -117,11 +117,11 @@
             <button class="tc-navbar-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             {{-- Cek apakah user punya profil dan file FotoProfile ada --}}
             @php
-                $profil = auth()->user()->petaniProfile;
+                $profil = auth()->user()->profile;
             @endphp
 
-            @if($profil && $profil->FotoProfile)
-                <img src="{{ asset($profil->FotoProfile) }}"
+            @if($profil && $profil->FotoProfil)
+                <img src="{{ asset($profil->FotoProfil) }}"
                 alt="Profil" class="tc-navbar-avatar" style="object-fit: cover;">
             @else
             {{-- Gambar default jika petani belum upload foto profil --}}

@@ -21,9 +21,9 @@
         <div style="display: flex; gap: 16px; align-items: center;">
             {{-- Foto Profil --}}
             <div style="position: relative; flex-shrink: 0;">
-                @if(!empty($petani->FotoProfile))
+                @if(!empty($petani->FotoProfil))
                     {{-- Border foto diubah jadi abu-abu terang agar terlihat di atas putih --}}
-                    <img src="{{ asset($petani->FotoProfile) }}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0;">
+                    <img src="{{ asset($petani->FotoProfil) }}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0;">
                 @else
                     <div style="width: 80px; height: 80px; border-radius: 50%; background: #15803d; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; border: 2px solid #e2e8f0;">
                         {{ strtoupper(substr($petani->NamaKebun ?? $petani->NamaLengkap ?? 'P', 0, 1)) }}

@@ -36,7 +36,6 @@
                     @guest
                         <li class="nav-item">
                             <a href="{{ route('beranda') }}" class="nav-link fw-semibold {{ request()->routeIs('beranda') ? 'text-success active' : 'text-secondary' }}">
-                                Beranda
                             </a>
                         </li>
                     @endguest
@@ -96,7 +95,7 @@
                                 <div class="profile-avatar-circle" style="width: 38px; height: 38px; font-size: 0.8rem;">
                                     @php
                                         // Ambil foto dari profile pembeli jika ada
-                                        $fotoProfil = auth()->user()->pembeliProfile?->FotoProfile;
+                                        $fotoProfil = auth()->user()->profile?->FotoProfil;
                                     @endphp
 
                                     @if($fotoProfil) 

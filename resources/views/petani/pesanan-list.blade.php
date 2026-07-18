@@ -9,12 +9,14 @@
         </div>
         
         <div class="text-end">
-            @php $statusPesanan = trim($pesanan->StatusPesanan); @endphp
+            @php $statusPesanan = trim(optional($pesanan->pengiriman)->StatusPesanan ?: $pesanan->StatusPembayaran); @endphp
             
             @if($statusPesanan === 'Menunggu Verifikasi Admin')
                 <span class="text-warning fw-bold small text-uppercase"><i class="fas fa-clock me-1"></i> Menunggu Admin</span>
             @elseif(in_array($statusPesanan, ['Pesanan Selesai', 'Selesai']))
                 <span class="text-success fw-bold small text-uppercase"><i class="fas fa-check-circle me-1"></i> Selesai</span>
+            @elseif(in_array($statusPesanan, ['Dibatalkan', 'Ditolak']))
+                <span class="text-danger fw-bold small text-uppercase"><i class="fas fa-ban me-1"></i> Dibatalkan</span>
             @else
                 <span class="text-success fw-bold small text-uppercase">{{ $statusPesanan }}</span>
             @endif
@@ -34,7 +36,7 @@
                 </div>
             </div>
             <div class="col">
-                <h5 class="fw-bold text-dark mb-1 fs-5">{{ $pesanan->penawaran->NamaTanaman }}</h5>
+                <h5 class="fw-bold text-dark mb-1 fs-5">{{ $pesanan->penawaran->permintaan->NamaTanaman }}</h5>
                 <p class="mb-1 text-secondary small">
                     <i class="bi bi-box me-1"></i> {{ number_format($pesanan->penawaran->JumlahTawar, 0, ',', '.') }} Kg
                 </p>
@@ -91,6 +93,10 @@
                         Belum ada ulasan
                     </span>
                 @endif
+            @elseif(in_array($statusPesanan, ['Dibatalkan', 'Ditolak']))
+                <button type="button" disabled class="btn btn-outline-danger px-4 fw-bold rounded-pill disabled" style="cursor: not-allowed; opacity: 0.8;">
+                    Dibatalkan
+                </button>
             @endif
         </div>
     </div>

@@ -3,6 +3,20 @@
 
 @section('content')
 <div style="background-color: #f4f7f6; min-height: 100vh; padding-bottom: 90px; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    @php
+        $statPembayaran = trim($pesanan->StatusPembayaran);
+        $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
+    
+        if ($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Petani Menyiapkan Barang', 'Dikirim', 'Pesanan Selesai', 'Selesai'])) {
+            $statusPesanan = 'Menunggu Verifikasi Admin';
+        } else {
+            $statusPesanan = $statPengiriman ?: $statPembayaran;
+        }
+    
+        $isConfirmed = !in_array($statusPesanan, ['Menunggu Pembayaran', 'Menunggu Verifikasi Admin', 'Belum Dibayar']) && !empty($pesanan->BuktiTransfer);
+        $isShipped = in_array($statusPesanan, ['Dikirim', 'Dalam Pengiriman', 'Pesanan Selesai', 'Selesai']);
+        $isDone = in_array($statusPesanan, ['Pesanan Selesai', 'Selesai']);
+    @endphp
     
     {{-- HEADER KEMBALI (Background menyatu dengan halaman, tetap sticky saat di-scroll) --}}
     <div style="background-color: #f4f7f6; position: sticky; top: 0; z-index: 50; padding-top: 0">
@@ -25,19 +39,63 @@
                 
                 @if(empty($pesanan->BuktiTransfer))
                     <p style="margin: 0; color: #ef4444; font-size: 0.9rem; font-weight: 600;">Menunggu Pembayaran</p>
-                @elseif($pesanan->StatusPesanan === 'Menunggu Verifikasi Admin')
+                @elseif(optional($pesanan->pengiriman)->StatusPesanan === 'Menunggu Verifikasi Admin')
                     <p style="margin: 0; color: #f59e0b; font-size: 0.9rem; font-weight: 600;">Menunggu Admin TaniHub memverifikasi bukti transfer Anda</p>
-                @elseif($pesanan->StatusPesanan === 'Petani Menyiapkan Barang')
+                @elseif(optional($pesanan->pengiriman)->StatusPesanan === 'Petani Menyiapkan Barang')
                     <p style="margin: 0; color: #2563eb; font-size: 0.9rem; font-weight: 600;">Pembayaran diterima. Petani sedang mengemas pesanan Anda</p>
-                @elseif($pesanan->StatusPesanan === 'Dikirim')
+                @elseif(optional($pesanan->pengiriman)->StatusPesanan === 'Dikirim')
                     <p style="margin: 0; color: #10b981; font-size: 0.9rem; font-weight: 600;">Pesanan sedang dalam perjalanan ke alamat Anda</p>
-                @elseif($pesanan->StatusPesanan === 'Pesanan Selesai')
+                @elseif(optional($pesanan->pengiriman)->StatusPesanan === 'Pesanan Selesai')
                     <p style="margin: 0; color: #059669; font-size: 0.9rem; font-weight: 600;">Pesanan telah selesai. Terima kasih!</p>
                 @else
-                    <p style="margin: 0; color: #6b7280; font-size: 0.9rem; font-weight: 600;">{{ $pesanan->StatusPesanan }}</p>
+                    <p style="margin: 0; color: #6b7280; font-size: 0.9rem; font-weight: 600;">{{ optional($pesanan->pengiriman)->StatusPesanan ?: $pesanan->StatusPembayaran }}</p>
                 @endif
             </div>
             <i class="fas fa-clipboard-list" style="font-size: 2rem; color: #e5e7eb;"></i>
+        </div>
+
+        {{-- SEGMEN TIMELINE (Riwayat Proses) --}}
+        <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+            <h4 style="margin: 0 0 15px 0; font-size: 1rem; color: #1f2937; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-stream" style="color: #10b981;"></i> Riwayat Transaksi
+            </h4>
+        
+            {{-- Timeline Container --}}
+            <div style="margin-left: 10px; border-left: 2px solid #e5e7eb; padding-left: 20px; position: relative;">
+            
+                {{-- 1. Penawaran Disetujui --}}
+                <div style="position: relative; margin-bottom: 25px;">
+                    <div style="position: absolute; left: -27px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: #10b981; border: 2px solid white; box-shadow: 0 0 0 2px #10b981;"></div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #1f2937; margin-bottom: 2px;">Pesanan Dibuat</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">Menunggu pembayaran atau verifikasi admin.</div>
+                    <div style="font-size: 0.8rem; color: #9ca3af; margin-top: 2px;">{{ \Carbon\Carbon::parse($pesanan->created_at)->translatedFormat('d M Y - H:i') }}</div>
+                </div>
+
+                {{-- 2. Pembayaran Dikonfirmasi --}}
+                <div style="position: relative; margin-bottom: 25px; opacity: {{ $isConfirmed ? '1' : '0.4' }};">
+                    <div style="position: absolute; left: -27px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: {{ $isConfirmed ? '#10b981' : '#d1d5db' }}; border: 2px solid white; box-shadow: 0 0 0 2px {{ $isConfirmed ? '#10b981' : '#d1d5db' }};"></div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #1f2937; margin-bottom: 2px;">Pembayaran Dikonfirmasi</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">Pembayaran berhasil diverifikasi. Pesanan sedang dikemas.</div>
+                </div>
+
+                {{-- 3. Pesanan Dikirim --}}
+                <div style="position: relative; margin-bottom: 25px; opacity: {{ $isShipped ? '1' : '0.4' }};">
+                    <div style="position: absolute; left: -27px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: {{ $isShipped ? '#10b981' : '#d1d5db' }}; border: 2px solid white; box-shadow: 0 0 0 2px {{ $isShipped ? '#10b981' : '#d1d5db' }};"></div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #1f2937; margin-bottom: 2px;">Pesanan Dikirim</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">Barang sedang dalam perjalanan menuju lokasi Anda.</div>
+                </div>
+
+                {{-- 4. Pesanan Selesai --}}
+                <div style="position: relative; opacity: {{ $isDone ? '1' : '0.4' }};">
+                    <div style="position: absolute; left: -27px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: {{ $isDone ? '#10b981' : '#d1d5db' }}; border: 2px solid white; box-shadow: 0 0 0 2px {{ $isDone ? '#10b981' : '#d1d5db' }};"></div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #1f2937; margin-bottom: 2px;">Pesanan Selesai</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">Barang telah Anda terima.</div>
+                    @if($isDone)
+                        <div style="font-size: 0.8rem; color: #9ca3af; margin-top: 2px;">{{ \Carbon\Carbon::parse($pesanan->updated_at)->translatedFormat('d M Y - H:i') }}</div>
+                    @endif
+                </div>
+                
+            </div>
         </div>
 
         {{-- ALAMAT PENGIRIMAN --}}
@@ -46,8 +104,8 @@
                 <i class="fas fa-map-marker-alt" style="color: #10b981; font-size: 1.2rem; margin-top: 2px;"></i>
                 <div>
                     <h4 style="margin: 0 0 5px 0; font-size: 1rem; color: #1f2937; font-weight: 700;">Alamat Pengiriman</h4>
-                    <p style="margin: 0 0 5px 0; font-size: 0.95rem; font-weight: 600; color: #374151;">{{ auth()->user()->pembeliProfile->NamaLengkap }} | {{ auth()->user()->pembeliProfile->NoTlp ?? '-' }}</p>
-                    <p style="margin: 0; font-size: 0.9rem; color: #6b7280; line-height: 1.5;">{{ auth()->user()->pembeliProfile->Alamat ?? 'Alamat belum diatur' }}</p>
+                    <p style="margin: 0 0 5px 0; font-size: 0.95rem; font-weight: 600; color: #374151;">{{ auth()->user()->profile->NamaLengkap }} | {{ auth()->user()->profile->NoWhatsApp ?? '-' }}</p>
+                    <p style="margin: 0; font-size: 0.9rem; color: #6b7280; line-height: 1.5;">{{ auth()->user()->profile->Alamat ?? 'Alamat belum diatur' }}</p>
                 </div>
             </div>
         </div>
@@ -68,8 +126,8 @@
                     @endif
                 </div>
                 <div style="flex-grow: 1;">
-                    <h5 style="margin: 0 0 5px 0; font-size: 1.05rem; font-weight: 700; color: #1f2937;">{{ $pesanan->penawaran->Komoditas }}</h5>
-                    <p style="margin: 0; font-size: 0.9rem; color: #6b7280;">Jumlah: {{ $pesanan->penawaran->JumlahTawar }} Kg</p>
+                    <h5 style="margin: 0 0 5px 0; font-size: 1.05rem; font-weight: 700; color: #1f2937;">{{ $pesanan->penawaran->permintaan->Komoditas }}</h5>
+                    <p style="margin: 0; font-size: 0.9rem; color: #6b7280;">Jumlah: {{ $pesanan->penawaran->permintaan->JumlahTawar }} Kg</p>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
                         <span style="font-weight: 600; color: #1f2937; font-size: 0.95rem;">Rp {{ number_format($pesanan->penawaran->HargaTawar, 0, ',', '.') }} <small style="color: #6b7280; font-weight: 400;">/kg</small></span>
                     </div>
@@ -102,11 +160,11 @@
                 <a href="{{ route('pembayaran.show', $pesanan->idTawar) }}" style="flex: 1; text-align: center; background: #ef4444; color: white; padding: 14px 0; border-radius: 8px; font-weight: 700; font-size: 1rem; text-decoration: none;">
                     Bayar Sekarang
                 </a>
-            @elseif($pesanan->StatusPesanan === 'Dikirim')
+            @elseif(optional($pesanan->pengiriman)->StatusPesanan === 'Dikirim')
                 <button onclick="document.getElementById('modalUlasanDetail').style.display='flex'" style="flex: 1; background: #2a7a43; color: white; border: none; padding: 14px 0; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer;">
                     Pesanan Diterima
                 </button>
-            @elseif($pesanan->StatusPesanan === 'Pesanan Selesai')
+            @elseif(in_array(optional($pesanan->pengiriman)->StatusPesanan, ['Pesanan Selesai', 'Selesai']))
                 <button disabled style="flex: 1; background: #f3f4f6; color: #9ca3af; border: none; padding: 14px 0; border-radius: 8px; font-weight: 700; font-size: 1rem;">
                     Transaksi Selesai
                 </button>

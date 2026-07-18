@@ -18,9 +18,6 @@
             <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
                 <i class="bi bi-geo-alt-fill text-danger"></i> Permintaan Terbaru
             </h6>
-            <a href="{{ route('petani.permintaan.index') }}" class="text-success text-decoration-none fw-semibold" style="font-size: 14px;">
-                Lihat Semua
-            </a>
         </div>
 
         {{-- List Permintaan --}}
@@ -75,9 +72,6 @@
                     <i class="bi bi-tags-fill me-2 text-warning"></i>
                     Riwayat Penawaran Anda
                 </h6>
-                <a href="{{ route('tawar.index') }}" class="tc-link-kecil">
-                    Lihat Semua
-                </a>
             </div>
             <div class="tc-card-body p-0">
                 @forelse($pengajuanTawar as $tawar)
@@ -87,6 +81,7 @@
                                 @if($tawar->Gambar)
                                     <img src="{{ asset($tawar->Gambar) }}" alt="Gambar Tanaman" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;">
                                 @else
+
                                     <div style="width: 50px; height: 50px; border-radius: 8px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
                                         <i class="bi bi-image"></i>
                                     </div>
@@ -95,11 +90,11 @@
 
                             <div class="tc-tawar-text">
                                 <div class="tc-tawar-komoditas fw-bold text-dark mb-1"> 
-                                    {{ $tawar->NamaTanaman }}
+                                    {{ $tawar->permintaan->NamaTanaman }}
                                 </div>
                                 <div class="tc-tawar-pasar text-muted" style="font-size: 12px;">
                                     <i class="bi bi-shop me-1"></i> 
-                                    {{ $tawar->permintaan->user->pembeliProfile->NamaLengkap ?? $tawar->permintaan->user->username ?? 'Toko Pembeli' }}
+                                    {{ $tawar->permintaan->user->profile->NamaLengkap ?? $tawar->permintaan->user->username ?? 'Toko Pembeli' }}
                                 </div>
                                 <div class="tc-tawar-harga text-success mt-1" style="font-size: 13px; font-weight: 600;"> 
                                     Rp{{ number_format($tawar->HargaTawar, 0, ',', '.') }}/kg
