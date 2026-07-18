@@ -7,8 +7,8 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('username')->unique(); 
-            $table->string('email')->unique();    
+            $table->string('username',25)->unique(); 
+            $table->string('email',100)->unique();    
             $table->string('password');
             
             // PERBAIKAN FATAL: Tambahkan role 'admin' di sini agar AdminSeeder bisa berjalan!

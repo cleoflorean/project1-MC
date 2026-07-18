@@ -13,7 +13,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             
             // Kolom no_whatsapp DIHAPUS karena kita akan ambil dari profil
-            $table->string('password_sementara')->nullable();
+            $table->string('password_sementara',10)->nullable();
             $table->enum('status', ['Menunggu', 'Selesai'])->default('Menunggu');
             
             $table->timestamps();

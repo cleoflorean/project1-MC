@@ -13,7 +13,7 @@ return new class extends Migration
             $table->unsignedBigInteger('idTawar'); // Berelasi ke Penawaran
             
             // MURNI LOGISTIK / OPERASIONAL
-            $table->string('StatusPesanan')->default('Menyiapkan Barang');
+            $table->string('StatusPesanan',20)->default('Menyiapkan Barang');
             $table->timestamp('WaktuKirim')->nullable();
             $table->timestamp('WaktuSelesai')->nullable();
             

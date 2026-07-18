@@ -10,11 +10,11 @@ return new class extends Migration {
             $table->unsignedBigInteger('user_id');
             
             // Biodata untuk Petani dan Pembeli
-            $table->string('NamaLengkap');
-            $table->string('NoWhatsApp')->nullable();
+            $table->string('NamaLengkap',60);
+            $table->string('NoWhatsApp',17)->nullable();
             $table->text('Alamat')->nullable();
             $table->text('Bio')->nullable();
-            $table->string('FotoProfil')->nullable();
+            $table->string('FotoProfil',255)->nullable();
             
             $table->timestamps();
 

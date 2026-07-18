@@ -19,9 +19,9 @@ return new class extends Migration
             $table->unique('idTawar'); 
             
             // Data Konten Ulasan
-            $table->integer('Rating'); 
+            $table->tinyInteger('Rating')->unsigned(); 
             $table->text('Ulasan')->nullable(); 
-            $table->string('MediaUlasan')->nullable(); // Langsung digabung ke sini
+            $table->string('MediaUlasan',255)->nullable(); // Langsung digabung ke sini
             
             $table->timestamps();
         });

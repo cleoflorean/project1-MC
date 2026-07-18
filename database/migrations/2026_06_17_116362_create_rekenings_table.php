@@ -16,9 +16,9 @@ return new class extends Migration {
             $table->unique('user_id');
             
             // Data Bank
-            $table->string('NamaBank'); // cth: BCA, BRI, Mandiri
-            $table->string('NoRekening');
-            $table->string('AtasNama');
+            $table->string('NamaBank',20); // cth: BCA, BRI, Mandiri
+            $table->string('NoRekening',20);
+            $table->string('AtasNama',100);
             
             $table->timestamps();
         });

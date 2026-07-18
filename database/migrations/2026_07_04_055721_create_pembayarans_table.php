@@ -13,9 +13,9 @@ return new class extends Migration
             $table->unsignedBigInteger('idTawar'); // Berelasi ke Penawaran
             
             // MURNI FINANSIAL
-            $table->integer('TotalBayar');
-            $table->string('BuktiTransfer')->nullable();
-            $table->string('StatusPembayaran')->default('Belum Bayar');
+            $table->decimal('TotalBayar',15,2);
+            $table->string('BuktiTransfer',255)->nullable();
+            $table->string('StatusPembayaran',15)->default('Belum Bayar');
             $table->timestamp('WaktuBayar')->nullable();
             
             // Kolom StatusPesanan, WaktuKirim, WaktuSelesai sudah DIHAPUS dari sini
