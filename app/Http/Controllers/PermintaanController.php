@@ -9,6 +9,7 @@ use App\Models\Pembayaran;
 use App\Models\Pengiriman; // <-- Tambahkan ini untuk menghitung total kontrak
 use App\Models\User;
 use App\Models\Ulasan; 
+use Illuminate\Support\Facades\DB;
 
 class PermintaanController extends Controller
 {
@@ -79,42 +80,68 @@ class PermintaanController extends Controller
 
     public function updateStatusPenawaran(Request $request, $id)
     {
-        $penawaran = Penawaran::findOrFail($id);
-        $penawaran->Status = $request->status;
-        $penawaran->save();
-
         if ($request->status === 'Setuju') {
-            $permintaan = Permintaan::findOrFail($penawaran->idMinta);
-            $totalBayar = $penawaran->JumlahTawar * $penawaran->HargaTawar;
-            
-            // 1. Buat tagihan pembayaran (TANPA StatusPesanan)
-            Pembayaran::updateOrCreate(
-                ['idTawar' => $penawaran->idTawar],
-                [
-                    'TotalBayar'       => $totalBayar,
-                    'StatusPembayaran' => 'Belum Dibayar'
-                ]
-            );
+            return DB::transaction(function () use ($request, $id) {
+                // 1. Kunci baris penawaran dari race condition (klik barengan)
+                $penawaran = Penawaran::lockForUpdate()->findOrFail($id);
 
-            // 2. PERBAIKAN: Buat data pengiriman awal agar StatusPesanan bisa dilacak
-            Pengiriman::updateOrCreate(
-                ['idTawar' => $penawaran->idTawar],
-                [
-                    'StatusPesanan' => 'Menunggu Pembayaran'
-                ]
-            );
+                // Cek pengaman: Kalau ternyata sudah bukan Pending lagi (misal baru saja otomatis ditutup sistem), batalkan!
+                if ($penawaran->Status !== 'Pending') {
+                    return back()->with('error', 'Maaf, penawaran ini baru saja ditutup oleh sistem atau stok petani sudah dialokasikan ke pesanan lain.');
+                }
 
-            $totalVolumeTerkumpul = Penawaran::where('idMinta', $penawaran->idMinta)
-                                             ->where('Status', 'Setuju')->sum('JumlahTawar');
+                $penawaran->Status = 'Setuju';
+                $penawaran->save();
 
-            if ($totalVolumeTerkumpul >= $permintaan->JumlahDibutuhkan) {
-                $permintaan->update(['Status' => 'Selesai']);
-                Penawaran::where('idMinta', $penawaran->idMinta)
-                         ->where('Status', 'Pending')->update(['Status' => 'Tidak Setuju']);
-            }
+                $permintaan = Permintaan::findOrFail($penawaran->idMinta);
+                $totalBayar = $penawaran->JumlahTawar * $penawaran->HargaTawar;
+                
+                // 2. Buat tagihan pembayaran
+                Pembayaran::updateOrCreate(
+                    ['idTawar' => $penawaran->idTawar],
+                    [
+                        'TotalBayar'       => $totalBayar,
+                        'StatusPembayaran' => 'Belum Dibayar'
+                    ]
+                );
+
+                // 3. Buat data pengiriman awal agar StatusPesanan bisa dilacak
+                Pengiriman::updateOrCreate(
+                    ['idTawar' => $penawaran->idTawar],
+                    [
+                        'StatusPesanan' => 'Menunggu Pembayaran'
+                    ]
+                );
+
+                // 4. FITUR ANTI DOUBLE-BOOKING: Otomatis batalkan penawaran lain dari PETANI INI yang masih Pending
+                Penawaran::where('idPetani', $penawaran->idPetani)
+                         ->where('idTawar', '!=', $id)
+                         ->where('Status', 'Pending')
+                         ->update([
+                             'Status' => 'Tidak Setuju',
+                             'Catatan' => 'Dibatalkan otomatis oleh sistem: Stok panen petani sudah dialokasikan ke pesanan lain yang disetujui.'
+                         ]);
+
+                // 5. Cek apakah volume permintaan pembeli sudah terpenuhi
+                $totalVolumeTerkumpul = Penawaran::where('idMinta', $penawaran->idMinta)
+                                                 ->where('Status', 'Setuju')->sum('JumlahTawar');
+
+                if ($totalVolumeTerkumpul >= $permintaan->JumlahDibutuhkan) {
+                    $permintaan->update(['Status' => 'Selesai']);
+                    Penawaran::where('idMinta', $penawaran->idMinta)
+                             ->where('Status', 'Pending')->update(['Status' => 'Tidak Setuju']);
+                }
+
+                return back()->with('success', 'Status penawaran berhasil disetujui. Penawaran ganda lain dari petani ini otomatis ditutup oleh sistem.');
+            });
+        } else {
+            // Untuk status selain 'Setuju' (misal 'Tidak Setuju' / tolak manual)
+            $penawaran = Penawaran::findOrFail($id);
+            $penawaran->Status = $request->status;
+            $penawaran->save();
+
+            return back()->with('success', 'Status penawaran berhasil diperbarui.');
         }
-
-        return back()->with('success', 'Status penawaran berhasil diperbarui.');
     }
 
     // ==========================================
