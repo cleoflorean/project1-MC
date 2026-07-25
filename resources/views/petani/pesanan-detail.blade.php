@@ -59,6 +59,9 @@
                     @else Silakan cek status secara berkala.
                     @endif
                 </p>
+                <div style="margin-top: 12px; display: inline-block; background: #ECFDF5; border: 1px solid #A7F3D0; padding: 6px 12px; border-radius: 8px;">
+                    <span style="color: #064E3B; font-weight: 700; font-size: 0.9rem;">No. Pesanan: {{ $pesanan->no_pesanan ?? '-' }}</span>
+                </div>
             </div>
 
             {{-- Tombol Aksi Cepat langsung dari Halaman Detail --}}

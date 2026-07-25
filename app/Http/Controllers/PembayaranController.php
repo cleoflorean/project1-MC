@@ -16,17 +16,30 @@ class PembayaranController extends Controller
 {
     public function store(Request $request, $idTawar)
     {
-        $penawaran = Penawaran::findOrFail($idTawar);
+        $penawaran = Penawaran::with('permintaan.user')->findOrFail($idTawar);
 
         $cekPembayaran = Pembayaran::where('idTawar', $idTawar)->first();
         if ($cekPembayaran) {
             return redirect()->route('pembayaran.show', $idTawar);
         }
 
+        // Generate Nomor Pesanan
+        $barang = $penawaran->permintaan->NamaTanaman ?? 'X';
+        $komoditas = $penawaran->permintaan->Komoditas ?? 'X';
+        $username = $penawaran->permintaan->user->username ?? 'X';
+
+        $inisialB = strtoupper(substr($barang, 0, 1));
+        $inisialK = strtoupper(substr($komoditas, 0, 1));
+        $inisialU = strtoupper(substr($username, 0, 2));
+        $randomN = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+
+        $no_pesanan = 'ORD-' . date('Ymd') . '-' . $inisialB . $inisialK . $inisialU . $randomN;
+
         $totalBayar = $penawaran->HargaTawar * $penawaran->JumlahTawar;
 
         $pembayaran = Pembayaran::create([
             'idTawar'          => $idTawar,
+            'no_pesanan'       => $no_pesanan,
             'TotalBayar'       => $totalBayar,
             'StatusPembayaran' => 'Belum Bayar', 
             // Kolom StatusPesanan dihapus dari sini karena sudah dipindah ke tabel pengirimans

@@ -36,6 +36,7 @@
         <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: space-between;">
             <div>
                 <h3 style="margin: 0 0 5px 0; font-size: 1.1rem; color: #111827; font-weight: 700;">Status Transaksi</h3>
+                <p style="margin: 0 0 8px 0; font-size: 0.85rem; color: #6b7280; font-weight: 600;">No. Pesanan: <span style="color: #111827;">{{ $pesanan->no_pesanan ?? '-' }}</span></p>
                 
                 @if(empty($pesanan->BuktiTransfer))
                     <p style="margin: 0; color: #ef4444; font-size: 0.9rem; font-weight: 600;">Menunggu Pembayaran</p>
@@ -120,7 +121,7 @@
             <div style="display: flex; gap: 15px;">
                 <div style="width: 70px; height: 70px; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden; background: #f9fafb; flex-shrink: 0;">
                     @if($pesanan->penawaran->Gambar)
-                        <img src="{{ asset('storage/' . $pesanan->penawaran->Gambar) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ asset($pesanan->penawaran->Gambar) }}" style="width: 100%; height: 100%; object-fit: cover;">
                     @else
                         <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #9ca3af;"><i class="fas fa-image"></i></div>
                     @endif

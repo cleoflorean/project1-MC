@@ -38,6 +38,9 @@
             <div class="col">
                 <h5 class="fw-bold text-dark mb-1 fs-5">{{ $pesanan->penawaran->permintaan->NamaTanaman }}</h5>
                 <p class="mb-1 text-secondary small">
+                    <span class="fw-bold">No. Pesanan:</span> {{ $pesanan->no_pesanan ?? '-' }}
+                </p>
+                <p class="mb-1 text-secondary small">
                     <i class="bi bi-box me-1"></i> {{ number_format($pesanan->penawaran->JumlahTawar, 0, ',', '.') }} Kg
                 </p>
             </div>

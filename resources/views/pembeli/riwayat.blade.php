@@ -114,6 +114,7 @@
                     <!-- Detail Produk -->
                     <div class="flex-grow-1">
                         <h6 class="mb-1 text-dark fs-6">{{ $pesanan->penawaran->permintaan->NamaTanaman ?? 'Nama Tanaman Terhapus' }}</h6>
+                        <p class="text-muted mb-1 small">No. Pesanan: <span class="fw-bold">{{ $pesanan->no_pesanan ?? '-' }}</span></p>
                         <p class="text-muted mb-0 small">Kuantitas: {{ $pesanan->penawaran->JumlahTawar ?? 0 }} Kg</p>
                     </div>
 
