@@ -65,6 +65,11 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi",
+            "@php artisan storage:link"
         ]
     },
     "extra": {
@@ -83,4 +88,5 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true
+
 }
