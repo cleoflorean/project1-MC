@@ -7,9 +7,9 @@
         $statPembayaran = trim($pesanan->StatusPembayaran);
         $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
     
-        if ($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Petani Menyiapkan Barang', 'Dikirim', 'Pesanan Selesai', 'Selesai'])) {
+        if ($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses', 'Dikirim', 'Pesanan Selesai', 'Selesai'])) {
             $statusPesanan = 'Menunggu Verifikasi Admin';
-        } elseif (empty($statPengiriman) && $statPembayaran === 'Lunas') {
+        } elseif (in_array($statPengiriman, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']))) {
             $statusPesanan = 'Petani Menyiapkan Barang';
         } else {
             $statusPesanan = $statPengiriman ?: $statPembayaran;

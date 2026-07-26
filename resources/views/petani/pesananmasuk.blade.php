@@ -17,7 +17,7 @@
         $statPengiriman = trim(optional($p->pengiriman)->StatusPesanan);
         
         // Masuk tab ini JIKA status pengiriman sedang disiapkan atau dikirim ATAU pembayaran Lunas
-        return in_array($statPengiriman, ['Petani Menyiapkan Barang', 'Dikirim']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']));
+        return in_array($statPengiriman, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses', 'Dikirim']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']));
     });
     
     $pesananSelesai = $dataPesanan->filter(function($p) {

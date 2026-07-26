@@ -10,11 +10,14 @@
         
         <div class="text-end">
             @php 
-                $statusPesanan = trim(optional($pesanan->pengiriman)->StatusPesanan);
-                if (empty($statusPesanan) && $pesanan->StatusPembayaran === 'Lunas') {
+                $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
+                $statPembayaran = trim($pesanan->StatusPembayaran);
+                if (in_array($statPengiriman, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']))) {
                     $statusPesanan = 'Petani Menyiapkan Barang';
-                } elseif (empty($statusPesanan)) {
-                    $statusPesanan = trim($pesanan->StatusPembayaran);
+                } elseif (!empty($statPengiriman)) {
+                    $statusPesanan = $statPengiriman;
+                } else {
+                    $statusPesanan = $statPembayaran;
                 }
             @endphp
             
@@ -76,7 +79,7 @@
                 <div class="btn btn-light text-warning fw-bold border-warning px-4 rounded-pill disabled" style="opacity: 1; background: #fffbeb;">
                     <i class="fas fa-shield-alt me-1"></i> Verifikasi Admin 
                 </div>
-            @elseif($statusPesanan === 'Petani Menyiapkan Barang')
+            @elseif(in_array($statusPesanan, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses']) || ($pesanan->StatusPembayaran === 'Lunas' && !in_array($statusPesanan, ['Dikirim', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak'])))
                 <form action="{{ route('petani.pesanan.kirim', $pesanan->idPembayaran) }}" method="POST" class="m-0">
                     @csrf
                     <button type="submit" class="btn btn-premium px-4 fw-bold rounded-pill shadow-sm">

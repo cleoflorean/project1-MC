@@ -11,9 +11,9 @@
     $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
 
     // 2. Gabungkan logika ke dalam variabel $statusPesanan
-    if ($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Petani Menyiapkan Barang', 'Dikirim', 'Pesanan Selesai', 'Selesai'])) {
+    if ($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses', 'Dikirim', 'Pesanan Selesai', 'Selesai'])) {
         $statusPesanan = 'Menunggu Verifikasi Admin';
-    } elseif (empty($statPengiriman) && $statPembayaran === 'Lunas') {
+    } elseif (in_array($statPengiriman, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']))) {
         $statusPesanan = 'Petani Menyiapkan Barang';
     } else {
         $statusPesanan = $statPengiriman ?: $statPembayaran;
@@ -67,7 +67,7 @@
             </div>
 
             {{-- Tombol Aksi Cepat langsung dari Halaman Detail --}}
-            @if($statusPesanan === 'Petani Menyiapkan Barang')
+            @if($statusPesanan === 'Petani Menyiapkan Barang' || in_array($statusPesanan, ['Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statusPesanan, ['Dikirim', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak'])))
                 <div>
                     <form action="{{ route('petani.pesanan.kirim', $pesanan->idPembayaran) }}" method="POST" style="margin: 0;">
                         @csrf

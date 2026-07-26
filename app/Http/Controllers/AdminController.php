@@ -147,7 +147,7 @@ class AdminController extends Controller
         try {
             Pengiriman::updateOrCreate(
                 ['idTawar' => $pembayaran->idTawar],
-                ['StatusPesanan' => 'Petani Menyiapkan Barang']
+                ['StatusPesanan' => 'Menyiapkan Barang']
             );
         } catch (\Exception $e) {
             \Log::error('Gagal update pengiriman saat verifikasi: ' . $e->getMessage());
