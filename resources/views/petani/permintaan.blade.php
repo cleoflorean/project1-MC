@@ -80,7 +80,7 @@
     </div>
 
 
-    {{-- ================= SECTION 2: PERMINTAAN KADALUARSA ================= --}}
+    {{-- ================= SECTION: PERMINTAAN KADALUARSA ================= --}}
     <div class="border-top pt-4 mt-5">
         <h5 class="fw-bold text-secondary mb-1">Riwayat Permintaan </h5>
         <p class="text-muted small mb-4">Daftar kebutuhan komoditas sebelumnya yang masanya telah berakhir.</p>
