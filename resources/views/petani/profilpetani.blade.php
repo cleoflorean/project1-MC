@@ -11,7 +11,7 @@
             <h1 style="margin: 0; font-size: 1.6rem; font-weight: 700; color: #1e293b; letter-spacing: -0.3px;">
                 Profil Petani - {{ $profil->NamaKebun ?? $profil->NamaLengkap ?? $user->name }}
             </h1>
-            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 0.9rem;">Kelola informasi identitas kebun, kontak, dan hasil panen Anda.</p>
+            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 0.9rem;">Kelola informasi identitas Anda.</p>
         </div>
         <div>
             {{-- TOMBOL EDIT PROFIL --}}

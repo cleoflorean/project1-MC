@@ -69,7 +69,7 @@
                             {{ $admin->NoRekening ?? '-' }}
                         </p>
                         <p style="margin: 0; font-size: 0.85rem; color: #6b7280; font-weight: 500;">
-                            a.n. {{ $admin->NamaPemilik ?? 'Admin Tani Harvest' }}
+                            a.n. {{ $admin->AtasNama ?? 'Admin Tani Harvest' }}
                         </p>
                     </div>
                     </div>

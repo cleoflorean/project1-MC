@@ -97,13 +97,31 @@ class PermintaanController extends Controller
                 $penawaran->Status = 'Setuju';
                 $penawaran->save();
 
-                $permintaan = Permintaan::findOrFail($penawaran->idMinta);
+                $permintaan = Permintaan::with('user')->findOrFail($penawaran->idMinta);
                 $totalBayar = $penawaran->JumlahTawar * $penawaran->HargaTawar;
                 
+                // Generate Nomor Pesanan (jika belum ada)
+                $pembayaranLama = Pembayaran::where('idTawar', $penawaran->idTawar)->first();
+                $no_pesanan = $pembayaranLama?->no_pesanan;
+
+                if (!$no_pesanan) {
+                    $barang = $permintaan->NamaTanaman ?? 'X';
+                    $komoditas = $permintaan->Komoditas ?? 'X';
+                    $username = $permintaan->user->username ?? 'X';
+
+                    $inisialB = strtoupper(substr($barang, 0, 1));
+                    $inisialK = strtoupper(substr($komoditas, 0, 1));
+                    $inisialU = strtoupper(substr($username, 0, 2));
+                    $randomN = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+
+                    $no_pesanan = 'ORD-' . date('Ymd') . '-' . $inisialB . $inisialK . $inisialU . $randomN;
+                }
+
                 // 2. Buat tagihan pembayaran
                 Pembayaran::updateOrCreate(
                     ['idTawar' => $penawaran->idTawar],
                     [
+                        'no_pesanan'       => $no_pesanan,
                         'TotalBayar'       => $totalBayar,
                         'StatusPembayaran' => 'Belum Dibayar'
                     ]

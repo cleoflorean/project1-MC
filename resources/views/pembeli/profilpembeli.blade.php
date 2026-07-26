@@ -5,8 +5,10 @@
     
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px;">
         <div>
-            <h1 style="margin: 0; font-size: 1.6rem; font-weight: 700; color: #1e293b; letter-spacing: -0.3px;">Manajemen Akun Pembeli</h1>
-            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 0.9rem;">Informasi legalitas identitas, kontak logistik, dan kredensial keamanan pengguna sistem.</p>
+            <h1 style="margin: 0; font-size: 1.6rem; font-weight: 700; color: #1e293b; letter-spacing: -0.3px;">
+                Profil Pembeli - {{ $profil->NamaLengkap ?? $user->username }}
+            </h1>
+            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 0.9rem;">Kelola informasi identitas Anda.</p>
         </div>
         <div>
             <a href="{{ route('profil.edit') }}" style="display: inline-flex; align-items: center; gap: 8px; background: #15803d; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: background 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">

@@ -5,8 +5,8 @@
     
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px;">
         <div>
-            <h1 style="margin: 0; font-size: 1.6rem; font-weight: 700; color: #1e293b; letter-spacing: -0.3px;">Konfigurasi Akun Pembeli</h1>
-            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 0.9rem;">Gerbang modifikasi data legalitas instansi, pemutakhiran kontak logistik, dan kredensial keamanan.</p>
+            <h1 style="margin: 0; font-size: 1.6rem; font-weight: 700; color: #1e293b; letter-spacing: -0.3px;">Konfigurasi Akun Petani</h1>
+            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 0.9rem;">Perbarui Identitas Anda.</p>
         </div>
         <div>
             <a href="{{ route('profil') }}" style="display: inline-flex; align-items: center; gap: 8px; background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
@@ -39,7 +39,7 @@
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
                 <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 15px 20px;">
                     <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-user-edit" style="color: #64748b;"></i> Pemutakhiran Identitas & Data Distribusi
+                        <i class="fas fa-user-edit" style="color: #64748b;"></i> Perbaruan Identitas & Data Distribusi
                     </h3>
                 </div>
 
