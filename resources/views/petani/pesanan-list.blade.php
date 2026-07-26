@@ -9,7 +9,14 @@
         </div>
         
         <div class="text-end">
-            @php $statusPesanan = trim(optional($pesanan->pengiriman)->StatusPesanan ?: $pesanan->StatusPembayaran); @endphp
+            @php 
+                $statusPesanan = trim(optional($pesanan->pengiriman)->StatusPesanan);
+                if (empty($statusPesanan) && $pesanan->StatusPembayaran === 'Lunas') {
+                    $statusPesanan = 'Petani Menyiapkan Barang';
+                } elseif (empty($statusPesanan)) {
+                    $statusPesanan = trim($pesanan->StatusPembayaran);
+                }
+            @endphp
             
             @if($statusPesanan === 'Menunggu Verifikasi Admin')
                 <span class="text-warning fw-bold small text-uppercase"><i class="fas fa-clock me-1"></i> Menunggu Admin</span>

@@ -20,7 +20,7 @@
                 $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
 
                 if ($currentStatus == 'belum-bayar') return in_array($statPembayaran, ['Menunggu Pembayaran', 'Belum Bayar', 'Belum Dibayar']) || !$sudahUpload;
-                if ($currentStatus == 'diproses') return $statPembayaran == 'Menunggu Verifikasi Admin' || $statPengiriman == 'Petani Menyiapkan Barang';
+                if ($currentStatus == 'diproses') return $statPembayaran == 'Menunggu Verifikasi Admin' || $statPengiriman == 'Petani Menyiapkan Barang' || ($statPembayaran == 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']));
                 if ($currentStatus == 'dikirim') return $statPengiriman == 'Dikirim';
                 if ($currentStatus == 'selesai') return in_array($statPengiriman, ['Pesanan Selesai', 'Selesai']);
                 return true; 
@@ -82,7 +82,7 @@
                     @elseif($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Dikirim', 'Pesanan Selesai', 'Selesai']))
                         <span class="text-warning text-dark me-2"><i class="fas fa-clock"></i> Sedang dicek oleh Admin.</span>
                         <span class="text-warning fw-bold border-start border-2 ps-2">DIPROSES</span>
-                    @elseif($statPengiriman === 'Petani Menyiapkan Barang')
+                    @elseif($statPengiriman === 'Petani Menyiapkan Barang' || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak'])))
                         <span class="text-primary me-2"><i class="fas fa-box"></i> Petani menyiapkan pesanan.</span>
                         <span class="text-primary fw-bold border-start border-2 ps-2">DIKEMAS</span>
                     @elseif($statPengiriman === 'Dikirim')

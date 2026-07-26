@@ -18,7 +18,7 @@ class AdminController extends Controller
     public function index()
     {
         // 1. Ambil data Transaksi
-        $semuaTransaksi = Pembayaran::with(['penawaran.permintaan.user', 'penawaran.petani', 'pengiriman'])
+        $semuaTransaksi = Pembayaran::with(['penawaran.permintaan.user.rekening', 'penawaran.petani.rekening', 'pengiriman'])
                                     ->latest('idPembayaran')
                                     ->take(5)
                                     ->get();
@@ -106,7 +106,7 @@ class AdminController extends Controller
      */
     public function konfirmasi()
     {
-        $semuaTransaksi = Pembayaran::with(['penawaran.permintaan.user', 'penawaran.petani', 'pengiriman'])
+        $semuaTransaksi = Pembayaran::with(['penawaran.permintaan.user.rekening', 'penawaran.petani.rekening', 'pengiriman'])
                                     ->latest('idPembayaran')
                                     ->get();
                                     
@@ -144,10 +144,14 @@ class AdminController extends Controller
         ]);
 
         // 2. Buat/Update status barang (di tabel pengirimans)
-        Pengiriman::updateOrCreate(
-            ['idTawar' => $pembayaran->idTawar],
-            ['StatusPesanan' => 'Petani Menyiapkan Barang']
-        );
+        try {
+            Pengiriman::updateOrCreate(
+                ['idTawar' => $pembayaran->idTawar],
+                ['StatusPesanan' => 'Petani Menyiapkan Barang']
+            );
+        } catch (\Exception $e) {
+            \Log::error('Gagal update pengiriman saat verifikasi: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Bukti pembayaran SAH! Petani sekarang akan menyiapkan dan mengirim komoditas.');
     }
@@ -163,10 +167,14 @@ class AdminController extends Controller
             'StatusPembayaran' => 'Ditolak'
         ]);
 
-        Pengiriman::updateOrCreate(
-            ['idTawar' => $pembayaran->idTawar],
-            ['StatusPesanan' => 'Dibatalkan']
-        );
+        try {
+            Pengiriman::updateOrCreate(
+                ['idTawar' => $pembayaran->idTawar],
+                ['StatusPesanan' => 'Dibatalkan']
+            );
+        } catch (\Exception $e) {
+            \Log::error('Gagal update pengiriman saat refund: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Transaksi dibatalkan. Dana berhasil dikembalikan ke pembeli.');
     }
@@ -178,10 +186,14 @@ class AdminController extends Controller
     {
         $pembayaran = Pembayaran::findOrFail($id);
         
-        Pengiriman::updateOrCreate(
-            ['idTawar' => $pembayaran->idTawar],
-            ['StatusPesanan' => 'Pesanan Selesai', 'WaktuSelesai' => now()]
-        );
+        try {
+            Pengiriman::updateOrCreate(
+                ['idTawar' => $pembayaran->idTawar],
+                ['StatusPesanan' => 'Pesanan Selesai', 'WaktuSelesai' => now()]
+            );
+        } catch (\Exception $e) {
+            \Log::error('Gagal update pengiriman saat pencairan: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Dana berhasil dicairkan ke Petani dan Pesanan ditandai Selesai.');
     }
@@ -197,10 +209,14 @@ class AdminController extends Controller
             'StatusPembayaran' => 'Ditolak'
         ]);
 
-        Pengiriman::updateOrCreate(
-            ['idTawar' => $pembayaran->idTawar],
-            ['StatusPesanan' => 'Dibatalkan']
-        );
+        try {
+            Pengiriman::updateOrCreate(
+                ['idTawar' => $pembayaran->idTawar],
+                ['StatusPesanan' => 'Dibatalkan']
+            );
+        } catch (\Exception $e) {
+            \Log::error('Gagal update pengiriman saat penolakan: ' . $e->getMessage());
+        }
 
         return back()->with('error', 'Bukti pembayaran ditolak! Transaksi dibatalkan.');
     }

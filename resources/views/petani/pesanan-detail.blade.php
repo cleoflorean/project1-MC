@@ -13,6 +13,8 @@
     // 2. Gabungkan logika ke dalam variabel $statusPesanan
     if ($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Petani Menyiapkan Barang', 'Dikirim', 'Pesanan Selesai', 'Selesai'])) {
         $statusPesanan = 'Menunggu Verifikasi Admin';
+    } elseif (empty($statPengiriman) && $statPembayaran === 'Lunas') {
+        $statusPesanan = 'Petani Menyiapkan Barang';
     } else {
         $statusPesanan = $statPengiriman ?: $statPembayaran;
     }

@@ -92,7 +92,7 @@ class PembayaranController extends Controller
 
     public function riwayatTransaksi(Request $request)
     {
-        $riwayat = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.profile', 'ulasan'])
+        $riwayat = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.profile', 'ulasan', 'pengiriman'])
             ->whereHas('penawaran.permintaan', function ($query) use ($request) {
                 $query->where('user_id', $request->user()->id);
             })
@@ -104,7 +104,7 @@ class PembayaranController extends Controller
 
     public function detailTransaksi($id)
     {
-        $pesanan = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.profile'])
+        $pesanan = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.profile', 'pengiriman', 'ulasan'])
                                 ->findOrFail($id);
 
         return view('pembeli.detail', compact('pesanan'));

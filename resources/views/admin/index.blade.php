@@ -217,15 +217,13 @@
                                         </div>
 
                                     @elseif($klasterStatus === 'escrow')
+                                        @php $rekPembeli = optional($trx->penawaran->permintaan->user->rekening); @endphp
                                         <span style="color: #0284c7; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; background: #e0f2fe; padding: 4px 10px; border-radius: 6px;">
                                             Menunggu Pengiriman
                                         </span>
-                                        <form action="{{ route('admin.transaksi.refund', $trx->idPembayaran) }}" method="POST" onsubmit="return confirm('Yakin ingin Refund dana ke Pembeli?')" style="margin:0;">
-                                            @csrf
-                                            <button type="submit" style="background: none; border: none; color: #ef4444; font-weight: 700; text-decoration: underline; font-size: 0.75rem; cursor: pointer; padding: 0;">
-                                                Refund Dana
-                                            </button>
-                                        </form>
+                                        <button type="button" onclick="bukaModalRefund('{{ route('admin.transaksi.refund', $trx->idPembayaran) }}', '{{ $rekPembeli->NamaBank ?? '' }}', '{{ $rekPembeli->NoRekening ?? '' }}', '{{ $rekPembeli->AtasNama ?? '' }}')" style="background: none; border: none; color: #ef4444; font-weight: 700; text-decoration: underline; font-size: 0.75rem; cursor: pointer; padding: 0;">
+                                            Refund Dana
+                                        </button>
 
                                     @elseif($klasterStatus === 'ready')
                                         @php $rek = optional($trx->penawaran->petani->rekening); @endphp
@@ -329,6 +327,76 @@
     </div>
 </div>
 
+{{-- MODAL CAIRKAN DANA KE PETANI --}}
+<div id="modalCairkanAdmin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 20px; border-radius: 8px; max-width: 400px; width: 90%; text-align: left; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+            <h4 style="margin: 0; color: #0f172a; font-size: 1rem; font-weight: 700;">Konfirmasi Pencairan Dana</h4>
+            <button onclick="document.getElementById('modalCairkanAdmin').style.display='none'" style="background: none; border: none; font-size: 1.2rem; color: #94a3b8; cursor: pointer; line-height: 1;">&times;</button>
+        </div>
+        
+        <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 15px;">Silakan transfer dana ke rekening petani berikut, lalu klik tombol konfirmasi jika sudah berhasil.</p>
+        
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
+            <div style="margin-bottom: 10px;">
+                <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Nama Bank / E-Wallet</div>
+                <div id="cairkanBank" style="font-size: 0.95rem; font-weight: 700; color: #0f172a;">-</div>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Nomor Rekening</div>
+                <div id="cairkanNoRek" style="font-size: 1.1rem; font-weight: 800; color: #0f172a; letter-spacing: 1px;">-</div>
+            </div>
+            <div>
+                <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Atas Nama</div>
+                <div id="cairkanPemilik" style="font-size: 0.95rem; font-weight: 700; color: #0f172a;">-</div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+            <button type="button" onclick="document.getElementById('modalCairkanAdmin').style.display='none'" style="background: white; color: #475569; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Batal</button>
+            <form id="formCairkanTarget" action="" method="POST" style="margin:0;">
+                @csrf
+                <button type="submit" style="background: #3b82f6; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">Ya, Dana Telah Ditransfer</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- MODAL REFUND DANA KE PEMBELI --}}
+<div id="modalRefundAdmin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 20px; border-radius: 8px; max-width: 400px; width: 90%; text-align: left; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+            <h4 style="margin: 0; color: #0f172a; font-size: 1rem; font-weight: 700;">Konfirmasi Refund Dana Pembeli</h4>
+            <button onclick="document.getElementById('modalRefundAdmin').style.display='none'" style="background: none; border: none; font-size: 1.2rem; color: #94a3b8; cursor: pointer; line-height: 1;">&times;</button>
+        </div>
+        
+        <p style="font-size: 0.85rem; color: #64748b; margin-top: 0; margin-bottom: 15px;">Silakan transfer pengembalian dana (refund) ke rekening pembeli berikut, lalu klik tombol konfirmasi di bawah ini jika sudah berhasil.</p>
+        
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
+            <div style="margin-bottom: 10px;">
+                <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Nama Bank / E-Wallet</div>
+                <div id="refundBank" style="font-size: 0.95rem; font-weight: 700; color: #0f172a;">-</div>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Nomor Rekening</div>
+                <div id="refundNoRek" style="font-size: 1.1rem; font-weight: 800; color: #0f172a; letter-spacing: 1px;">-</div>
+            </div>
+            <div>
+                <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Atas Nama</div>
+                <div id="refundPemilik" style="font-size: 0.95rem; font-weight: 700; color: #0f172a;">-</div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+            <button type="button" onclick="document.getElementById('modalRefundAdmin').style.display='none'" style="background: white; color: #475569; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Batal</button>
+            <form id="formRefundTarget" action="" method="POST" style="margin:0;">
+                @csrf
+                <button type="submit" style="background: #ef4444; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">Refund Telah Dilakukan</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 {{-- MODAL & TABS INLINE OVERRIDE STYLING --}}
 <style>
     .tab-btn { background: none; border: none; padding: 8px 14px; font-size: 0.78rem; font-weight: 600; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; display: inline-flex; align-items: center; }
@@ -356,6 +424,22 @@
         document.getElementById('imgModalTarget').src = urlGambar;
         document.getElementById('formVerifikasiTarget').action = urlAksiForm;
         document.getElementById('modalBuktiAdmin').style.display = 'flex';
+    }
+
+    function bukaModalCairkan(urlAksiForm, bank, norek, pemilik) {
+        document.getElementById('cairkanBank').innerText = bank || 'Belum diatur';
+        document.getElementById('cairkanNoRek').innerText = norek || 'Belum diatur';
+        document.getElementById('cairkanPemilik').innerText = pemilik || 'Belum diatur';
+        document.getElementById('formCairkanTarget').action = urlAksiForm;
+        document.getElementById('modalCairkanAdmin').style.display = 'flex';
+    }
+
+    function bukaModalRefund(urlAksiForm, bank, norek, pemilik) {
+        document.getElementById('refundBank').innerText = bank || 'Belum diatur';
+        document.getElementById('refundNoRek').innerText = norek || 'Belum diatur';
+        document.getElementById('refundPemilik').innerText = pemilik || 'Belum diatur';
+        document.getElementById('formRefundTarget').action = urlAksiForm;
+        document.getElementById('modalRefundAdmin').style.display = 'flex';
     }
 </script>
 @endsection
