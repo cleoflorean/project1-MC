@@ -44,7 +44,7 @@ class PesananPetaniController extends Controller
             ['StatusPesanan' => 'Dikirim']
         );
 
-        return redirect()->back()->with('success', 'Berhasil! Status pesanan telah diperbarui menjadi Sedang Dikirim.');
+        return redirect()->back()->with('success', 'Berhasil! Status pesanan sekarang: Menunggu Pesanan Diterima.');
     }
 
     /**

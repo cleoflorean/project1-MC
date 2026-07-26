@@ -7,10 +7,12 @@
         $statPembayaran = trim($pesanan->StatusPembayaran);
         $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
     
-        if ($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses', 'Dikirim', 'Pesanan Selesai', 'Selesai'])) {
+        if ($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Menyiapkan Barang', 'Barang Disiapkan', 'Petani Menyiapkan Barang', 'Di Proses', 'Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima', 'Pesanan Selesai', 'Selesai'])) {
             $statusPesanan = 'Menunggu Verifikasi Admin';
-        } elseif (in_array($statPengiriman, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']))) {
-            $statusPesanan = 'Petani Menyiapkan Barang';
+        } elseif (in_array($statPengiriman, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima', 'Dalam Pengiriman'])) {
+            $statusPesanan = 'Dikirim';
+        } elseif (in_array($statPengiriman, ['Menyiapkan Barang', 'Barang Disiapkan', 'Petani Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']))) {
+            $statusPesanan = 'Barang Disiapkan';
         } else {
             $statusPesanan = $statPengiriman ?: $statPembayaran;
         }
@@ -44,9 +46,9 @@
                     <p style="margin: 0; color: #ef4444; font-size: 0.9rem; font-weight: 600;">Menunggu Pembayaran</p>
                 @elseif(optional($pesanan->pengiriman)->StatusPesanan === 'Menunggu Verifikasi Admin')
                     <p style="margin: 0; color: #f59e0b; font-size: 0.9rem; font-weight: 600;">Menunggu Admin TaniHub memverifikasi bukti transfer Anda</p>
-                @elseif(optional($pesanan->pengiriman)->StatusPesanan === 'Petani Menyiapkan Barang')
+                @elseif(in_array(optional($pesanan->pengiriman)->StatusPesanan, ['Barang Disiapkan', 'Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses']) || ($pesanan->StatusPembayaran === 'Lunas' && !in_array(optional($pesanan->pengiriman)->StatusPesanan, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak'])))
                     <p style="margin: 0; color: #2563eb; font-size: 0.9rem; font-weight: 600;">Pembayaran diterima. Petani sedang mengemas pesanan Anda</p>
-                @elseif(optional($pesanan->pengiriman)->StatusPesanan === 'Dikirim')
+                @elseif(in_array(optional($pesanan->pengiriman)->StatusPesanan, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima']))
                     <p style="margin: 0; color: #10b981; font-size: 0.9rem; font-weight: 600;">Pesanan sedang dalam perjalanan ke alamat Anda</p>
                 @elseif(optional($pesanan->pengiriman)->StatusPesanan === 'Pesanan Selesai')
                     <p style="margin: 0; color: #059669; font-size: 0.9rem; font-weight: 600;">Pesanan telah selesai. Terima kasih!</p>
@@ -163,7 +165,7 @@
                 <a href="{{ route('pembayaran.show', $pesanan->idTawar) }}" style="flex: 1; text-align: center; background: #ef4444; color: white; padding: 14px 0; border-radius: 8px; font-weight: 700; font-size: 1rem; text-decoration: none;">
                     Bayar Sekarang
                 </a>
-            @elseif(optional($pesanan->pengiriman)->StatusPesanan === 'Dikirim')
+            @elseif(in_array(optional($pesanan->pengiriman)->StatusPesanan, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima']))
                 <button onclick="document.getElementById('modalUlasanDetail').style.display='flex'" style="flex: 1; background: #2a7a43; color: white; border: none; padding: 14px 0; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer;">
                     Pesanan Diterima
                 </button>

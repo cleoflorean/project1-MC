@@ -11,12 +11,16 @@
     $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
 
     // 2. Gabungkan logika ke dalam variabel $statusPesanan
-    if ($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses', 'Dikirim', 'Pesanan Selesai', 'Selesai'])) {
+    if ($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Menyiapkan Barang', 'Barang Disiapkan', 'Petani Menyiapkan Barang', 'Di Proses', 'Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima', 'Pesanan Selesai', 'Selesai'])) {
         $statusPesanan = 'Menunggu Verifikasi Admin';
-    } elseif (in_array($statPengiriman, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']))) {
-        $statusPesanan = 'Petani Menyiapkan Barang';
+    } elseif (in_array($statPengiriman, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima', 'Dalam Pengiriman'])) {
+        $statusPesanan = 'Menunggu Pesanan Diterima';
+    } elseif (in_array($statPengiriman, ['Menyiapkan Barang', 'Barang Disiapkan', 'Petani Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']))) {
+        $statusPesanan = 'Barang Disiapkan';
+    } elseif (!empty($statPengiriman) && !in_array($statPengiriman, ['Menunggu Pembayaran'])) {
+        $statusPesanan = $statPengiriman;
     } else {
-        $statusPesanan = $statPengiriman ?: $statPembayaran;
+        $statusPesanan = $statPembayaran;
     }
 
     // 1. Pembayaran Dikonfirmasi (aktif jika status telah melewati proses menunggu pembayaran)
@@ -47,16 +51,16 @@
             <div>
                 <h2 style="margin: 0 0 8px 0; font-size: 1.75rem; font-weight: 800; color: #064E3B; letter-spacing: -0.5px;">
                     @if($statusPesanan === 'Menunggu Verifikasi Admin') Menunggu Verifikasi Admin
-                    @elseif($statusPesanan === 'Petani Menyiapkan Barang') Siap Dikirim
-                    @elseif(in_array($statusPesanan, ['Dikirim', 'Dalam Pengiriman'])) Sedang Diproses
+                    @elseif(in_array($statusPesanan, ['Barang Disiapkan', 'Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses'])) Barang Disiapkan
+                    @elseif(in_array($statusPesanan, ['Menunggu Pesanan Diterima', 'Dikirim', 'Dalam Pengiriman', 'Sedang Dikirim'])) Menunggu Pesanan Diterima
                     @elseif(in_array($statusPesanan, ['Pesanan Selesai', 'Selesai'])) Transaksi Selesai
                     @else {{ $statusPesanan }}
                     @endif
                 </h2>
                 <p style="margin: 0; font-size: 0.95rem; color: #475569;">
                     @if($statusPesanan === 'Menunggu Verifikasi Admin') Pembeli telah mengunggah bukti pembayaran. Menunggu Admin memverifikasi dana.
-                    @elseif($statusPesanan === 'Petani Menyiapkan Barang') Anda sudah bisa mengirimkan pesanan ke alamat pembeli di bawah ini.
-                    @elseif(in_array($statusPesanan, ['Dikirim', 'Dalam Pengiriman'])) Pesanan sedang dalam perjalanan menuju lokasi pembeli.
+                    @elseif(in_array($statusPesanan, ['Barang Disiapkan', 'Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses'])) Anda sudah bisa mengirimkan pesanan ke alamat pembeli di bawah ini.
+                    @elseif(in_array($statusPesanan, ['Menunggu Pesanan Diterima', 'Dikirim', 'Dalam Pengiriman', 'Sedang Dikirim'])) Pesanan sudah dikirimkan dan sedang menunggu konfirmasi penerimaan oleh pembeli.
                     @elseif(in_array($statusPesanan, ['Pesanan Selesai', 'Selesai'])) Dana akan segera diteruskan ke rekening Anda oleh Admin.
                     @else Silakan cek status secara berkala.
                     @endif
@@ -67,14 +71,20 @@
             </div>
 
             {{-- Tombol Aksi Cepat langsung dari Halaman Detail --}}
-            @if($statusPesanan === 'Petani Menyiapkan Barang' || in_array($statusPesanan, ['Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statusPesanan, ['Dikirim', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak'])))
+            @if(in_array($statusPesanan, ['Barang Disiapkan', 'Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statusPesanan, ['Dikirim', 'Menunggu Pesanan Diterima', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak'])))
                 <div>
                     <form action="{{ route('petani.pesanan.kirim', $pesanan->idPembayaran) }}" method="POST" style="margin: 0;">
                         @csrf
                         <button type="submit" style="background: #059669; color: #FFFFFF; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);" onmouseover="this.style.background='#047857'" onmouseout="this.style.background='#059669'">
-                            <i class="fas fa-paper-plane"></i> Kirim Barang
+                            <i class="fas fa-paper-plane"></i> Kirimkan Pesanan
                         </button>
                     </form>
+                </div>
+            @elseif(in_array($statusPesanan, ['Menunggu Pesanan Diterima', 'Dikirim', 'Sedang Dikirim', 'Dalam Pengiriman']))
+                <div>
+                    <button type="button" disabled style="background: #64748B; color: #FFFFFF; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: not-allowed; opacity: 0.8; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-clock"></i> Menunggu Pesanan Diterima
+                    </button>
                 </div>
             @endif
         </div>

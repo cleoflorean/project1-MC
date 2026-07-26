@@ -12,9 +12,11 @@
             @php 
                 $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
                 $statPembayaran = trim($pesanan->StatusPembayaran);
-                if (in_array($statPengiriman, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']))) {
-                    $statusPesanan = 'Petani Menyiapkan Barang';
-                } elseif (!empty($statPengiriman)) {
+                if (in_array($statPengiriman, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima'])) {
+                    $statusPesanan = 'Menunggu Pesanan Diterima';
+                } elseif (in_array($statPengiriman, ['Menyiapkan Barang', 'Barang Disiapkan', 'Petani Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']))) {
+                    $statusPesanan = 'Barang Disiapkan';
+                } elseif (!empty($statPengiriman) && !in_array($statPengiriman, ['Menunggu Pembayaran'])) {
                     $statusPesanan = $statPengiriman;
                 } else {
                     $statusPesanan = $statPembayaran;
@@ -27,6 +29,10 @@
                 <span class="text-success fw-bold small text-uppercase"><i class="fas fa-check-circle me-1"></i> Selesai</span>
             @elseif(in_array($statusPesanan, ['Dibatalkan', 'Ditolak']))
                 <span class="text-danger fw-bold small text-uppercase"><i class="fas fa-ban me-1"></i> Dibatalkan</span>
+            @elseif(in_array($statusPesanan, ['Barang Disiapkan', 'Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses']))
+                <span class="text-primary fw-bold small text-uppercase"><i class="fas fa-box-open me-1"></i> Barang Disiapkan</span>
+            @elseif(in_array($statusPesanan, ['Menunggu Pesanan Diterima', 'Dikirim', 'Sedang Dikirim']))
+                <span class="text-info fw-bold small text-uppercase"><i class="fas fa-truck me-1"></i> Menunggu Pesanan Diterima</span>
             @else
                 <span class="text-success fw-bold small text-uppercase">{{ $statusPesanan }}</span>
             @endif
@@ -79,16 +85,16 @@
                 <div class="btn btn-light text-warning fw-bold border-warning px-4 rounded-pill disabled" style="opacity: 1; background: #fffbeb;">
                     <i class="fas fa-shield-alt me-1"></i> Verifikasi Admin 
                 </div>
-            @elseif(in_array($statusPesanan, ['Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses']) || ($pesanan->StatusPembayaran === 'Lunas' && !in_array($statusPesanan, ['Dikirim', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak'])))
+            @elseif(in_array($statusPesanan, ['Barang Disiapkan', 'Menyiapkan Barang', 'Petani Menyiapkan Barang', 'Di Proses']) || ($pesanan->StatusPembayaran === 'Lunas' && !in_array($statusPesanan, ['Dikirim', 'Menunggu Pesanan Diterima', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak'])))
                 <form action="{{ route('petani.pesanan.kirim', $pesanan->idPembayaran) }}" method="POST" class="m-0">
                     @csrf
                     <button type="submit" class="btn btn-premium px-4 fw-bold rounded-pill shadow-sm">
-                        Kirim Barang
+                        <i class="fas fa-paper-plane me-1"></i> Kirimkan Pesanan
                     </button>
                 </form>
-            @elseif($statusPesanan === 'Dikirim')
-                <button type="button" disabled class="btn btn-secondary px-4 fw-bold rounded-pill disabled" style="cursor: not-allowed; opacity: 0.7;">
-                    Sedang Dikirim
+            @elseif(in_array($statusPesanan, ['Dikirim', 'Menunggu Pesanan Diterima', 'Sedang Dikirim']))
+                <button type="button" disabled class="btn btn-secondary px-4 fw-bold rounded-pill disabled" style="cursor: not-allowed; opacity: 0.8;">
+                    <i class="fas fa-clock me-1"></i> Menunggu Pesanan Diterima
                 </button>
             @elseif(in_array($statusPesanan, ['Pesanan Selesai', 'Selesai']))
                 @if($pesanan->ulasan)
