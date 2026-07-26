@@ -12,6 +12,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        Penawaran::cleanExpired();
         // 1. Ambil ID Petani yang sedang login
         $petaniId = auth()->id();
 

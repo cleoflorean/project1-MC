@@ -84,11 +84,19 @@
                 </div>
 
                 <div style="grid-column: 1 / -1; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fef3c7;">
-                    <span style="display: block; font-size: 0.75rem; color: #d97706; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Catatan dari Petani</span>
-                    <div style="font-size: 0.95rem; font-weight: 500; color: #78350f; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; font-style: italic;">
-                        <i class="fas fa-comment-dots" style="color: #f59e0b; margin-top: 4px;"></i>
-                        <span>"{{ $tawar->Catatan ?? 'Tidak Ada Catatan dari Petani.' }}"</span>
-                    </div>
+                    @if(str_starts_with($tawar->Catatan ?? '', 'Dibatalkan otomatis'))
+                        <span style="display: block; font-size: 0.75rem; color: #dc2626; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Keterangan Sistem / Alasan Batal</span>
+                        <div style="font-size: 0.95rem; font-weight: 600; color: #991b1b; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;">
+                            <i class="fas fa-exclamation-triangle" style="color: #ef4444; margin-top: 4px;"></i>
+                            <span>{{ str_replace('Dibatalkan otomatis oleh sistem: ', '', $tawar->Catatan) }}</span>
+                        </div>
+                    @else
+                        <span style="display: block; font-size: 0.75rem; color: #d97706; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Catatan dari Petani</span>
+                        <div style="font-size: 0.95rem; font-weight: 500; color: #78350f; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; font-style: italic;">
+                            <i class="fas fa-comment-dots" style="color: #f59e0b; margin-top: 4px;"></i>
+                            <span>"{{ $tawar->Catatan ?? 'Tidak Ada Catatan dari Petani.' }}"</span>
+                        </div>
+                    @endif
                 </div>
 
             </div>

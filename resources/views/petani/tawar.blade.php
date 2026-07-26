@@ -105,8 +105,15 @@
 
                             {{-- Catatan --}}
                             <div class="pt-2 border-top mb-3">
-                                <span class="text-muted d-block mb-1" style="font-size: 11px; font-weight: 600;">Catatan Anda:</span>
-                                <p class="text-secondary small m-0 text-truncate" title="{{ $tawar->Catatan }}">"{{ $tawar->Catatan }}"</p>
+                                @if(str_starts_with($tawar->Catatan ?? '', 'Dibatalkan otomatis'))
+                                    <div class="alert alert-danger p-2 mb-0 mt-1 rounded-2" style="font-size: 11px; line-height: 1.4; border-left: 3px solid #dc2626; background-color: #fef2f2; color: #991b1b;">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i> <strong>Alasan Batal / Ditolak:</strong><br>
+                                        {{ str_replace('Dibatalkan otomatis oleh sistem: ', '', $tawar->Catatan) }}
+                                    </div>
+                                @else
+                                    <span class="text-muted d-block mb-1" style="font-size: 11px; font-weight: 600;">Catatan Anda:</span>
+                                    <p class="text-secondary small m-0 text-truncate" title="{{ $tawar->Catatan }}">"{{ $tawar->Catatan }}"</p>
+                                @endif
                             </div>
 
                             {{-- Tombol Aksi --}}

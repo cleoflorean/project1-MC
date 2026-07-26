@@ -60,6 +60,7 @@ class TawarController extends Controller
     return redirect()->route('tawar.index')->with('success', 'Penawaran panen berhasil dikirim!');
 }
     public function index() {
+        Penawaran::cleanExpired();
         // Menggunakan where agar hanya mengambil data milik petani yang sedang login
         $pengajuanTawar = Penawaran::with('permintaan.user.profile')
                         ->where('idPetani', auth()->id())

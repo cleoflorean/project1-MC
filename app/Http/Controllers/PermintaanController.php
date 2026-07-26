@@ -15,6 +15,7 @@ class PermintaanController extends Controller
 {
     public function dashboard(Request $request)
     {
+        Penawaran::cleanExpired();
         $idPermintaans = $request->user()->permintaans()->pluck('idPermintaan');
         $penawarans = Penawaran::with(['petani.profile', 'permintaan']) // <-- FIX: profile jadi profile
             ->whereIn('idMinta', $idPermintaans)->latest()->take(5)->get(); 
@@ -24,6 +25,7 @@ class PermintaanController extends Controller
 
     public function index(Request $request)
     {
+        Penawaran::cleanExpired();
         $permintaans = $request->user()->permintaans()->with('penawarans')->latest()->get(); 
         return view('pembeli.permintaan', compact('permintaans')); 
     }
@@ -66,6 +68,7 @@ class PermintaanController extends Controller
 
     public function lihatPenawaran($id)
     {
+        Penawaran::cleanExpired();
         $permintaan = Permintaan::with(['penawarans.petani.profile'])->findOrFail($id); // <-- FIX: profile jadi profile
         $penawarans = $permintaan->penawarans;
 
@@ -80,6 +83,7 @@ class PermintaanController extends Controller
 
     public function updateStatusPenawaran(Request $request, $id)
     {
+        Penawaran::cleanExpired();
         if ($request->status === 'Setuju') {
             return DB::transaction(function () use ($request, $id) {
                 // 1. Kunci baris penawaran dari race condition (klik barengan)
@@ -87,7 +91,7 @@ class PermintaanController extends Controller
 
                 // Cek pengaman: Kalau ternyata sudah bukan Pending lagi (misal baru saja otomatis ditutup sistem), batalkan!
                 if ($penawaran->Status !== 'Pending') {
-                    return back()->with('error', 'Maaf, penawaran ini baru saja ditutup oleh sistem atau stok petani sudah dialokasikan ke pesanan lain.');
+                    return back()->with('error', 'Maaf, penawaran ini sudah kedaluwarsa (melampaui batas 2x24 jam tanpa respon) atau stok petani sudah dialokasikan ke pesanan lain.');
                 }
 
                 $penawaran->Status = 'Setuju';
@@ -113,13 +117,16 @@ class PermintaanController extends Controller
                     ]
                 );
 
-                // 4. FITUR ANTI DOUBLE-BOOKING: Otomatis batalkan penawaran lain dari PETANI INI yang masih Pending
+                // 4. FITUR ANTI DOUBLE-BOOKING: Otomatis batalkan penawaran lain dari PETANI INI untuk JENIS TANAMAN YANG SAMA yang masih Pending
                 Penawaran::where('idPetani', $penawaran->idPetani)
                          ->where('idTawar', '!=', $id)
                          ->where('Status', 'Pending')
+                         ->whereHas('permintaan', function ($query) use ($permintaan) {
+                             $query->where('NamaTanaman', $permintaan->NamaTanaman);
+                         })
                          ->update([
                              'Status' => 'Tidak Setuju',
-                             'Catatan' => 'Dibatalkan otomatis oleh sistem: Stok panen petani sudah dialokasikan ke pesanan lain yang disetujui.'
+                             'Catatan' => 'Dibatalkan otomatis oleh sistem: Stok panen ' . $permintaan->NamaTanaman . ' sudah dialokasikan ke pesanan lain yang disetujui.'
                          ]);
 
                 // 5. Cek apakah volume permintaan pembeli sudah terpenuhi
@@ -132,7 +139,7 @@ class PermintaanController extends Controller
                              ->where('Status', 'Pending')->update(['Status' => 'Tidak Setuju']);
                 }
 
-                return back()->with('success', 'Status penawaran berhasil disetujui. Penawaran ganda lain dari petani ini otomatis ditutup oleh sistem.');
+                return back()->with('success', 'Status penawaran berhasil disetujui. Penawaran ganda lain untuk ' . $permintaan->NamaTanaman . ' dari petani ini otomatis ditutup oleh sistem.');
             });
         } else {
             // Untuk status selain 'Setuju' (misal 'Tidak Setuju' / tolak manual)
