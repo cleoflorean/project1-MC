@@ -61,15 +61,15 @@
                     
                     <!-- Fitur Chat Ke WhatsApp -->
                     @php
-                        $noTelp = $pesanan->penawaran->petani->no_hp ?? ''; 
-                        if(strpos($noTelp, '0') === 0) {
-                            $noTelp = '62' . substr($noTelp, 1);
+                        $noWa = $pesanan->penawaran->petani->profile->NoWhatsApp ?? ''; 
+                        if(strpos($noWa, '0') === 0) {
+                            $noWa = '62' . substr($noWa, 1);
                         }
                         $namaKomoditas = $pesanan->penawaran->permintaan->Komoditas ?? $pesanan->penawaran->permintaan->NamaTanaman ?? 'produk ini';
-                        $pesanWA = "Halo, saya ingin bertanya mengenai pesanan saya untuk {$namaKomoditas}.";
+                        $pesanWa = "Halo, saya ingin bertanya mengenai pesanan saya untuk {$namaKomoditas}.";
                     @endphp
 
-                    <a href="https://wa.me/{{ $noTelp }}?text={{ urlencode($pesanWA) }}" target="_blank" class="btn btn-sm btn-outline-success px-2 py-0 me-2" style="font-size: 0.8rem;">
+                    <a href="https://wa.me/{{ $noWa }}?text={{ urlencode($pesanWa) }}" target="_blank" class="btn btn-sm btn-outline-success px-2 py-0 me-2" style="font-size: 0.8rem;">
                         <i class="fab fa-whatsapp"></i> Chat
                     </a>
                 </div>
