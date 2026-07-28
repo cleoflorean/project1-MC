@@ -106,24 +106,30 @@
                         
                         {{-- Kiri: Profil Pembeli & Bintang --}}
                         <div style="display: flex; gap: 12px; align-items: flex-start;">
-                            {{-- Avatar Pembeli --}}
-                            <div style="width: 40px; height: 40px; background: #f1f5f9; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #64748b; flex-shrink: 0; border: 1px solid #e2e8f0;">
-                                {{ strtoupper(substr($ulasan->pembayaran->penawaran->permintaan->user->username ?? 'P', 0, 1)) }}
+                        {{-- Avatar Pembeli --}}
+                            <div style="width: 40px; height: 40px; background: #f1f5f9; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #64748b; flex-shrink: 0; border: 1px solid #e2e8f0; overflow: hidden;">
+                                @if(!empty($ulasan->penawaran?->permintaan?->user?->profile?->FotoProfil))
+                                    <img src="{{ asset($ulasan->penawaran->permintaan->user->profile->FotoProfil) }}" alt="Foto Pembeli" style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    <i class="fas fa-user-tie" style="font-size: 1.2rem;"></i>
+                                @endif
                             </div>
-                            
-                            <div>
-                                <h4 style="margin: 0; font-size: 0.95rem; color: #0f172a; font-weight: 700;">
-                                    {{ $ulasan->pembayaran->penawaran->permintaan->user->username ?? 'Pembeli Anonim' }}
-                                </h4>
-                                
-                                {{-- Bintang Rating --}}
-                                <div style="color: #fbbf24; font-size: 0.85rem; margin-top: 4px;">
-                                    @for($i = 1; $i <= 5; $i++)
-                                        <i class="{{ $i <= $ulasan->Rating ? 'fas' : 'far' }} fa-star"></i>
-                                    @endfor
-                                </div>
-                            </div>
-                        </div>
+
+    {{-- Info Pembeli --}}
+    <div>
+        <h4 style="margin: 0; font-size: 0.95rem; color: #0f172a; font-weight: 700;">
+            {{ $ulasan->penawaran?->permintaan?->user?->username ?? 'Pembeli Anonim' }}
+        </h4>
+        
+        {{-- Bintang Rating --}}
+        <div style="color: #fbbf24; font-size: 0.85rem; margin-top: 4px;">
+            @for($i = 1; $i <= 5; $i++)
+                <i class="{{ $i <= $ulasan->Rating ? 'fas' : 'far' }} fa-star"></i>
+            @endfor
+        </div>
+    </div>
+    
+</div>
                         
                         {{-- Kanan: Tanggal & Komoditas --}}
                         <div style="text-align: right;">

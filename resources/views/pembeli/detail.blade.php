@@ -187,23 +187,9 @@
 <div id="modalUlasanDetail" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; align-items: center; justify-content: center;">
     <div style="background: white; padding: 25px; border-radius: 16px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
         <h4 style="margin: 0 0 10px 0; color: #1f2937; font-weight: 700;">Pesanan Diterima</h4>
-        <p style="margin: 0 0 20px 0; font-size: 0.95rem; color: #6b7280;">Beri penilaian untuk kualitas komoditas ini</p>
         
         <form action="{{ route('pembeli.pesanan.selesai', $pesanan->idPembayaran) }}" method="POST">
             @csrf
-            
-            <div style="font-size: 2.5rem; color: #e5e7eb; margin-bottom: 20px; display: flex; justify-content: center; gap: 5px; cursor: pointer;">
-                <i class="fas fa-star star-btn-detail" data-value="1"></i>
-                <i class="fas fa-star star-btn-detail" data-value="2"></i>
-                <i class="fas fa-star star-btn-detail" data-value="3"></i>
-                <i class="fas fa-star star-btn-detail" data-value="4"></i>
-                <i class="fas fa-star star-btn-detail" data-value="5"></i>
-            </div>
-            
-            <input type="hidden" name="Rating" id="ratingInputDetail" required>
-            
-            <textarea name="Ulasan" rows="3" placeholder="Ceritakan pengalaman Anda (Opsional)" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; margin-bottom: 20px; font-family: inherit; font-size: 0.95rem; resize: none; box-sizing: border-box; background: #f9fafb;"></textarea>
-            
             <div style="display: flex; gap: 12px;">
                 <button type="button" onclick="document.getElementById('modalUlasanDetail').style.display='none'" style="background: #f3f4f6; color: #4b5563; border: none; padding: 12px 0; border-radius: 8px; font-weight: 700; cursor: pointer; flex: 1; transition: 0.2s;">
                     Batal

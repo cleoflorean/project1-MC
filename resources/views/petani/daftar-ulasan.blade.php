@@ -24,7 +24,7 @@
                     <div style="border-bottom: 1px solid #E2E8F0; padding-bottom: 20px; margin-bottom: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                             <strong style="color: #334155; font-size: 1rem;">
-                                {{ $ul->pembayaran->penawaran->permintaan->user->username ?? 'Pembeli Anonim' }}
+                                {{ $ul->penawaran->permintaan->user->username ?? 'Pembeli Anonim' }}
                             </strong>
                             <small style="color: #94a3b8; font-weight: 500;">{{ $ul->created_at->format('d M Y') }}</small>
                         </div>
