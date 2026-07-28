@@ -152,7 +152,6 @@
                             </button>
                         @else
                             <button class="btn btn-outline-secondary px-4" disabled>Sudah Dinilai</button>
-                            <button type="button" class="btn btn-outline-success px-4">Beli Lagi</button>
                         @endif
                     @endif
                 </div>
