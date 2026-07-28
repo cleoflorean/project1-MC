@@ -27,8 +27,8 @@ class TawarController extends Controller
         'idMinta'     => 'required',
         'JumlahTawar' => 'required|numeric',
         'HargaTawar'  => 'required|numeric',
-        'Catatan'     => 'nullable|string',
-        'Gambar'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'Catatan'     => 'required|string',
+        'Gambar'      => 'required|image|mimes:jpeg,png,jpg|max:2048',
     ]);
 
     // 2. Buat objek penawaran baru

@@ -124,7 +124,7 @@
                             <p class="mb-1 text-dark fw-semibold small">Klik untuk unggah foto</p>
                             <span class="text-muted d-block small" style="font-size: 11px;">Format JPG/PNG (Maks. 2MB)</span>
                             
-                            <input type="file" class="form-control d-none" id="Gambar" name="Gambar" accept="image/*" required>
+                            <input type="file" class="form-control d-none" id="Gambar" name="Gambar" accept="image/*">
                         </div>
 
                         @error('Gambar')
