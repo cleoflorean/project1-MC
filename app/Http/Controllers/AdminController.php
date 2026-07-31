@@ -29,19 +29,14 @@ class AdminController extends Controller
                         ->get();
 
         // 3. Hitung Statistik Utama
-        // Hitung dana admin: Pembayaran Lunas, tapi pengiriman belum selesai
-        $totalDanaAdmin = Pembayaran::where('StatusPembayaran', 'Lunas')
-            ->whereDoesntHave('pengiriman', function ($query) {
-                $query->whereIn('StatusPesanan', ['Pesanan Selesai', 'Selesai']);
-            })
-            ->sum('TotalBayar');
+        // PERBAIKAN: Semua yang berstatus "Lunas" dihitung sebagai Dana Ditampung Admin 
+        // (terlepas dari barangnya sudah sampai atau belum).
+        $totalDanaAdmin = Pembayaran::where('StatusPembayaran', 'Lunas')->sum('TotalBayar');
                                  
         $menungguVerifikasi = Pembayaran::where('StatusPembayaran', 'Menunggu Verifikasi Admin')->count();
         
-        // Hitung transaksi sukses: Pengiriman sudah selesai
-        $totalTransaksiSukses = Pembayaran::whereHas('pengiriman', function ($query) {
-            $query->whereIn('StatusPesanan', ['Pesanan Selesai', 'Selesai']);
-        })->sum('TotalBayar');
+        // PERBAIKAN: Hanya transaksi yang uangnya sudah dicairkan ke Petani yang masuk ke Transaksi Sukses.
+        $totalTransaksiSukses = Pembayaran::where('StatusPembayaran', 'Dana Dicairkan')->sum('TotalBayar');
         
         $jumlahPetani = User::where('role', 'petani')->count();
 
@@ -186,6 +181,11 @@ class AdminController extends Controller
     {
         $pembayaran = Pembayaran::findOrFail($id);
         
+        // PERBAIKAN: Ubah status uang menjadi 'Dana Dicairkan'
+        $pembayaran->update([
+            'StatusPembayaran' => 'Dana Dicairkan'
+        ]);
+
         try {
             Pengiriman::updateOrCreate(
                 ['idTawar' => $pembayaran->idTawar],

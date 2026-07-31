@@ -117,10 +117,14 @@
                                 $klasterStatus = 'unpaid';
                             } elseif ($trx->StatusPembayaran === 'Menunggu Verifikasi Admin' || $trx->StatusPembayaran === 'Menunggu Verifikasi') {
                                 $klasterStatus = 'pending';
-                            } elseif ($statusPesanan === 'Pesanan Selesai' || $trx->StatusPembayaran === 'Ditolak' || $trx->StatusPembayaran === 'Dibatalkan' || $statusPesanan === 'Dibatalkan') {
+                            } elseif ($trx->StatusPembayaran === 'Dana Dicairkan') {
+                                // STATUS BARU: Uang sudah dikirim ke Petani
                                 $klasterStatus = 'done';
-                            } elseif ($trx->StatusPembayaran === 'Lunas' && in_array($statusPesanan, ['Selesai', 'Pesanan Diterima', 'Barang Diterima', 'Diterima'])) {
-                                $klasterStatus = 'ready';
+                            } elseif ($trx->StatusPembayaran === 'Ditolak' || $trx->StatusPembayaran === 'Dibatalkan' || $statusPesanan === 'Dibatalkan') {
+                                $klasterStatus = 'done';
+                            } elseif ($trx->StatusPembayaran === 'Lunas' && in_array($statusPesanan, ['Pesanan Selesai', 'Selesai', 'Pesanan Diterima', 'Barang Diterima', 'Diterima'])) {
+                                // Jika pesanan sudah diterima/selesai TAPI uang masih Lunas (belum dicairkan), tombol cairkan muncul
+                                $klasterStatus = 'ready'; 
                             } elseif ($trx->StatusPembayaran === 'Lunas') {
                                 $klasterStatus = 'escrow';
                             }
