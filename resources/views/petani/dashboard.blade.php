@@ -29,7 +29,7 @@
                     <div class="d-flex flex-column align-items-start mb-3">
                         <div class="d-flex align-items-baseline gap-2 mb-1">
                             <h6 class="fw-bold text-dark mb-0 text-capitalize" style="font-size: 18px;">
-                                {{ $req->NamaTanaman }}
+                                {{ $req->komoditas->namatanaman ?? 'Tanaman Terhapus' }}
                             </h6>
                             <span class="text-muted" style="font-size: 13px;">
                                 {{ number_format($req->JumlahDibutuhkan, 0, ',', '.') }} kg
@@ -90,7 +90,7 @@
 
                             <div class="tc-tawar-text">
                                 <div class="tc-tawar-komoditas fw-bold text-dark mb-1"> 
-                                    {{ $tawar->permintaan->NamaTanaman }}
+                                    {{ $tawar->permintaan->komoditas->namatanaman?? 'Tanaman Terhapus' }}
                                 </div>
                                 <div class="tc-tawar-pasar text-muted" style="font-size: 12px;">
                                     <i class="bi bi-shop me-1"></i> 

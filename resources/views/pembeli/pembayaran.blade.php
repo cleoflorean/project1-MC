@@ -31,12 +31,12 @@
                     <!-- PISAH BARIS: Nama Tanaman -->
                     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px;">
                         <span style="color: #6b7280;">Nama Tanaman</span>
-                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->permintaan->NamaTanaman }}</span>
+                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->permintaan->komoditas->namatanaman ?? 'Tanaman Terhapus' }}</span>
                     </div>
                     <!-- PISAH BARIS: Komoditas -->
                     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px;">
                         <span style="color: #6b7280;">Komoditas</span>
-                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->permintaan->Komoditas }}</span>
+                        <span style="font-weight: 600; color: #111827;">{{ $pembayaran->penawaran->permintaan->komoditas->komoditas ?? 'Kategori Terhapus' }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px;">
                         <span style="color: #6b7280;">Harga Satuan</span>

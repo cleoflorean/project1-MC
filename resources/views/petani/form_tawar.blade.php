@@ -29,7 +29,7 @@
     <form action="{{ route('tawar.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     {{-- Menggabungkan ketangguhan request() dengan kemudahan variabel Controller --}}
-    <input type="hidden" name="idMinta" value="{{ $idMinta ?? request()->query('idMinta') }}">
+    <input type="hidden" name="idMinta" value="{{ $idMinta }}">
 
         <div class="row g-4">
             
@@ -46,7 +46,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-flower1"></i></span>
                                     <input type="text" class="form-control bg-light border-start-0 fw-bold text-success" name="NamaTanaman" 
-                                           value="{{ request()->query('NamaTanaman') }}" readonly>
+                                           value="{{ $permintaan->komoditas->namatanaman ?? '' }}" readonly>
                                 </div>
                                 <div class="form-text text-muted" style="font-size: 11px;">Nama tanaman dikunci otomatis mengikuti permintaan pembeli.</div>
                             </div>
@@ -57,7 +57,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-grid-3x3-gap-fill"></i></span>
                                     <input type="text" class="form-control bg-light border-start-0 fw-bold text-dark" name="Komoditas" 
-                                           value="{{ request()->query('Komoditas') }}" readonly>
+                                           value="{{ $permintaan->komoditas->komoditas ?? '' }}" readonly>
                                 </div>
                                 <div class="form-text text-muted" style="font-size: 11px;">Komoditas dikunci otomatis sesuai kategori permintaan pasar.</div>
                             </div>

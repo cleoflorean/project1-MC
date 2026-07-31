@@ -71,15 +71,15 @@
                             {{-- Foto Jika Ada --}}
                             @if($tawar->Gambar)
                                 <div class="mb-3 rounded-3 overflow-hidden" style="height: 140px;">
-                                    <img src="{{ asset($tawar->Gambar) }}" class="w-100 h-100 object-fit-cover" alt="{{ $tawar->permintaan->NamaTanaman }}">
+                                    <img src="{{ asset($tawar->Gambar) }}" class="w-100 h-100 object-fit-cover" alt="{{ $tawar->permintaan->komoditas->namatanaman ?? 'Tanaman' }}">
                                 </div>
                             @endif
 
                             <hr class="text-muted opacity-25 my-3">
 
                             <div class="mb-4">
-                                <h4 class="fw-bold text-success mb-2" style="font-size: 19px;">{{ $tawar->permintaan->NamaTanaman }}</h4>
-                                <h4 class="text-muted d-block small mb-3" style="font-size: 12px;">{{ $tawar->permintaan->Komoditas }}</h4>
+                                <h4 class="fw-bold text-success mb-2" style="font-size: 19px;">{{ $tawar->permintaan->komoditas->namatanaman ?? 'Tanaman Terhapus' }}</h4>
+                                <h4 class="text-muted d-block small mb-3" style="font-size: 12px;">{{ $tawar->permintaan->komoditas->komoditas ?? 'Kategori Terhapus' }}</h4>
 
                                 <div class="row text-center bg-light rounded-3 p-2 g-0">
                                     <div class="col-6 border-end">

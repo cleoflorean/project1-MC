@@ -130,7 +130,7 @@
                                 </div>
                                 <div>
                                     <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">
-                                        <i class="fas fa-box" style="color: #cbd5e1; font-size: 0.7rem; margin-right: 3px;"></i> {{ $trx->penawaran->permintaan->Komoditas ?? 'Komoditas' }}
+                                        <i class="fas fa-box" style="color: #cbd5e1; font-size: 0.7rem; margin-right: 3px;"></i> {{ $trx->penawaran->permintaan->komoditas->komoditas?? 'Komoditas Terhapus' }}
                                     </div>
                                 </div>
                             </div>

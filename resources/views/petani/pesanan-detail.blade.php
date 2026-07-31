@@ -172,10 +172,10 @@
                     <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; justify-content: center;">
                         <div style="display: flex; gap: 8px; margin-bottom: 6px;">
                             <span style="background: #ECFDF5; color: #059669; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
-                                {{ $pesanan->penawaran->permintaan->Komoditas }}
+                                {{ $pesanan->penawaran->permintaan->komoditas->namatanaman ?? 'Kategori Terhapus' }}
                             </span>
                         </div>
-                        <h4 style="margin: 0 0 8px 0; font-size: 1.25rem; color: #0F172A; font-weight: 700;">{{ $pesanan->penawaran->permintaan->NamaTanaman }}</h4>
+                        <h4 style="margin: 0 0 8px 0; font-size: 1.25rem; color: #0F172A; font-weight: 700;">{{ $pesanan->penawaran->permintaan->komoditas->namatanaman ?? 'Tanaman Terhapus' }}</h4>
                         
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; flex-wrap: wrap; gap: 8px;">
                             <span style="color: #64748B; font-size: 0.95rem; font-weight: 500;">

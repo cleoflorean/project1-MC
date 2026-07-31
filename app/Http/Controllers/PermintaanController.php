@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Permintaan;
 use App\Models\Penawaran;
 use App\Models\Pembayaran;
-use App\Models\Pengiriman; // <-- Tambahkan ini untuk menghitung total kontrak
+use App\Models\Pengiriman; 
 use App\Models\User;
 use App\Models\Ulasan; 
 use Illuminate\Support\Facades\DB;
@@ -17,17 +17,21 @@ class PermintaanController extends Controller
     {
         Penawaran::cleanExpired();
         $idPermintaans = $request->user()->permintaans()->pluck('idPermintaan');
-        $penawarans = Penawaran::with(['petani.profile', 'permintaan']) // <-- FIX: profile jadi profile
+        $penawarans = Penawaran::with(['petani.profile', 'permintaan.komoditas']) // <-- FIX: profile jadi profile
             ->whereIn('idMinta', $idPermintaans)->latest()->take(5)->get(); 
+        
+        $komoditas_list = \App\Models\Komoditas::all();
 
-        return view('pembeli.pembeli', compact('penawarans'));
+        return view('pembeli.pembeli', compact('penawarans', 'komoditas_list'));
     }
 
     public function index(Request $request)
     {
         Penawaran::cleanExpired();
-        $permintaans = $request->user()->permintaans()->with('penawarans')->latest()->get(); 
-        return view('pembeli.permintaan', compact('permintaans')); 
+        $permintaans = $request->user()->permintaans()->with(['penawarans', 'komoditas'])->latest()->get(); 
+        $komoditas_list = \App\Models\Komoditas::all();
+        
+        return view('pembeli.permintaan', compact('permintaans', 'komoditas_list')); 
     }
 
     public function destroy($id)
@@ -47,16 +51,14 @@ class PermintaanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'NamaTanaman'   => 'required|string',
-            'komoditas'     => 'required|string',
+            'komoditas_id'  => 'required|exists:komoditas,id',
             'volume'        => 'required|numeric',
             'batas_harga'   => 'required|numeric',
             'batas_akhir'   => 'required|date',
         ]);
 
         $request->user()->permintaans()->create([
-            'NamaTanaman'       => $request->NamaTanaman,
-            'Komoditas'         => $request->komoditas,
+            'komoditas_id'      => $request->komoditas_id,
             'JumlahDibutuhkan'  => $request->volume,
             'HargaMaksimal'     => $request->batas_harga,
             'BatasTanggal'      => $request->batas_akhir,
@@ -97,7 +99,7 @@ class PermintaanController extends Controller
                 $penawaran->Status = 'Setuju';
                 $penawaran->save();
 
-                $permintaan = Permintaan::with('user')->findOrFail($penawaran->idMinta);
+                $permintaan = Permintaan::with(['user', 'komoditas'])->findOrFail($penawaran->idMinta);
                 $totalBayar = $penawaran->JumlahTawar * $penawaran->HargaTawar;
                 
                 // Generate Nomor Pesanan (jika belum ada)
@@ -105,8 +107,8 @@ class PermintaanController extends Controller
                 $no_pesanan = $pembayaranLama?->no_pesanan;
 
                 if (!$no_pesanan) {
-                    $barang = $permintaan->NamaTanaman ?? 'X';
-                    $komoditas = $permintaan->Komoditas ?? 'X';
+                    $barang = $permintaan->komoditas->nama_komoditas ?? 'X';
+                    $komoditas = $permintaan->komoditas->kategori ?? 'X';
                     $username = $permintaan->user->username ?? 'X';
 
                     $inisialB = strtoupper(substr($barang, 0, 1));
@@ -140,11 +142,11 @@ class PermintaanController extends Controller
                          ->where('idTawar', '!=', $id)
                          ->where('Status', 'Pending')
                          ->whereHas('permintaan', function ($query) use ($permintaan) {
-                             $query->where('NamaTanaman', $permintaan->NamaTanaman);
+                             $query->where('komoditas_id', $permintaan->komoditas_id);
                          })
                          ->update([
                              'Status' => 'Tidak Setuju',
-                             'Catatan' => 'Dibatalkan otomatis oleh sistem: Stok panen ' . $permintaan->NamaTanaman . ' sudah dialokasikan ke pesanan lain yang disetujui.'
+                             'Catatan' => 'Dibatalkan otomatis oleh sistem: Stok panen ' . ($permintaan->komoditas->nama_komoditas ?? 'tanaman ini') . ' sudah dialokasikan ke pesanan lain yang disetujui.'
                          ]);
 
                 // 5. Cek apakah volume permintaan pembeli sudah terpenuhi
@@ -157,7 +159,7 @@ class PermintaanController extends Controller
                              ->where('Status', 'Pending')->update(['Status' => 'Tidak Setuju']);
                 }
 
-                return back()->with('success', 'Status penawaran berhasil disetujui. Penawaran ganda lain untuk ' . $permintaan->NamaTanaman . ' dari petani ini otomatis ditutup oleh sistem.');
+                return back()->with('success', 'Status penawaran berhasil disetujui. Penawaran ganda lain untuk ' . ($permintaan->komoditas->nama_komoditas ?? 'tanaman ini') . ' dari petani ini otomatis ditutup oleh sistem.');
             });
         } else {
             // Untuk status selain 'Setuju' (misal 'Tidak Setuju' / tolak manual)

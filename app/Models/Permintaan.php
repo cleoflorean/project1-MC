@@ -15,13 +15,17 @@ class Permintaan extends Model
 
     protected $fillable = [
         'user_id',
-        'NamaTanaman',
-        'Komoditas',
+        'komoditas_id',
         'JumlahDibutuhkan',
         'HargaMaksimal',
         'BatasTanggal',
         'Status',
     ];
+
+    public function komoditas()
+    {
+        return $this->belongsTo(Komoditas::class, 'komoditas_id');
+    }
 
     public function user()
     {

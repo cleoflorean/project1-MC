@@ -2,6 +2,9 @@
 
 @section('title', 'Permintaan Saya - Platform Komoditas')
 
+<!-- Pindahkan CSS ke atas agar dimuat lebih dulu sebelum konten -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 @section('content')
 <main class="container py-4" style="max-width: 1000px;">
     
@@ -41,7 +44,7 @@
                     <div class="flex-grow-1 text-start">
                         <!-- Judul dan Badge Status -->
                         <div class="d-flex align-items-center gap-2 mb-3 text-start">
-                            <h4 class="m-0 fw-bold text-dark" style="font-size: 1.25rem; color: #0f172a !important;">{{ $item->NamaTanaman }}</h4>
+                            <h4 class="m-0 fw-bold text-dark" style="font-size: 1.25rem; color: #0f172a !important;">{{ $item->komoditas->namatanaman ?? 'Tanaman Terhapus' }}</h4>
                             <span class="px-2 py-1" style="font-size: 0.7rem; font-weight: 600; border-radius: 6px; {{ $isExpired ? 'background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;' : 'background: #ecfdf5; color: #047857; border: 1px solid #d1fae5;' }}">
                                 {{ $isExpired ? 'Kadaluarsa' : 'Aktif' }}
                             </span>
@@ -51,7 +54,7 @@
                         <div class="row g-2 text-secondary text-start" style="font-size: 0.9rem;">
                             <div class="col-12 col-md-6">
                                 <i class="fas fa-tag text-success me-2" style="width: 18px;"></i>
-                                Komoditas: <strong class="text-dark">{{ $item->Komoditas }}</strong>
+                                Komoditas: <strong class="text-dark">{{ $item->Komoditas->komoditas }}</strong>
                             </div>
                             <div class="col-12 col-md-6">
                                 <i class="fas fa-money-bill-wave text-success me-2" style="width: 18px;"></i>
@@ -99,66 +102,102 @@
             </div>
         @endforelse
     </div>
-
 </main>
 
 <!-- MODAL FORM BUAT PERMINTAAN -->
-    <div class="modal-overlay" id="formModalRequest" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 1050; justify-content: center; align-items: center; padding: 1rem;">
-        <div class="card border-0 shadow-lg p-4 text-start" style="width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; background: white; border-radius: 16px;">
+<div class="modal-overlay" id="formModalRequest" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 1050; justify-content: center; align-items: center; padding: 1rem;">
+    <div class="card border-0 shadow-lg p-4 text-start" style="width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; background: white; border-radius: 16px;">
+        
+        <!-- Header Modal -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="text-start">
+                <h4 class="fw-bold text-dark m-0" style="font-size: 1.25rem;">Buat Permintaan Pengadaan</h4>
+                <p class="text-secondary m-0" style="font-size: 0.8rem; margin-top: 3px;">Siarkan spesifikasi Anda ke ekosistem petani.</p>
+            </div>
+            <button type="button" onclick="closeModal('formModalRequest')" style="background: #f1f5f9; border: none; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; color: #64748b;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- Body Form Modal -->
+        <form action="{{ route('permintaan.store') }}" method="POST">
+            @csrf
             
-            <!-- Header Modal -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div class="text-start">
-                    <h4 class="fw-bold text-dark m-0" style="font-size: 1.25rem;">Buat Permintaan Pengadaan</h4>
-                    <p class="text-secondary m-0" style="font-size: 0.8rem; margin-top: 3px;">Siarkan spesifikasi Anda ke ekosistem petani.</p>
-                </div>
-                <button type="button" onclick="closeModal('formModalRequest')" style="background: #f1f5f9; border: none; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; color: #64748b;">
-                    <i class="fas fa-times"></i>
-                </button>
+            <div class="mb-3 text-start">
+                <label class="form-label fw-semibold text-dark small mb-1">Nama Tanaman</label>
+                <select name="komoditas_id" id="select_nama_tanaman" class="form-select py-2" style="width: 100%;" required>
+                    <option value="">-- Ketik Nama Tanaman --</option>
+                    @foreach($komoditas_list as $kom)
+                        <!-- PERBAIKAN: Gunakan data-komoditas agar tidak bingung -->
+                        <option value="{{ $kom->id }}" data-komoditas="{{ $kom->komoditas }}">{{ $kom->namatanaman }}</option>
+                    @endforeach
+                </select>
             </div>
             
-            <!-- Body Form Modal -->
-            <form action="{{ route('permintaan.store') }}" method="POST">
-                @csrf
-                <div class="mb-3 text-start">
-                    <label class="form-label fw-semibold text-dark small mb-1">Nama Tanaman</label>
-                    <input type="text" name="NamaTanaman" class="form-control py-2" style="border-radius: 8px;" placeholder="Contoh: Cabai Rawit Dewata" required>
+            <div class="mb-3 text-start">
+                <label class="form-label fw-semibold text-dark small mb-1">Komoditas</label>
+                <input type="text" name="komoditas" id="input_komoditas" class="form-control py-2" style="border-radius: 8px; background-color: #f8fafc;" placeholder="Pilih tanaman terlebih dahulu" readonly required>
+            </div>
+
+            <div class="row g-3 mb-3 text-start">
+                <div class="col-6">
+                    <label class="form-label fw-semibold text-dark small mb-1">Volume (kg)</label>
+                    <input type="number" name="volume" class="form-control py-2" style="border-radius: 8px;" placeholder="Contoh: 2500" required>
                 </div>
-                <div class="mb-3 text-start">
-                    <label class="form-label fw-semibold text-dark small mb-1">Pilih Komoditas</label>
-                    <select name="komoditas" class="form-select py-2" style="border-radius: 8px;" required>
-                        <option value="">-- Pilih Komoditas --</option>
-                        <option value="Tanaman Pangan">Tanaman Pangan (Biji-bijian, Umbi-umbian, Kacang-kacangan)</option>
-                        <option value="Hortikultura">Hortikultura (Sayuran, Buah-buahan, Tanaman Obat)</option>
-                        <option value="Perkebunan">Perkebunan (Tanaman Industri, Rempah-rempah)</option>
-                    </select>
+                <div class="col-6">
+                    <label class="form-label fw-semibold text-dark small mb-1">Harga Maks (Rp/kg)</label>
+                    <input type="number" name="batas_harga" class="form-control py-2" style="border-radius: 8px;" placeholder="Contoh: 30000" required>
                 </div>
-                <div class="row g-3 mb-3 text-start">
-                    <div class="col-6">
-                        <label class="form-label fw-semibold text-dark small mb-1">Volume (kg)</label>
-                        <input type="number" name="volume" class="form-control py-2" style="border-radius: 8px;" placeholder="Contoh: 2500" required>
-                    </div>
-                    <div class="col-6">
-                        <label class="form-label fw-semibold text-dark small mb-1">Harga Maks (Rp/kg)</label>
-                        <input type="number" name="batas_harga" class="form-control py-2" style="border-radius: 8px;" placeholder="Contoh: 30000" required>
-                    </div>
-                </div>
-                <div class="mb-4 text-start">
-                    <label class="form-label fw-semibold text-dark small mb-1">Batas Akhir Penerimaan</label>
-                    <input type="date" name="batas_akhir" class="form-control py-2" style="border-radius: 8px;" required>
-                </div>
-                <button type="submit" class="btn btn-success w-100 py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2" style="border-radius: 8px; background-color: #2e7d32; border: none;">
-                    <i class="fas fa-paper-plane"></i> Kirim Permintaan
-                </button>
-            </form>
-        </div>
-    </div> <!-- END OF MODAL -->
+            </div>
+            
+            <div class="mb-4 text-start">
+                <label class="form-label fw-semibold text-dark small mb-1">Batas Akhir Penerimaan</label>
+                <input type="date" name="batas_akhir" class="form-control py-2" style="border-radius: 8px;" required>
+            </div>
+            
+            <button type="submit" class="btn btn-success w-100 py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2" style="border-radius: 8px; background-color: #2e7d32; border: none;">
+                <i class="fas fa-paper-plane"></i> Kirim Permintaan
+            </button>
+        </form>
+    </div>
+</div> <!-- END OF MODAL -->
+
+<!-- Library JS diletakkan di bawah sebelum endsection -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
+    $(document).ready(function() {
+        // 1. Inisialisasi Select2
+        $('#select_nama_tanaman').select2({
+            placeholder: "-- Ketik Nama Tanaman --",
+            allowClear: true,
+            language: {
+                noResults: function() {
+                    return "Tidak ada tanaman ditemukan";
+                }
+            }
+        });
+
+        // 2. Fitur Otomatis Isi Komoditas (SUDAH DIPERBAIKI)
+        $('#select_nama_tanaman').on('change', function() {
+            // Ambil nilai dari atribut data-komoditas milik <option> yang dipilih
+            var nilaiKomoditas = $(this).find(':selected').attr('data-komoditas');
+            
+            // Cek jika nilainya ada, masukkan ke input
+            if (nilaiKomoditas) {
+                $('#input_komoditas').val(nilaiKomoditas);
+            } else {
+                $('#input_komoditas').val(''); 
+            }
+        });
+    });
+
     // Script Modal
     function openModal(id) {
         document.getElementById(id).style.display = 'flex';
     }
+    
     function closeModal(id) {
         document.getElementById(id).style.display = 'none';
     }
@@ -169,10 +208,8 @@
         
         cards.forEach(card => {
             if (status === 'all') {
-                // Tampilkan semua
                 card.style.display = 'block';
             } else {
-                // Cocokkan data-status dengan dropdown value
                 if (card.getAttribute('data-status') === status) {
                     card.style.display = 'block';
                 } else {

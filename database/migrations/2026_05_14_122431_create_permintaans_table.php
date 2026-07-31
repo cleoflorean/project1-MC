@@ -8,8 +8,6 @@ return new class extends Migration {
         Schema::create('permintaans', function (Blueprint $table) {
             $table->id('idPermintaan');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('NamaTanaman',30);
-            $table->string('Komoditas',20);
             $table->integer('JumlahDibutuhkan');
             $table->decimal('HargaMaksimal', 15, 2);
             $table->date('BatasTanggal');

@@ -131,8 +131,8 @@
                     @endif
                 </div>
                 <div style="flex-grow: 1;">
-                    <h5 style="margin: 0 0 5px 0; font-size: 1.05rem; font-weight: 700; color: #1f2937;">{{ $pesanan->penawaran->permintaan->Komoditas }}</h5>
-                    <p style="margin: 0; font-size: 0.9rem; color: #6b7280;">Jumlah: {{ $pesanan->penawaran->permintaan->JumlahTawar }} Kg</p>
+                    <h5 style="margin: 0 0 5px 0; font-size: 1.05rem; font-weight: 700; color: #1f2937;">{{ $pesanan->penawaran->permintaan->komoditas->namatanaman ?? '-'}}</h5>
+                    <p style="margin: 0; font-size: 0.9rem; color: #6b7280;">Jumlah: {{ $pesanan->penawaran->JumlahTawar }} Kg</p>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
                         <span style="font-weight: 600; color: #1f2937; font-size: 0.95rem;">Rp {{ number_format($pesanan->penawaran->HargaTawar, 0, ',', '.') }} <small style="color: #6b7280; font-weight: 400;">/kg</small></span>
                     </div>

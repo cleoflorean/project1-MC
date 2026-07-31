@@ -27,7 +27,7 @@ class PermintaanController extends Controller
                                         ->orderBy('BatasTanggal', 'desc')
                                         ->get();
 
-        $komoditas = Permintaan::where('Status', 'Aktif')->pluck('Komoditas')->unique()->filter();
+        $komoditas = Permintaan::where('Status', 'Aktif')->pluck('komoditas_id')->unique()->filter();
 
         // Kirim kedua tipe data ke satu halaman view yang sama
         return view('petani.permintaan', compact('permintaanAktif', 'permintaanKadaluarsa', 'komoditas'));

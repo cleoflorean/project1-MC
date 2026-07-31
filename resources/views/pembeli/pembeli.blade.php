@@ -31,7 +31,7 @@
                                     <!-- FOTO PRODUK DINAMIS (DARI CONTROLLER PETANI) -->
                                     @if($tawar->Gambar && file_exists(public_path($tawar->Gambar)))
                                         <!-- Menampilkan foto yang diupload petani -->
-                                        <img src="{{ asset($tawar->Gambar) }}" alt="{{ $tawar->permintaan->NamaTanaman ?? 'Komoditas' }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                        <img src="{{ asset($tawar->Gambar) }}" alt="{{ $tawar->permintaan->komoditas->namatanaman ?? 'Komoditas' }}" style="width: 100%; height: 100%; object-fit: cover;">
                                     @else
                                         <!-- Default Placeholder jika petani tidak upload foto -->
                                         <img src="https://placehold.co/400x400?text=Tidak+Ada+Foto" alt="No Image" style="width: 100%; height: 100%; object-fit: cover;">
@@ -52,14 +52,14 @@
                                 <!-- Detail Info Produk -->
                                 <div class="product-info-body">
                                     <h4 class="product-title">
-                                        {{ $tawar->permintaan->NamaTanaman ?? 'Permintaan #'.$tawar->idMinta }}
+                                        {{ $tawar->permintaan->komoditas->namatanaman ?? 'Permintaan #' }}
                                     </h4>
                                     <p class="product-seller mb-1">
                                         <i class="fas fa-store me-1" style="font-size: 0.75rem;"></i> 
                                         {{ $tawar->petani?->profile?->NamaLengkap ?? $tawar->petani?->username ?? 'Petani Tidak Diketahui' }}
                                     </p>
                                     <p class="product-category mb-2">
-                                        {{ $tawar->permintaan->Komoditas ?? '-' }}
+                                        {{ $tawar->permintaan->komoditas->komoditas ?? '-' }}
                                     </p>
                                     
                                     <div class="product-meta-row">
@@ -103,18 +103,48 @@
                     @csrf
                     <div class="mb-3">
                         <label class="form-label text-secondary fw-semibold small">Nama Tanaman</label>
-                        <input type="text" name="NamaTanaman" class="form-control" placeholder="Contoh: Cabai Rawit" required>
+                        <!-- Tambahkan library Select2 & jQuery untuk fitur ketik -->
+                        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+                        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+                        
+                        <select name="komoditas_id" id="select_nama_tanaman_dashboard" class="form-select" style="width: 100%;" required>
+                            <option value="">-- Ketik Nama Tanaman --</option>
+                            @foreach($komoditas_list as $kom)
+                                <option value="{{ $kom->id }}" data-kategori="{{ $kom->kategori }}">{{ $kom->nama_komoditas }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label text-secondary fw-semibold small">Komoditas</label>
-                        <select name="komoditas" class="form-select" required>
-                            <option value="">-- Pilih --</option>
-                            <option value="Sayur">Sayur</option>
-                            <option value="Kacang-Kacangan">Kacang-Kacangan</option>
-                            <option value="Buah-Buahan">Buah-Buahan</option>
-                        </select>
+                        <input type="text" id="input_kategori_dashboard" class="form-control" style="background-color: #f8fafc;" placeholder="Otomatis terisi..." readonly>
                     </div>
+
+                    <script>
+                        $(document).ready(function() {
+                            $('#select_nama_tanaman_dashboard').select2({
+                                placeholder: "-- Ketik Nama Tanaman --",
+                                allowClear: true,
+                                language: {
+                                    noResults: function() {
+                                        return "Tidak ada tanaman ditemukan";
+                                    }
+                                }
+                            });
+
+                            $('#select_nama_tanaman_dashboard').on('change', function() {
+                                var selectedOption = $(this).find('option:selected');
+                                var kategori = selectedOption.data('kategori');
+                                
+                                if (kategori) {
+                                    $('#input_kategori_dashboard').val(kategori);
+                                } else {
+                                    $('#input_kategori_dashboard').val('');
+                                }
+                            });
+                        });
+                    </script>
 
                     <div class="mb-3">
                         <label class="form-label text-secondary fw-semibold small">Volume (kg)</label>

@@ -65,7 +65,7 @@
                         if(strpos($noWa, '0') === 0) {
                             $noWa = '62' . substr($noWa, 1);
                         }
-                        $namaKomoditas = $pesanan->penawaran->permintaan->Komoditas ?? $pesanan->penawaran->permintaan->NamaTanaman ?? 'produk ini';
+                        $namaKomoditas = $pesanan->penawaran->permintaan->komoditas->namatanaman ?? 'produk ini';
                         $pesanWa = "Halo, saya ingin bertanya mengenai pesanan saya untuk {$namaKomoditas}.";
                     @endphp
 
@@ -113,7 +113,7 @@
                     
                     <!-- Detail Produk -->
                     <div class="flex-grow-1">
-                        <h6 class="mb-1 text-dark fs-6">{{ $pesanan->penawaran->permintaan->NamaTanaman ?? 'Nama Tanaman Terhapus' }}</h6>
+                        <h6 class="mb-1 text-dark fs-6">{{ $pesanan->penawaran->permintaan->komoditas->namatanaman ?? 'Nama Tanaman Terhapus' }}</h6>
                         <p class="text-muted mb-1 small">No. Pesanan: <span class="fw-bold">{{ $pesanan->no_pesanan ?? '-' }}</span></p>
                         <p class="text-muted mb-0 small">Kuantitas: {{ $pesanan->penawaran->JumlahTawar ?? 0 }} Kg</p>
                     </div>

@@ -10,7 +10,7 @@
         <div>
             <h1 style="margin: 0; font-size: 1.75rem; font-weight: 800; color: #0f172a; letter-spacing: -0.5px;">Evaluasi Penawaran Masuk</h1>
             <p style="margin: 6px 0 0 0; color: #64748b; font-size: 0.95rem;">
-                Permintaan: <span style="background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; margin-left: 4px;">{{ $permintaan->NamaTanaman }}</span>
+                Permintaan: <span style="background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; margin-left: 4px;">{{ $permintaan->komoditas->namatanaman ?? 'Tanaman Terhapus' }}</span>
             </p>
         </div>
         <div>
@@ -186,7 +186,7 @@
                                 if($noWa && substr($noWa, 0, 1) == '0') {
                                     $noWa = '62' . substr($noWa, 1);
                                 }
-                                $pesanWa = "Halo, saya pembeli komoditas " . ($tawar->permintaan->Komoditas ?? $tawar->permintaan->NamaTanaman) . ". Penawaran Anda telah saya setujui. Mari berdiskusi mengenai teknis pengiriman.";
+                                $pesanWa = "Halo, saya pembeli komoditas " . ($tawar->permintaan->komoditas->nama_komoditas ?? 'tanaman ini') . ". Penawaran Anda telah saya setujui. Mari berdiskusi mengenai teknis pengiriman.";
                             @endphp
 
                             @if($noWa)

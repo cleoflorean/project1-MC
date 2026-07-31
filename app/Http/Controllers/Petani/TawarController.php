@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Petani;
 
 use App\Http\Controllers\Controller;
 use App\Models\Penawaran;
+use App\Models\Permintaan;
 use Illuminate\Http\Request;
 
 class TawarController extends Controller
@@ -13,11 +14,10 @@ class TawarController extends Controller
     {
         // Sesuaikan query dengan parameter URL dari halaman pasar (nama_tanaman & kategori)
         $idMinta     = $request->query('idMinta');
-        $namaTanaman = $request->query('NamaTanaman');
-        $kategori    = $request->query('Kategori'); // Menggunakan istilah kategori sesuai form baru
+        $permintaan = Permintaan::with('komoditas')->findOrFail($idMinta);
 
         // Kembalikan ke view petani.form_tawar (Pastikan folder & nama file view sudah sesuai)
-        return view('petani.form_tawar', compact('namaTanaman', 'idMinta', 'kategori'));
+        return view('petani.form_tawar', compact('permintaan', 'idMinta'));
     }
 
     // 2. Memproses Data Saat Tombol "Kirim Penawaran" Diklik
@@ -62,7 +62,7 @@ class TawarController extends Controller
     public function index() {
         Penawaran::cleanExpired();
         // Menggunakan where agar hanya mengambil data milik petani yang sedang login
-        $pengajuanTawar = Penawaran::with('permintaan.user.profile')
+        $pengajuanTawar = Penawaran::with('permintaan.user.profile','permintaan.komoditas')
                         ->where('idPetani', auth()->id())
                         ->get();
         

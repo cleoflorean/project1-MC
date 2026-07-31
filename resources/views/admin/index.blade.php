@@ -96,16 +96,16 @@
             <div style="overflow-x: auto;">
                 <table style="width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 0.85rem;">
                     <thead>
-                        <tr style="background: #f8fafc; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.5px;">
-                            <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0; border-top-left-radius: 8px;">Transaksi</th>
-                            <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Petani</th>
-                            <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Pembeli</th>
-                            <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Komoditas</th>
-                            <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Status Info</th>
-                            <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0; text-align: center;">Lampiran</th>
-                            <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0; border-top-right-radius: 8px; text-align: right;">Aksi Kendali</th>
-                        </tr>
-                    </thead>
+                    <tr style="background: #f8fafc; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.5px;">
+                        <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0; border-top-left-radius: 8px;">Transaksi</th>
+                        <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Petani</th>
+                        <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Pembeli</th>
+                        <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Komoditas</th>
+                        <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Status Info</th>
+                        <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0; text-align: center;">Lampiran</th>
+                        <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0; border-top-right-radius: 8px; text-align: right;">Aksi Kendali</th>
+                    </tr>
+                </thead>
                     <tbody style="color: #334155;">
                         @forelse($semuaTransaksi as $trx)
                         
@@ -126,155 +126,157 @@
                             }
                         @endphp
 
-                        <tr style="transition: all 0.2s ease; border-bottom: 1px solid #f1f5f9;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.transform='translateY(-1px)';" onmouseout="this.style.backgroundColor='transparent'; this.style.transform='none';">
-                            
-                            {{-- 1. Transaksi Info --}}
-                            <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;">
-                                <div style="font-weight: 800; color: #0f172a; font-size: 0.9rem; margin-bottom: 4px;">Rp {{ number_format($trx->TotalBayar, 0, ',', '.') }}</div>
-                                <div style="color: #94a3b8; font-size: 0.75rem;"><span style="color:#64748b; font-weight: 600;">#{{ $trx->idPembayaran }}</span> &bull; {{ $trx->created_at ? $trx->created_at->format('d M Y') : '-' }}</div>
-                            </td>
+                        <tr class="trx-row" data-status="{{ $klasterStatus }}" style="transition: all 0.2s ease; border-bottom: 1px solid #f1f5f9;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.transform='translateY(-1px)';" onmouseout="this.style.backgroundColor='transparent'; this.style.transform='none';">
+                        
+                        {{-- 1. Transaksi Info --}}
+                        <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;">
+                            <div style="font-weight: 800; color: #0f172a; font-size: 0.9rem; margin-bottom: 4px;">{{ $trx->no_pesanan ?? '-' }}</div>
+                            <div style="font-weight: 700; color: #059669; font-size: 0.85rem; margin-bottom: 4px;">Rp {{ number_format($trx->TotalBayar, 0, ',', '.') }}</div>
+                            <div style="color: #94a3b8; font-size: 0.75rem;">{{ $trx->created_at ? $trx->created_at->format('d M Y') : '-' }}</div>
+                        </td>
 
-                            {{-- Petani --}}
-                            <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;">
-                                        {{ strtoupper(substr($trx->penawaran->petani->username ?? 'G', 0, 1)) }}
-                                    </div>
-                                    <div>
-                                        <div style="font-weight: 700; color: #1e293b; font-size: 0.85rem;">{{ $trx->penawaran->petani->username ?? 'Guest' }}</div>
-                                        
-                                    </div>
+                        {{-- 2. PETANI --}}
+                        <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;" class="searchable-cell">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0;">
+                                    {{ strtoupper(substr($trx->penawaran->petani->username ?? 'P', 0, 1)) }}
                                 </div>
-                            </td>
-                            
-                            {{-- 2. Pembeli & Komoditas --}}
-                            <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;">
-                                        {{ strtoupper(substr($trx->penawaran->permintaan->user->username ?? 'G', 0, 1)) }}
-                                    </div>
-                                    <div>
-                                        <div style="font-weight: 700; color: #1e293b; font-size: 0.85rem;">{{ $trx->penawaran->permintaan->user->username ?? 'Guest' }}</div>
-                                        
-                                    </div>
+                                <div style="font-weight: 700; color: #1e293b; font-size: 0.85rem;">
+                                    {{ $trx->penawaran->petani->username ?? '-' }}
                                 </div>
-                            </td>
+                            </div>
+                        </td>
 
-                            {{-- Komoditas --}}
-                            <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;">
-                                <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">
-                                        <i class="fas fa-box" style="color: #cbd5e1; font-size: 0.7rem; margin-right: 3px;"></i> {{ $trx->penawaran->permintaan->Komoditas ?? 'Komoditas' }}
+                        {{-- 3. PEMBELI --}}
+                        <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;" class="searchable-cell">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0;">
+                                    {{ strtoupper(substr($trx->penawaran->permintaan->user->username ?? 'G', 0, 1)) }}
                                 </div>
-                            </td>
-                            
-                            {{-- 3. Status Info (Gabungan Keuangan & Logistik) --}}
-                            <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;">
-                                <div style="display: flex; flex-direction: column; gap: 6px;">
-                                    {{-- Keuangan --}}
-                                    <div>
-                                        @if($klasterStatus === 'unpaid')
-                                            <span style="background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #e2e8f0; display: inline-block;">Belum Bayar</span>
-                                        @elseif($klasterStatus === 'pending')
-                                            <span style="background: #fff7ed; color: #c2410c; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #ffedd5; display: inline-block;">Belum Verifikasi</span>
-                                        @elseif($klasterStatus === 'escrow' || $klasterStatus === 'ready')
-                                            <span style="background: #ecfdf5; color: #047857; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #d1fae5; display: inline-block;">Dana Diterima</span>
-                                        @elseif($klasterStatus === 'done' && $trx->StatusPembayaran !== 'Ditolak' && $trx->StatusPembayaran !== 'Dibatalkan')
-                                            <span style="background: #f0fdf4; color: #166534; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #bbf7d0; display: inline-block;">Selesai (Cair)</span>
-                                        @else
-                                            <span style="background: #fef2f2; color: #991b1b; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #fecaca; display: inline-block;">Dibatalkan</span>
-                                        @endif
-                                    </div>
-                                    {{-- Logistik --}}
-                                    <div style="font-size: 0.7rem; font-weight: 600; color: #64748b; margin-left: 2px;">
-                                        <i class="fas fa-truck" style="margin-right: 4px; color: #cbd5e1;"></i> 
-                                        @if(in_array($statusPesanan, ['Pesanan Selesai', 'Selesai', 'Pesanan Diterima', 'Barang Diterima', 'Diterima']))
-                                            <span style="color: #059669;">Barang Diterima</span>
-                                        @elseif($statusPesanan === 'Dibatalkan')
-                                            <span style="color: #dc2626;">Batal</span>
-                                        @elseif($klasterStatus === 'unpaid')
-                                            <span>Menunggu Pembayaran</span>
-                                        @else
-                                            <span style="color: #0284c7;">{{ $statusPesanan ?: 'Diproses' }}</span>
-                                        @endif
+                                <div style="font-weight: 700; color: #1e293b; font-size: 0.85rem;">
+                                    {{ $trx->penawaran->permintaan->user->username ?? 'Guest' }}
+                                </div>
+                            </div>
+                        </td>
+                        
+                        {{-- 4. Komoditas --}}
+                        <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;" class="searchable-cell">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">
+                                        <i class="fas fa-box" style="color: #cbd5e1; font-size: 0.7rem; margin-right: 3px;"></i> {{ $trx->penawaran->permintaan->komoditas->komoditas?? 'Komoditas Terhapus' }}
                                     </div>
                                 </div>
-                            </td>
-                            
-                            {{-- 4. Lampiran --}}
-                            <td style="padding: 16px 20px; text-align: center; border-bottom: 1px solid #f1f5f9;">
-                                @if($trx->BuktiTransfer)
-                                    <button type="button" onclick="bukaModalBukti('{{ asset('storage/' . $trx->BuktiTransfer) }}', '{{ route('admin.transaksi.verifikasi', $trx->idPembayaran) }}')" style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#ffffff'; this.style.borderColor='#cbd5e1';">
-                                        <i class="fas fa-image" style="color: #3b82f6;"></i> Bukti
-                                    </button>
-                                @else
-                                    <span style="color: #cbd5e1; font-style: italic; font-size: 0.75rem;">Kosong</span>
-                                @endif
-                            </td>
-                            
-                            {{-- 5. Aksi Kendali --}}
-                            <td style="padding: 16px 20px; text-align: right; border-bottom: 1px solid #f1f5f9;">
-                                <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
-                                    
+                            </div>
+                        </td>
+                        
+                        {{-- 3. Status Info --}}
+                        <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;">
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                <div>
                                     @if($klasterStatus === 'unpaid')
-                                        <span style="color: #94a3b8; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
-                                            <i class="fas fa-clock"></i> Belum Bayar
-                                        </span>
-
+                                        <span style="background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #e2e8f0; display: inline-block;">Belum Bayar</span>
                                     @elseif($klasterStatus === 'pending')
-                                        <div style="display: flex; gap: 6px;">
-                                            <form action="{{ route('admin.transaksi.verifikasi', $trx->idPembayaran) }}" method="POST" onsubmit="return confirm('Setujui pembayaran ini?')" style="margin:0;">
-                                                @csrf
-                                                <button type="submit" style="background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.7rem; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 4px rgba(16,185,129,0.2);" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
-                                                    Terima
-                                                </button>
-                                            </form>
-                                            <form action="{{ route('admin.transaksi.tolak', $trx->idPembayaran) }}" method="POST" onsubmit="return confirm('Tolak pembayaran ini?')" style="margin:0;">
-                                                @csrf
-                                                <button type="submit" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.7rem; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 4px rgba(239,68,68,0.2);" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
-                                                    Tolak
-                                                </button>
-                                            </form>
-                                        </div>
-
-                                    @elseif($klasterStatus === 'escrow')
-                                        @php $rekPembeli = optional($trx->penawaran->permintaan->user->rekening); @endphp
-                                        <span style="color: #0284c7; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; background: #e0f2fe; padding: 4px 10px; border-radius: 6px;">
-                                            Menunggu Pengiriman
-                                        </span>
-                                        <button type="button" onclick="bukaModalRefund('{{ route('admin.transaksi.refund', $trx->idPembayaran) }}', '{{ $rekPembeli->NamaBank ?? '' }}', '{{ $rekPembeli->NoRekening ?? '' }}', '{{ $rekPembeli->AtasNama ?? '' }}')" style="background: none; border: none; color: #ef4444; font-weight: 700; text-decoration: underline; font-size: 0.75rem; cursor: pointer; padding: 0;">
-                                            Refund Dana
-                                        </button>
-
-                                    @elseif($klasterStatus === 'ready')
-                                        @php $rek = optional($trx->penawaran->petani->rekening); @endphp
-                                        <button type="button" onclick="bukaModalCairkan('{{ route('admin.transaksi.cairkan', $trx->idPembayaran) }}', '{{ $rek->NamaBank ?? '' }}', '{{ $rek->NoRekening ?? '' }}', '{{ $rek->AtasNama ?? '' }}')" style="background: #3b82f6; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; cursor: pointer; box-shadow: 0 2px 4px rgba(59,130,246,0.25); transition: background 0.2s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
-                                            Cairkan Ke Petani
-                                        </button>
-
-                                    @elseif($klasterStatus === 'done')
-                                        @if($trx->StatusPembayaran === 'Ditolak' || $trx->StatusPembayaran === 'Dibatalkan' || $statusPesanan === 'Dibatalkan')
-                                            <span style="color: #991b1b; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; background: #fef2f2; padding: 4px 10px; border-radius: 6px;">
-                                                <i class="fas fa-ban"></i> Dibatalkan
-                                            </span>
-                                        @else
-                                            <span style="color: #166534; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; padding: 4px 10px; border-radius: 6px;">
-                                                <i class="fas fa-check-double"></i> Dana Dicairkan
-                                            </span>
-                                        @endif
+                                        <span style="background: #fff7ed; color: #c2410c; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #ffedd5; display: inline-block;">Belum Verifikasi</span>
+                                    @elseif($klasterStatus === 'escrow' || $klasterStatus === 'ready')
+                                        <span style="background: #ecfdf5; color: #047857; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #d1fae5; display: inline-block;">Dana Diterima</span>
+                                    @elseif($klasterStatus === 'done' && $trx->StatusPembayaran !== 'Ditolak' && $trx->StatusPembayaran !== 'Dibatalkan' && $statusPesanan !== 'Dibatalkan')
+                                        <span style="background: #f0fdf4; color: #166534; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #bbf7d0; display: inline-block;">Selesai (Cair)</span>
+                                    @else
+                                        <span style="background: #fef2f2; color: #991b1b; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.7rem; border: 1px solid #fecaca; display: inline-block;">Dibatalkan</span>
                                     @endif
                                 </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" style="padding: 40px; text-align: center; color: #94a3b8; font-style: italic;">
-                                <i class="fas fa-inbox fa-3x mb-3" style="color: #cbd5e1; display: block;"></i>
-                                Belum ada transaksi yang masuk
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                <div style="font-size: 0.7rem; font-weight: 600; color: #64748b; margin-left: 2px;">
+                                    <i class="fas fa-truck" style="margin-right: 4px; color: #cbd5e1;"></i> 
+                                    @if(in_array($statusPesanan, ['Pesanan Selesai', 'Selesai', 'Pesanan Diterima', 'Barang Diterima', 'Diterima']))
+                                        <span style="color: #059669;">Barang Diterima</span>
+                                    @elseif($statusPesanan === 'Dibatalkan' || $trx->StatusPembayaran === 'Dibatalkan' || $trx->StatusPembayaran === 'Ditolak')
+                                        <span style="color: #dc2626;">Batal</span>
+                                    @elseif($klasterStatus === 'unpaid')
+                                        <span>Menunggu Pembayaran</span>
+                                    @else
+                                        <span style="color: #0284c7;">{{ $statusPesanan ?: 'Diproses' }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </td>
+                        
+                        {{-- 4. Lampiran --}}
+                        <td style="padding: 16px 20px; text-align: center; border-bottom: 1px solid #f1f5f9;">
+                            @if($trx->BuktiTransfer)
+                                <button type="button" onclick="bukaModalBukti('{{ asset('storage/' . $trx->BuktiTransfer) }}', '{{ $trx->idPembayaran }}')" style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#ffffff'; this.style.borderColor='#cbd5e1';">
+                                    <i class="fas fa-image" style="color: #3b82f6;"></i> Bukti
+                                </button>
+                            @else
+                                <span style="color: #cbd5e1; font-style: italic; font-size: 0.75rem;">Kosong</span>
+                            @endif
+                        </td>
+                        
+                        {{-- 5. Aksi Kendali --}}
+                        <td style="padding: 16px 20px; text-align: right; border-bottom: 1px solid #f1f5f9;">
+                            <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
+                                
+                                @if($klasterStatus === 'unpaid')
+                                    <span style="color: #94a3b8; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i class="fas fa-clock"></i> Belum Bayar
+                                    </span>
+
+                                @elseif($klasterStatus === 'pending')
+                                    <div style="display: flex; gap: 6px;">
+                                        <form action="{{ route('admin.transaksi.verifikasi', $trx->idPembayaran) }}" method="POST" onsubmit="return confirm('Setujui pembayaran ini?')" style="margin:0;">
+                                            @csrf
+                                            <button type="submit" style="background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.7rem; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 4px rgba(16,185,129,0.2);" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
+                                                Terima
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('admin.transaksi.tolak', $trx->idPembayaran) }}" method="POST" onsubmit="return confirm('Tolak pembayaran ini?')" style="margin:0;">
+                                            @csrf
+                                            <button type="submit" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.7rem; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 4px rgba(239,68,68,0.2);" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
+                                                Tolak
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                @elseif($klasterStatus === 'escrow')
+                                    @php $rekPembeli = optional($trx->penawaran->permintaan->user->rekening); @endphp
+                                    <span style="color: #0284c7; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; background: #e0f2fe; padding: 4px 10px; border-radius: 6px;">
+                                        Menunggu Pengiriman
+                                    </span>
+                                    <button type="button" onclick="bukaModalRefund('{{ route('admin.transaksi.refund', $trx->idPembayaran) }}', '{{ $rekPembeli->NamaBank ?? '' }}', '{{ $rekPembeli->NoRekening ?? '' }}', '{{ $rekPembeli->AtasNama ?? '' }}')" style="background: none; border: none; color: #ef4444; font-weight: 700; text-decoration: underline; font-size: 0.75rem; cursor: pointer; padding: 0;">
+                                        Refund Dana
+                                    </button>
+
+                                @elseif($klasterStatus === 'ready')
+                                    @php $rek = optional($trx->penawaran->petani->rekening); @endphp
+                                    <button type="button" onclick="bukaModalCairkan('{{ route('admin.transaksi.cairkan', $trx->idPembayaran) }}', '{{ $rek->NamaBank ?? '' }}', '{{ $rek->NoRekening ?? '' }}', '{{ $rek->AtasNama ?? '' }}')" style="background: #3b82f6; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; cursor: pointer; box-shadow: 0 2px 4px rgba(59,130,246,0.25); transition: background 0.2s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
+                                        Cairkan Ke Petani
+                                    </button>
+
+                                @elseif($klasterStatus === 'done')
+                                    @if($trx->StatusPembayaran === 'Ditolak' || $trx->StatusPembayaran === 'Dibatalkan' || $statusPesanan === 'Dibatalkan')
+                                        <span style="color: #991b1b; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; background: #fef2f2; padding: 4px 10px; border-radius: 6px;">
+                                            <i class="fas fa-ban"></i> Dibatalkan
+                                        </span>
+                                    @else
+                                        <span style="color: #166534; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; padding: 4px 10px; border-radius: 6px;">
+                                            <i class="fas fa-check-double"></i> Dana Dicairkan
+                                        </span>
+                                    @endif
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" style="padding: 60px 20px; text-align: center; color: #94a3b8;">
+                            <i class="fas fa-folder-open" style="font-size: 2.5rem; color: #e2e8f0; margin-bottom: 12px; display: block;"></i>
+                            <div style="font-size: 0.9rem; font-weight: 500;">Belum Ada Transaksi yang Masuk.</div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
             </div>
         </div>
     </div>

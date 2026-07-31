@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div class="col">
-                <h5 class="fw-bold text-dark mb-1 fs-5">{{ $pesanan->penawaran->permintaan->NamaTanaman }}</h5>
+                <h5 class="fw-bold text-dark mb-1 fs-5">{{ $pesanan->penawaran->permintaan->komoditas->namatanaman ?? 'Tanaman Terhapus' }}</h5>
                 <p class="mb-1 text-secondary small">
                     <span class="fw-bold">No. Pesanan:</span> {{ $pesanan->no_pesanan ?? '-' }}
                 </p>

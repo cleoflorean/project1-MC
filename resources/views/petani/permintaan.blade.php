@@ -43,8 +43,8 @@
                         <hr class="text-muted opacity-25 my-3">
 
                         <div class="mb-4">
-                            <h4 class="fw-bold text-success mb-1" style="font-size: 19px;">{{ $item->NamaTanaman }}</h4>
-                            <span class="badge bg-light text-secondary border mb-3">{{ $item->Komoditas ?? 'Sayuran' }}</span> 
+                            <h4 class="fw-bold text-success mb-1" style="font-size: 19px;">{{ $item->komoditas->namatanaman ?? 'Tanaman Terhapus' }}</h4>
+                            <span class="badge bg-light text-secondary border mb-3">{{ $item->komoditas->komoditas ?? 'Kategori Terhapus' }}</span> 
 
                             <div class="row text-center bg-light rounded-3 p-2 g-0 border border-light-subtle">
                                 <div class="col-6 border-end">
@@ -65,7 +65,7 @@
                             </span>
                         </div>
                         
-                        <a href="{{ route('tawar.create', ['idMinta' => $item->idPermintaan, 'NamaTanaman' => $item->NamaTanaman, 'Komoditas' => $item->Komoditas]) }}"
+                        <a href="{{ route('tawar.create', ['idMinta' => $item->idPermintaan, 'NamaTanaman' => $item->komoditas->nama_komoditas ?? '', 'Komoditas' => $item->komoditas->kategori ?? '']) }}"
                             class="btn btn-success w-100 py-2.5 rounded-3 fw-semibold shadow-sm text-center text-white text-decoration-none d-block">
                             <i class="bi bi-send-fill me-2"></i>Tawarkan Hasil Panen
                         </a>
@@ -115,7 +115,7 @@
                         <hr class="text-muted opacity-25 my-3">
 
                         <div class="mb-4">
-                            <h4 class="fw-bold text-secondary mb-1" style="font-size: 19px;">{{ $item->NamaTanaman }}</h4>
+                            <h4 class="fw-bold text-secondary mb-1" style="font-size: 19px;">{{ $item->komoditas->nama_komoditas ?? 'Tanaman Terhapus' }}</h4>
                             <span class="badge bg-light text-secondary border mb-3">{{ $item->Komoditas ?? 'Sayuran' }}</span> 
 
                             <div class="row text-center bg-light rounded-3 p-2 g-0 border border-light-subtle">
