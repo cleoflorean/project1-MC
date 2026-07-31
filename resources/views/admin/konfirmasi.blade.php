@@ -63,7 +63,9 @@
                 <thead>
                     <tr style="background: #f8fafc; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.5px;">
                         <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0; border-top-left-radius: 8px;">Transaksi</th>
-                        <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Pembeli & Komoditas</th>
+                        <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Petani</th>
+                        <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Pembeli</th>
+                        <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Komoditas</th>
                         <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0;">Status Info</th>
                         <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0; text-align: center;">Lampiran</th>
                         <th style="padding: 16px 20px; border-bottom: 2px solid #e2e8f0; border-top-right-radius: 8px; text-align: right;">Aksi Kendali</th>
@@ -97,15 +99,36 @@
                             <div style="font-weight: 700; color: #059669; font-size: 0.85rem; margin-bottom: 4px;">Rp {{ number_format($trx->TotalBayar, 0, ',', '.') }}</div>
                             <div style="color: #94a3b8; font-size: 0.75rem;">{{ $trx->created_at ? $trx->created_at->format('d M Y') : '-' }}</div>
                         </td>
-                        
-                        {{-- 2. Pembeli & Komoditas --}}
+
+                        {{-- 2. PETANI --}}
                         <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;" class="searchable-cell">
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 32px; height: 32px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0;">
+                                    {{ strtoupper(substr($trx->penawaran->petani->username ?? 'P', 0, 1)) }}
+                                </div>
+                                <div style="font-weight: 700; color: #1e293b; font-size: 0.85rem;">
+                                    {{ $trx->penawaran->petani->username ?? '-' }}
+                                </div>
+                            </div>
+                        </td>
+
+                        {{-- 3. PEMBELI --}}
+                        <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;" class="searchable-cell">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0;">
                                     {{ strtoupper(substr($trx->penawaran->permintaan->user->username ?? 'G', 0, 1)) }}
                                 </div>
+                                <div style="font-weight: 700; color: #1e293b; font-size: 0.85rem;">
+                                    {{ $trx->penawaran->permintaan->user->username ?? 'Guest' }}
+                                </div>
+                            </div>
+                        </td>
+                        
+                        {{-- 4. Komoditas --}}
+                        <td style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;" class="searchable-cell">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                </div>
                                 <div>
-                                    <div style="font-weight: 700; color: #1e293b; font-size: 0.85rem;">{{ $trx->penawaran->permintaan->user->username ?? 'Guest' }}</div>
                                     <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">
                                         <i class="fas fa-box" style="color: #cbd5e1; font-size: 0.7rem; margin-right: 3px;"></i> {{ $trx->penawaran->permintaan->Komoditas ?? 'Komoditas' }}
                                     </div>
