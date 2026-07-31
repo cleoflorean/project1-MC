@@ -39,7 +39,8 @@ class KomoditasSeeder extends Seeder
             ['namatanaman' => 'Pepaya', 'komoditas' => 'Hortikultura'],
             ['namatanaman' => 'Semangka', 'komoditas' => 'Hortikultura'],
             ['namatanaman' => 'Melon', 'komoditas' => 'Hortikultura'],
-            
+            ['namatanaman' => 'Terong', 'komoditas' => 'Hortikultura'],
+
             // Perkebunan
             ['namatanaman' => 'Kelapa Sawit', 'komoditas' => 'Perkebunan'],
             ['namatanaman' => 'Karet', 'komoditas' => 'Perkebunan'],

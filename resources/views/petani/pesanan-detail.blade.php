@@ -27,7 +27,7 @@
     $isConfirmed = !in_array($statusPesanan, ['Menunggu Pembayaran', 'Menunggu Verifikasi Admin', 'Belum Dibayar']);
     
     // 2. Pesanan Dikirim (aktif jika petani sudah mengirim barang / status sudah dikirim atau selesai)
-    $isShipped = in_array($statusPesanan, ['Dikirim', 'Dalam Pengiriman', 'Pesanan Selesai', 'Selesai']);
+    $isShipped = in_array($statusPesanan, ['Dikirim', 'Dalam Pengiriman', 'Menunggu Pesanan Diterima', 'Menunggu Diterima', 'Pesanan Selesai', 'Selesai']);
     
     // 3. Pesanan Selesai (aktif jika status transaksi sudah benar-benar tuntas)
     $isDone = in_array($statusPesanan, ['Pesanan Selesai', 'Selesai']);

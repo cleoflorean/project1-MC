@@ -59,6 +59,32 @@
             <i class="fas fa-clipboard-list" style="font-size: 2rem; color: #e5e7eb;"></i>
         </div>
 
+        @php
+            // Ambil data petani & profil dari penawaran
+            $petani = $pesanan->penawaran->petani ?? $pesanan->penawaran->user ?? null;
+            $profilPetani = $petani ? $petani->profile : null;
+        @endphp
+
+        {{-- Card Alamat Pengirim (Petani) --}}
+        <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+            <h4 style="margin: 0 0 15px 0; font-size: 1rem; color: #1f2937; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-store" style="color: #10b981;"></i> Alamat Pengirim
+            </h4>
+
+            <div style="font-size: 0.95rem; margin-bottom: 6px;">
+                <span style="font-weight: 700; color: #1e293b;">
+                    {{ $profilPetani->NamaLengkap ?? $petani->username ?? 'Nama Petani' }}
+                </span> 
+                <span style="color: #64748b; font-size: 0.875rem; margin-left: 8px;">
+                    {{ !empty($profilPetani->NoWhatsApp) ? '(+62) ' . ltrim($profilPetani->NoWhatsApp, '0') : '' }}
+                </span>
+            </div>
+            
+            <p style="margin: 0; line-height: 1.5; color: #475569; font-size: 0.9rem;">
+                {{ $profilPetani->Alamat ?? 'Alamat pengirim belum dilengkapi.' }}
+            </p>
+        </div>
+
         {{-- SEGMEN TIMELINE (Riwayat Proses) --}}
         <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
             <h4 style="margin: 0 0 15px 0; font-size: 1rem; color: #1f2937; font-weight: 700; display: flex; align-items: center; gap: 8px;">
@@ -108,7 +134,7 @@
             <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                 <i class="fas fa-map-marker-alt" style="color: #10b981; font-size: 1.2rem; margin-top: 2px;"></i>
                 <div>
-                    <h4 style="margin: 0 0 5px 0; font-size: 1rem; color: #1f2937; font-weight: 700;">Alamat Pengiriman</h4>
+                    <h4 style="margin: 0 0 5px 0; font-size: 1rem; color: #1f2937; font-weight: 700;">Alamat</h4>
                     <p style="margin: 0 0 5px 0; font-size: 0.95rem; font-weight: 600; color: #374151;">{{ auth()->user()->profile->NamaLengkap }} | {{ auth()->user()->profile->NoWhatsApp ?? '-' }}</p>
                     <p style="margin: 0; font-size: 0.9rem; color: #6b7280; line-height: 1.5;">{{ auth()->user()->profile->Alamat ?? 'Alamat belum diatur' }}</p>
                 </div>
