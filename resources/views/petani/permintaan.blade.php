@@ -43,8 +43,8 @@
                         <hr class="text-muted opacity-25 my-3">
 
                         <div class="mb-4">
-                            <h4 class="fw-bold text-success mb-1" style="font-size: 19px;">{{ $item->namatanaman ?? 'Tanaman Terhapus' }}</h4>
-                            <span class="badge bg-light text-secondary border mb-3">{{ $item->komoditas ?? 'Kategori Terhapus' }}</span> 
+                            <h4 class="fw-bold text-success mb-1" style="font-size: 19px;">{{ $item->komoditas->namatanaman ?? 'Tanaman Terhapus' }}</h4>
+                            <span class="badge bg-light text-secondary border mb-3">{{ $item->komoditas->komoditas ?? 'Kategori Terhapus' }}</span> 
 
                             <div class="row text-center bg-light rounded-3 p-2 g-0 border border-light-subtle">
                                 <div class="col-6 border-end">
