@@ -9,20 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up(): void
-{
-    Schema::table('permintaans', function (Blueprint $table) {
-        if (!Schema::hasColumn('permintaans', 'komoditas_id')) {
+    public function up(): void
+    {
+        Schema::table('permintaans', function (Blueprint $table) {
             $table->foreignId('komoditas_id')->nullable()->constrained('komoditas')->onDelete('cascade');
-        }
-        if (!Schema::hasColumn('permintaans', 'namatanaman')) {
+            
+            // Hapus ->change() agar Laravel membuat ini sebagai kolom baru
             $table->string('namatanaman', 30)->nullable();
-        }
-        if (!Schema::hasColumn('permintaans', 'komoditas')) {
             $table->string('komoditas', 20)->nullable();
-        }
-    });
-
+        });
     }
 
     /**
