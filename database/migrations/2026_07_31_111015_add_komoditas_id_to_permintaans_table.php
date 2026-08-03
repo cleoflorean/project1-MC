@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('permintaans', function (Blueprint $table) {
             $table->foreignId('komoditas_id')->nullable()->constrained('komoditas')->onDelete('cascade');
-            $table->string('namatanaman', 30)->nullable()->change();
-            $table->string('komoditas', 20)->nullable()->change();
+            $table->string('namatanaman', 30)->nullable();
+            $table->string('komoditas', 20)->nullable();
         });
     }
 
