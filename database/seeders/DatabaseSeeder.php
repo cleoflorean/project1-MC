@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminSeeder::class,
             KomoditasSeeder::class,
+            DropPointSeeder::class,
+            KurirSeeder::class,
         ]);
     }
 }

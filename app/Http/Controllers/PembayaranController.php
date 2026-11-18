@@ -104,7 +104,7 @@ class PembayaranController extends Controller
 
     public function detailTransaksi($id)
     {
-        $pesanan = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.profile', 'pengiriman', 'ulasan'])
+        $pesanan = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.profile', 'pengiriman.tracking.dropPoint', 'pengiriman.kurir.profile', 'ulasan'])
                                 ->findOrFail($id);
 
         return view('pembeli.detail', compact('pesanan'));

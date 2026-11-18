@@ -81,4 +81,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(Penawaran::class, 'idPetani', 'id');
     }
+
+    /**
+     * Relasi One-to-Many penugasan pengiriman sebagai kurir internal
+     */
+    public function pengirimanSebagaiKurir()
+    {
+        return $this->hasMany(Pengiriman::class, 'id_kurir', 'id');
+    }
+
+    public function isKurir(): bool
+    {
+        return $this->role === 'kurir';
+    }
 }

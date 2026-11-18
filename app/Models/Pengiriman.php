@@ -14,15 +14,37 @@ class Pengiriman extends Model
 
     // Murni urusan logistik kurir
     protected $fillable = [
-        'idTawar', 
+        'idTawar',
+        'id_kurir',
+        'no_resi',
+        'foto_resi_awal',
         'StatusPesanan',
-        'WaktuKirim',      
-        'WaktuSelesai'     
+        'catatan',
+        'WaktuKirim',
+        'WaktuSelesai'
     ];
 
     // Relasi ke tabel penawaran
     public function penawaran()
     {
         return $this->belongsTo(Penawaran::class, 'idTawar', 'idTawar');
+    }
+
+    // Relasi ke pembayaran
+    public function pembayaran()
+    {
+        return $this->hasOne(Pembayaran::class, 'idTawar', 'idTawar');
+    }
+
+    // Relasi ke kurir (User dengan role kurir)
+    public function kurir()
+    {
+        return $this->belongsTo(User::class, 'id_kurir', 'id');
+    }
+
+    // Relasi ke riwayat tracking
+    public function tracking()
+    {
+        return $this->hasMany(PengirimanTracking::class, 'idPengiriman', 'idPengiriman')->orderBy('waktu_scan', 'asc');
     }
 }

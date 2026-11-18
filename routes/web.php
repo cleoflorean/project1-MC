@@ -22,6 +22,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LupaSandiController;
 use App\Http\Controllers\KomplainController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\KurirController;
 
 // =========================================================================
 // HALAMAN PUBLIK (Akses tanpa login)
@@ -38,6 +39,8 @@ Route::post('/register', [RegisterController::class, 'store']);
 
 Route::get('/lupa-sandi', [LupaSandiController::class, 'showLupaSandi'])->name('lupa-sandi');
 Route::post('/lupa-sandi', [LupaSandiController::class, 'storeLupaSandi'])->name('lupa-sandi.kirim');
+
+Route::get('/lacak-resi', [KurirController::class, 'lacakResi'])->name('lacak.resi');
 
 
 // =========================================================================
@@ -151,5 +154,16 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/lupa-sandi/proses/{id}', [LaporanController::class, 'prosesLupaSandi'])->name('admin.lupasandi.proses');
         Route::post('/komplain-barang/update/{id}', [LaporanController::class, 'updateStatusKomplain'])->name('admin.komplain.update');
         Route::post('/komplain-barang/tindak/{id}', [LaporanController::class, 'tindakTegasKomplain'])->name('admin.komplain.tindak');
+    });
+
+    // =====================================================================
+    // AREA KURIR INTERNAL (LOGISTIK TANI HARVEST)
+    // =====================================================================
+    Route::prefix('kurir')->group(function () {
+        Route::get('/dashboard', [KurirController::class, 'dashboard'])->name('kurir.dashboard');
+        Route::get('/pengiriman/{id}', [KurirController::class, 'detailPengiriman'])->name('kurir.pengiriman.detail');
+        Route::post('/pengiriman/{id}/ambil', [KurirController::class, 'ambilPaket'])->name('kurir.pengiriman.ambil');
+        Route::post('/pengiriman/{id}/checkin', [KurirController::class, 'checkinDropPoint'])->name('kurir.pengiriman.checkin');
+        Route::post('/pengiriman/{id}/selesai', [KurirController::class, 'selesaikanPengantaran'])->name('kurir.pengiriman.selesai');
     });
 });

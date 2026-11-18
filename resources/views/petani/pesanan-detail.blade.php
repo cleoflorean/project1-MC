@@ -103,6 +103,49 @@
                 <p style="margin: 0; line-height: 1.6; color: #475569; font-size: 0.95rem;">{{ $profilPembeli->Alamat ?? 'Alamat belum dilengkapi.' }}</p>
             </div>
 
+            {{-- SEGMEN KURIR & RESI PENGIRIMAN --}}
+            @if($pesanan->pengiriman && $pesanan->pengiriman->no_resi)
+            <div style="background: #FFFFFF; padding: 24px 32px; border-radius: 20px; border: 1px solid #F1F5F9; box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.03);">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 14px; margin-bottom: 14px;">
+                    <div>
+                        <span style="background: #ECFDF5; color: #059669; font-weight: 700; font-size: 0.75rem; padding: 4px 10px; border-radius: 8px;">
+                            <i class="fas fa-truck-fast"></i> Kurir Internal Tani Harvest
+                        </span>
+                        <div style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin-top: 6px;">
+                            No. Resi: {{ $pesanan->pengiriman->no_resi }}
+                        </div>
+                    </div>
+                    <a href="{{ route('lacak.resi', ['resi' => $pesanan->pengiriman->no_resi]) }}" target="_blank" style="background: #059669; color: white; padding: 8px 18px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; text-decoration: none;">
+                        <i class="fas fa-search-location"></i> Pantau Paket
+                    </a>
+                </div>
+
+                @if($pesanan->pengiriman->kurir)
+                    <div style="font-size: 0.9rem; color: #475569; margin-bottom: 10px;">
+                        <i class="fas fa-id-badge text-success"></i> Kurir Bertugas: <strong>{{ $pesanan->pengiriman->kurir->profile->NamaLengkap ?? $pesanan->pengiriman->kurir->username }}</strong>
+                    </div>
+                @endif
+
+                @if($pesanan->pengiriman->tracking && $pesanan->pengiriman->tracking->count() > 0)
+                    <div style="margin-top: 14px;">
+                        <div style="font-size: 0.9rem; font-weight: 700; color: #1E293B; margin-bottom: 8px;">Riwayat Posisi Barang Terkini:</div>
+                        <div style="border-left: 2px solid #E2E8F0; margin-left: 8px; padding-left: 16px;">
+                            @foreach($pesanan->pengiriman->tracking as $tr)
+                                <div style="position: relative; margin-bottom: 12px;">
+                                    <div style="position: absolute; left: -22px; top: 3px; width: 10px; height: 10px; border-radius: 50%; background: {{ $loop->last ? '#059669' : '#94A3B8' }};"></div>
+                                    <div style="font-size: 0.88rem; font-weight: 700; color: #1E293B;">{{ $tr->status_log }}</div>
+                                    @if($tr->dropPoint)
+                                        <div style="font-size: 0.8rem; color: #64748B;"><i class="fas fa-warehouse text-success"></i> {{ $tr->dropPoint->nama_titik }}</div>
+                                    @endif
+                                    <div style="font-size: 0.78rem; color: #94A3B8;">{{ \Carbon\Carbon::parse($tr->waktu_scan)->translatedFormat('d M Y, H:i') }} WIB</div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </div>
+            @endif
+
             {{-- SEGMEN TIMELINE (Riwayat Proses Realistis) --}}
             <div style="background: #FFFFFF; padding: 32px; border-radius: 20px; border: 1px solid #F1F5F9; box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.03);">
                 <h3 style="margin: 0 0 24px 0; font-size: 1.15rem; color: #0F172A; font-weight: 800; display: flex; align-items: center; gap: 10px;">

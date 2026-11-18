@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Petani;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pembayaran;
-use App\Models\Pengiriman; // WAJIB DITAMBAHKAN AGAR BISA UPDATE STATUS
+use App\Models\Pengiriman;
+use App\Models\PengirimanTracking;
+use App\Models\User;
+use Illuminate\Support\Str;
 
 class PesananPetaniController extends Controller
 {
@@ -16,8 +19,7 @@ class PesananPetaniController extends Controller
     {
         $idPetaniLogin = auth()->id();
 
-        // PERBAIKAN 1 & 2: Tambah 'pengiriman' dan ubah nama variabel jadi $dataPesanan
-        $dataPesanan = Pembayaran::with(['penawaran.permintaan.user', 'ulasan', 'pengiriman'])
+        $dataPesanan = Pembayaran::with(['penawaran.permintaan.user', 'ulasan', 'pengiriman.kurir', 'pengiriman.tracking'])
             ->whereHas('penawaran', function($query) use ($idPetaniLogin) {
                 $query->where('idPetani', $idPetaniLogin);
             })
@@ -38,13 +40,42 @@ class PesananPetaniController extends Controller
             $query->where('idPetani', auth()->id());
         })->findOrFail($id);
         
-        // PERBAIKAN 3: Update StatusPesanan ke tabel pengirimans, bukan pembayarans
-        Pengiriman::updateOrCreate(
-            ['idTawar' => $pesanan->idTawar],
-            ['StatusPesanan' => 'Dikirim']
-        );
+        // Ambil kurir internal jika ada
+        $kurir = User::where('role', 'kurir')->first();
 
-        return redirect()->back()->with('success', 'Berhasil! Status pesanan sekarang: Menunggu Pesanan Diterima.');
+        // Cari atau buat Pengiriman
+        $pengiriman = Pengiriman::where('idTawar', $pesanan->idTawar)->first();
+
+        $noResi = $pengiriman->no_resi ?? ('TH-' . date('Ymd') . '-' . strtoupper(Str::random(6)));
+
+        if (!$pengiriman) {
+            $pengiriman = Pengiriman::create([
+                'idTawar'       => $pesanan->idTawar,
+                'id_kurir'      => $kurir ? $kurir->id : null,
+                'no_resi'       => $noResi,
+                'StatusPesanan' => 'Dikirim',
+                'WaktuKirim'    => now(),
+            ]);
+        } else {
+            $pengiriman->update([
+                'id_kurir'      => $pengiriman->id_kurir ?: ($kurir ? $kurir->id : null),
+                'no_resi'       => $pengiriman->no_resi ?: $noResi,
+                'StatusPesanan' => 'Dikirim',
+                'WaktuKirim'    => $pengiriman->WaktuKirim ?: now(),
+            ]);
+        }
+
+        // Catat tracking awal jika belum ada
+        if ($pengiriman->tracking()->count() === 0) {
+            PengirimanTracking::create([
+                'idPengiriman'  => $pengiriman->idPengiriman,
+                'status_log'    => 'Pesanan siap dikirim dari kebun Petani',
+                'catatan'       => 'Barang telah dikemas rapi. Menunggu kurir internal melakukan penjemputan.',
+                'waktu_scan'    => now(),
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Berhasil! Nomor Resi ' . $pengiriman->no_resi . ' diterbitkan. Status pesanan: Menunggu Kurir / Dalam Pengiriman.');
     }
 
     /**
@@ -52,8 +83,7 @@ class PesananPetaniController extends Controller
      */
     public function detailPesanan($id)
     {
-        // PERBAIKAN: Jangan lupa tambahkan 'pengiriman' di sini juga
-        $pesanan = Pembayaran::with(['penawaran.permintaan.user.profile', 'ulasan', 'pengiriman'])
+        $pesanan = Pembayaran::with(['penawaran.permintaan.user.profile', 'ulasan', 'pengiriman.kurir', 'pengiriman.tracking.dropPoint'])
             ->whereHas('penawaran', function($query) {
                 $query->where('idPetani', auth()->id());
             })

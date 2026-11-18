@@ -129,6 +129,50 @@
             </div>
         </div>
 
+        {{-- KARTU PELACAKAN RESI KURIR INTERNAL --}}
+        @if($pesanan->pengiriman && $pesanan->pengiriman->no_resi)
+        <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 12px;">
+                <div>
+                    <span style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; color: #15803d; background: #dcfce7; padding: 3px 8px; border-radius: 6px;">
+                        <i class="fas fa-truck-fast"></i> Kurir Internal Tani Harvest
+                    </span>
+                    <div style="font-size: 1.05rem; font-weight: 800; color: #1e293b; margin-top: 5px;">
+                        {{ $pesanan->pengiriman->no_resi }}
+                    </div>
+                </div>
+                <a href="{{ route('lacak.resi', ['resi' => $pesanan->pengiriman->no_resi]) }}" target="_blank" style="font-size: 0.85rem; font-weight: 700; color: #166534; text-decoration: none; border: 1px solid #166534; padding: 6px 14px; border-radius: 20px;">
+                    <i class="fas fa-search-location"></i> Lacak
+                </a>
+            </div>
+
+            @if($pesanan->pengiriman->tracking && $pesanan->pengiriman->tracking->count() > 0)
+                <div style="margin-top: 10px;">
+                    <h5 style="font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 10px;">Riwayat Posisi Barang:</h5>
+                    <div style="border-left: 2px solid #e2e8f0; margin-left: 6px; padding-left: 15px;">
+                        @foreach($pesanan->pengiriman->tracking as $tr)
+                            <div style="position: relative; margin-bottom: 15px;">
+                                <div style="position: absolute; left: -21px; top: 2px; width: 10px; height: 10px; border-radius: 50%; background: {{ $loop->last ? '#16a34a' : '#94a3b8' }};"></div>
+                                <div style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">{{ $tr->status_log }}</div>
+                                @if($tr->dropPoint)
+                                    <div style="font-size: 0.78rem; color: #64748b;"><i class="fas fa-warehouse" style="color: #10b981;"></i> {{ $tr->dropPoint->nama_titik }}</div>
+                                @endif
+                                <div style="font-size: 0.75rem; color: #94a3b8;">{{ \Carbon\Carbon::parse($tr->waktu_scan)->translatedFormat('d M Y, H:i') }} WIB</div>
+                                @if($tr->foto_bukti)
+                                    <div style="margin-top: 4px;">
+                                        <a href="{{ asset('storage/' . $tr->foto_bukti) }}" target="_blank" style="font-size: 0.75rem; color: #166534; text-decoration: none; font-weight: 600;">
+                                            <i class="fas fa-image"></i> Lihat Foto Bukti
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        </div>
+        @endif
+
         {{-- ALAMAT PENGIRIMAN --}}
         <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
             <div style="display: flex; gap: 10px; margin-bottom: 10px;">
