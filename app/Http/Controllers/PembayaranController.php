@@ -8,9 +8,11 @@ use App\Models\Penawaran;
 use App\Models\Ulasan;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use App\Models\Profile;
 use App\Models\Rekening;
 use App\Models\Pengiriman; // <-- PERBAIKAN 1: Tambahkan model Pengiriman
+
 
 class PembayaranController extends Controller
 {
@@ -53,15 +55,112 @@ class PembayaranController extends Controller
 
     public function show($idTawar)
     {
-        $pembayaran = Pembayaran::with(['penawaran.permintaan', 'penawaran.petani.profile'])
-                            ->where('idTawar', $idTawar)
-                            ->firstOrFail();
+        $pembayaran = Pembayaran::with([
+            'penawaran.permintaan',
+            'penawaran.petani.profile'
+        ])
+        ->where('idTawar', $idTawar)
+        ->whereHas('penawaran.permintaan', function ($query) {
+            $query->where('user_id', auth()->id());
+        })
+        ->firstOrFail();
+
+        // Konfigurasi Midtrans
+        \Midtrans\Config::$serverKey = config('midtrans.server_key');
+        \Midtrans\Config::$isProduction = config('midtrans.is_production');
+        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$is3ds = true;
+
+        // Buat Snap Token jika belum tersedia
+        if (!$pembayaran->snap_token) {
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $pembayaran->no_pesanan,
+                    'gross_amount' => (int) $pembayaran->TotalBayar,
+                ],
+            ];
+
+            $snapToken = \Midtrans\Snap::getSnapToken($params);
+
+            $pembayaran->update([
+                'snap_token' => $snapToken
+            ]);
+        }
 
         $adminUser = User::where('role', 'admin')->first();
-        $admin = $adminUser ? Rekening::where('user_id', $adminUser->id)->first() : null;
+        $admin = $adminUser
+            ? Rekening::where('user_id', $adminUser->id)->first()
+            : null;
 
-        return view('pembeli.pembayaran', compact('pembayaran', 'admin')); 
+        return view('pembeli.pembayaran', compact(
+            'pembayaran',
+            'admin'
+        ));
     }
+
+
+    public function cekStatusMidtrans($id)
+    {
+        $pembayaran = Pembayaran::findOrFail($id);
+
+        try {
+            // Konfigurasi Midtrans
+            \Midtrans\Config::$serverKey = config('midtrans.server_key');
+            \Midtrans\Config::$isProduction = config('midtrans.is_production');
+
+            // Meminta status transaksi ke Midtrans
+            $status = \Midtrans\Transaction::status(
+                $pembayaran->no_pesanan
+            );
+
+            // Pastikan respons berasal dari transaksi yang sesuai
+            if (
+                $status->order_id !== $pembayaran->no_pesanan ||
+                $status->status_code !== '200'
+            ) {
+                return back()->with('error', 'Status transaksi tidak valid.');
+            }
+
+            // Pastikan nominal sesuai dengan database
+            if ((float) $status->gross_amount !== (float) $pembayaran->TotalBayar) {
+                return back()->with('error', 'Nominal transaksi tidak sesuai.');
+            }
+
+            DB::transaction(function () use ($status, $pembayaran) {
+
+                $pembayaran->update([
+                    'transaction_id' => $status->transaction_id,
+                    'payment_type' => $status->payment_type ?? null,
+                    'transaction_status' => $status->transaction_status,
+                ]);
+
+                // Jika pembayaran berhasil
+                if (
+                    $status->transaction_status === 'settlement' ||
+                    (
+                        $status->transaction_status === 'capture' &&
+                        ($status->fraud_status ?? '') === 'accept'
+                    )
+                ) {
+                    $pembayaran->update([
+                        'StatusPembayaran' => 'Sudah Dibayar',
+                        'WaktuBayar' => $pembayaran->WaktuBayar ?? now(),
+                    ]);
+
+                    Pengiriman::where('idTawar', $pembayaran->idTawar)
+                        ->update([
+                            'StatusPesanan' => 'Menunggu Diproses',
+                        ]);
+                }
+            });
+
+            return back()->with('success', 'Status pembayaran berhasil diperiksa.');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal memeriksa pembayaran: ' . $e->getMessage());
+        }
+    }
+
 
     public function uploadBukti(Request $request, $idPembayaran)
     {
@@ -84,7 +183,7 @@ class PembayaranController extends Controller
             ]);
 
             return redirect()->route('pembeli.riwayat')
-                             ->with('success', 'Bukti transfer berhasil diunggah! Saat ini sedang menunggu verifikasi.');
+                            ->with('success', 'Bukti transfer berhasil diunggah! Saat ini sedang menunggu verifikasi.');
         }
 
         return back()->with('error', 'Gagal mengunggah bukti transfer.');

@@ -53,12 +53,82 @@
                 </div>
             </div>
 
+            {{-- PEMBAYARAN MELALUI MIDTRANS --}}
+            <div style="margin-bottom: 30px;">
+                <p style="margin: 0 0 16px 0; font-size: 0.85rem; font-weight: 700; color: #064e3b; letter-spacing: 0.5px; text-transform: uppercase;">
+                    Metode Pembayaran
+                </p>
+
+                <div style="background: #f0fdf4; border: 1px solid #dcfce7; border-radius: 16px; padding: 20px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="color: #059669; font-size: 1.3rem; background: #ffffff; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+
+                        <div>
+                            <p style="margin: 0; font-weight: 700; color: #111827;">
+                                Pembayaran Aman dengan Midtrans
+                            </p>
+                            <p style="margin: 4px 0 0; font-size: 0.8rem; color: #6b7280;">
+                                Pilih metode pembayaran melalui halaman checkout.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- TOMBOL PEMBAYARAN --}}
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button
+                    type="button"
+                    id="pay-button"
+                    style="flex: 2; padding: 16px; background: #064e3b; color: #ffffff; border: none; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer;"
+                >
+                    Bayar Sekarang
+                </button>
+
+                <a href="javascript:history.back()"
+                    style="flex: 1; padding: 16px; background: #f3f4f6; color: #4b5563; text-align: center; border-radius: 12px; font-weight: 600; font-size: 0.95rem; text-decoration: none;">
+                    Batal
+                </a>
+            </div>
+
+            {{-- MIDTRANS SNAP --}}
+            <script
+                src="https://app.sandbox.midtrans.com/snap/snap.js"
+                data-client-key="{{ config('midtrans.client_key') }}">
+            </script>
+
+            <script>
+                document.getElementById('pay-button').addEventListener('click', function () {
+                    snap.pay(@json($pembayaran->snap_token), {
+                        onSuccess: function (result) {
+                            alert('Pembayaran berhasil diproses. Status akan diperbarui oleh sistem.');
+                            window.location.reload();
+                        },
+                        onPending: function (result) {
+                            alert('Pembayaran belum selesai. Silakan selesaikan pembayaran Anda.');
+                            window.location.reload();
+                        },
+                        onError: function (result) {
+                            alert('Terjadi kesalahan saat memproses pembayaran.');
+                        },
+                        onClose: function () {
+                            alert('Anda menutup halaman pembayaran sebelum menyelesaikan transaksi.');
+                        }
+                    });
+                });
+            </script>
+
+
+
+
             {{-- METODE TRANSFER --}}
-            <div style="margin-bottom: 40px;">
+            {{-- <div style="margin-bottom: 40px;">
                 <p style="margin: 0 0 16px 0; font-size: 0.85rem; font-weight: 700; color: #064e3b; letter-spacing: 0.5px; text-transform: uppercase;">Tujuan Rekening</p>
                 <div style="background: #f0fdf4; border: 1px solid #dcfce7; border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px;">
                     {{-- IKON 2: Metode Pembayaran --}}
-                    <div style="color: #059669; font-size: 1.3rem; background: #ffffff; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #e8f5e9;">
+                    {{-- <div style="color: #059669; font-size: 1.3rem; background: #ffffff; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #e8f5e9;">
                         <i class="fas fa-university"></i>
                     </div>
                    <div>
@@ -72,31 +142,31 @@
                             a.n. {{ $admin->AtasNama ?? 'Admin Tani Harvest' }}
                         </p>
                     </div>
-                    </div>
+                </div> --}}
             {{-- FORM UPLOAD DENGAN DESIGN MINIMALIS --}}
-            <div>
+            {{-- <div>
                 <form action="{{ route('pembayaran.upload', $pembayaran->idPembayaran) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     
                     <div style="margin-bottom: 30px;">
-                        <label style="display: block; width: 100%; padding: 28px 20px; border: 2px dashed #e5e7eb; border-radius: 16px; background: #fafafa; text-align: center; cursor: pointer; transition: all 0.2s; box-sizing: border-box;" onmouseover="this.style.borderColor='#059669'; this.style.background='#f0fdf4';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.background='#fafafa';">
+                        <label style="display: block; width: 100%; padding: 28px 20px; border: 2px dashed #e5e7eb; border-radius: 16px; background: #fafafa; text-align: center; cursor: pointer; transition: all 0.2s; box-sizing: border-box;" onmouseover="this.style.borderColor='#059669'; this.style.background='#f0fdf4';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.background='#fafafa';"> --}}
                             {{-- IKON 3: Aksi Upload --}}
-                            <i class="fas fa-arrow-up" style="font-size: 1.1rem; color: #059669; background: #ffffff; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);"></i>
+                            {{-- <i class="fas fa-arrow-up" style="font-size: 1.1rem; color: #059669; background: #ffffff; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);"></i>
                             <div style="font-size: 0.9rem; color: #111827; font-weight: 600; margin-bottom: 2px;">Unggah Bukti Transfer</div>
                             <div style="font-size: 0.75rem; color: #9ca3af;">Format berkas: Gambar (JPG, PNG) atau PDF</div>
                             
                             <input type="file" name="BuktiTransfer" required style="display: none;" onchange="document.getElementById('fileName').textContent = '✓ ' + this.files[0].name; document.getElementById('fileName').style.color='#059669'">
                             <div id="fileName" style="margin-top: 10px; font-size: 0.85rem; color: #6b7280; font-weight: 600;"></div>
                         </label>
-                    </div>
+                    </div> --}}
                     
                     {{-- AREA TOMBOL UTAMA --}}
-                    <div style="display: flex; gap: 12px; align-items: center;">
+                    {{-- <div style="display: flex; gap: 12px; align-items: center;">
                         <button type="submit" style="flex: 2; padding: 16px; background: #064e3b; color: #ffffff; border: none; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#043224'" onmouseout="this.style.background='#064e3b'">Konfirmasi Pembayaran</button>
                         <a href="javascript:history.back()" style="flex: 1; padding: 16px; background: #f3f4f6; color: #4b5563; text-align: center; border-radius: 12px; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: 0.2s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">Batal</a>
                     </div>
                 </form>
-            </div>
+            </div> --}}
             
         </div>
     </div>

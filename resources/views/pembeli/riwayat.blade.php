@@ -8,26 +8,74 @@
 
         <!-- Header -->
         <h4 class="mb-3 fw-bold text-dark">Riwayat Transaksi</h4>
-
+            
         @php
             $currentStatus = request()->query('status', 'semua');
-            
-            $filteredRiwayat = $riwayat->filter(function($pesanan) use ($currentStatus) {
-                $sudahUpload = !empty($pesanan->BuktiTransfer);
-                
-                // PERBAIKAN: Pisahkan status pembayaran dan pengiriman
-                $statPembayaran = trim($pesanan->StatusPembayaran);
-                $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
 
-                if ($currentStatus == 'belum-bayar') return in_array($statPembayaran, ['Menunggu Pembayaran', 'Belum Bayar', 'Belum Dibayar']) || !$sudahUpload;
-                if ($currentStatus == 'diproses') return $statPembayaran == 'Menunggu Verifikasi Admin' || in_array($statPengiriman, ['Menyiapkan Barang', 'Barang Disiapkan', 'Petani Menyiapkan Barang', 'Di Proses']) || ($statPembayaran == 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']));
-                if ($currentStatus == 'dikirim') return in_array($statPengiriman, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima']);
-                if ($currentStatus == 'selesai') return in_array($statPengiriman, ['Pesanan Selesai', 'Selesai']);
-                return true; 
+            $filteredRiwayat = $riwayat->filter(function($pesanan) use ($currentStatus) {
+
+                $statPembayaran = strtolower(trim($pesanan->StatusPembayaran ?? ''));
+                $statPengiriman = strtolower(trim(optional($pesanan->pengiriman)->StatusPesanan ?? ''));
+                $statusMidtrans = strtolower(trim($pesanan->transaction_status ?? ''));
+
+                // Pembayaran berhasil melalui Midtrans atau pembayaran manual
+                $sudahDibayar = in_array($statPembayaran, ['sudah dibayar', 'lunas'])
+                    || $statusMidtrans === 'settlement';
+
+                $belumBayar = !$sudahDibayar &&
+                    in_array($statPembayaran, [
+                        'menunggu pembayaran',
+                        'belum bayar',
+                        'belum dibayar'
+                    ]);
+
+                $statusSelesai = in_array($statPengiriman, [
+                    'pesanan selesai', 'selesai'
+                ]);
+
+                $statusDikirim = in_array($statPengiriman, [
+                    'dikirim',
+                    'menunggu diterima',
+                    'menunggu pesanan diterima'
+                ]);
+
+                $statusBatal = in_array($statPengiriman, [
+                    'dibatalkan', 'ditolak'
+                ]) || in_array($statPembayaran, [
+                    'ditolak', 'dibatalkan'
+                ]);
+
+                $statusProses = in_array($statPengiriman, [
+                    'menunggu diproses',
+                    'menyiapkan barang',
+                    'barang disiapkan',
+                    'petani menyiapkan barang',
+                    'di proses'
+                ]);
+
+                if ($currentStatus == 'belum-bayar') {
+                    return $belumBayar;
+                }
+
+                if ($currentStatus == 'diproses') {
+                    return $menungguVerifikasi ||
+                        ($sudahDibayar && !$statusDikirim && !$statusSelesai && !$statusBatal) ||
+                        $statusProses;
+                }
+
+                if ($currentStatus == 'dikirim') {
+                    return $statusDikirim;
+                }
+
+                if ($currentStatus == 'selesai') {
+                    return $statusSelesai;
+                }
+
+                return true;
             });
         @endphp
 
-        <!-- TABS NAVIGASI (Shopee Style) -->
+        <!-- TABS NAVIGASI -->
         <div class="card border-0 rounded-0 shadow-sm mb-3">
             <div class="d-flex text-center">
                 <a href="?status=semua" class="flex-fill py-3 text-decoration-none {{ $currentStatus == 'semua' ? 'text-success fw-bold border-bottom border-success' : 'text-dark' }}" style="{{ $currentStatus == 'semua' ? 'border-bottom-width: 3px !important;' : '' }}">Semua</a>
@@ -47,8 +95,23 @@
         
         @php 
             // Ambil status di awal agar mudah dipanggil di bawah
-            $statPembayaran = trim($pesanan->StatusPembayaran);
-            $statPengiriman = trim(optional($pesanan->pengiriman)->StatusPesanan);
+            $statPembayaran = strtolower(trim($pesanan->StatusPembayaran ?? ''));
+            $statPengiriman = strtolower(trim(optional($pesanan->pengiriman)->StatusPesanan ?? ''));
+            $statusMidtrans = strtolower(trim($pesanan->transaction_status ?? ''));
+
+            $sudahDibayar = in_array($statPembayaran, ['sudah dibayar', 'lunas'])
+                || $statusMidtrans === 'settlement';
+
+            $belumBayar = !$sudahDibayar && in_array($statPembayaran, [
+                'menunggu pembayaran',
+                'belum bayar',
+                'belum dibayar'
+            ]);
+
+            // $menungguVerifikasi = in_array($statPembayaran, [
+            //     'menunggu verifikasi admin',
+            //     'menunggu verifikasi'
+            // ]); 
         @endphp
 
         <div class="card border-0 shadow-sm mb-3 rounded-0">
@@ -76,23 +139,44 @@
 
                 <div class="d-flex align-items-center">
                     <!-- PERBAIKAN LOGIKA STATUS UNTUK LABEL -->
-                    @if(in_array($statPembayaran, ['Menunggu Pembayaran', 'Belum Bayar', 'Belum Dibayar']) || empty($pesanan->BuktiTransfer))
-                        <span class="text-danger me-2"><i class="fas fa-exclamation-circle"></i> Menunggu Pembayaran.</span>
-                        <span class="text-danger fw-bold border-start border-2 ps-2">BELUM BAYAR</span>
-                    @elseif($statPembayaran === 'Menunggu Verifikasi Admin' && !in_array($statPengiriman, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima', 'Pesanan Selesai', 'Selesai']))
-                        <span class="text-warning text-dark me-2"><i class="fas fa-clock"></i> Sedang dicek oleh Admin.</span>
-                        <span class="text-warning fw-bold border-start border-2 ps-2">DIPROSES</span>
-                    @elseif(in_array($statPengiriman, ['Menyiapkan Barang', 'Barang Disiapkan', 'Petani Menyiapkan Barang', 'Di Proses']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima', 'Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak'])))
-                        <span class="text-primary me-2"><i class="fas fa-box"></i> Petani menyiapkan pesanan.</span>
-                        <span class="text-primary fw-bold border-start border-2 ps-2">DIKEMAS</span>
-                    @elseif(in_array($statPengiriman, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima']))
-                        <span class="text-success me-2"><i class="fas fa-truck"></i> Pesanan dalam perjalanan. <i class="far fa-question-circle text-muted"></i></span>
-                        <span class="text-success fw-bold border-start border-2 ps-2">DIKIRIM</span>
-                    @elseif(in_array($statPengiriman, ['Pesanan Selesai', 'Selesai']))
-                        <span class="text-success me-2"><i class="fas fa-check-circle"></i> Pesanan tiba di alamat tujuan.</span>
-                        <span class="text-success fw-bold border-start border-2 ps-2">SELESAI</span>
+                    @if($belumBayar)
+                        <span class="text-danger me-2">
+                            <i class="fas fa-exclamation-circle"></i> Menunggu Pembayaran.
+                        </span>
+                        <span class="text-danger fw-bold border-start border-2 ps-2">Belum bayar</span>
+
+                    @elseif(in_array($statPengiriman, [
+                        'menunggu diproses',
+                        'menyiapkan barang',
+                        'barang disiapkan',
+                        'petani menyiapkan barang',
+                        'di proses'
+                    ]))
+                        <span class="text-primary border-start border-2 ps-2">Diproses</span>
+
+                    @elseif(in_array($statPengiriman, [
+                        'dikirim',
+                        'menunggu diterima',
+                        'menunggu pesanan diterima'
+                    ]))
+                        <span class="text-success me-2">
+                            <i class="fas fa-truck"></i> Pesanan dalam perjalanan.
+                        </span>
+                        <span class="text-success border-start border-2 ps-2">Dikirim</span>
+
+                    @elseif(in_array($statPengiriman, ['pesanan selesai', 'selesai']))
+                        <span class="text-success border-start border-2 ps-2">Selesai</span>
+
+                    @elseif($sudahDibayar)
+                        <span class="text-success me-2">
+                            <i class="fas fa-check-circle"></i> Pembayaran berhasil.
+                        </span>
+                        <span class="text-success border-start border-2 ps-2">Sudah dibayar</span>
+
                     @else
-                        <span class="text-secondary fw-bold">{{ strtoupper($statPengiriman ?: $statPembayaran) }}</span>
+                        <span class="text-secondary fw-bold">
+                            {{ strtoupper($statPengiriman ?: $statPembayaran) }}
+                        </span>
                     @endif
                 </div>
             </div>
@@ -128,30 +212,47 @@
             <!-- Footer Total & Aksi -->
             <div class="card-body bg-white bg-opacity-50">
                 <div class="d-flex justify-content-end align-items-center mb-4">
-                    <span class="text-dark me-2"><i class="fas fa-shield-alt text-success"></i> Total Pesanan:</span>
+                    <span class="text-dark me-2"></i> Total:</span>
                     <span class="text-success fs-4 fw-bold">Rp{{ number_format($pesanan->TotalBayar, 0, ',', '.') }}</span>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="{{ route('detail', $pesanan->idPembayaran) }}" class="btn btn-outline-secondary px-4">Tampilkan Rincian</a>
+                    <a href="{{ route('detail', $pesanan->idPembayaran) }}" class="btn btn-outline-secondary px-4">Rincian</a>
 
                     <!-- PERBAIKAN LOGIKA STATUS UNTUK TOMBOL AKSI -->
-                    @if(in_array($statPembayaran, ['Menunggu Pembayaran', 'Belum Bayar', 'Belum Dibayar']) || empty($pesanan->BuktiTransfer))
-                        <a href="{{ route('pembayaran.show', $pesanan->idTawar) }}" class="btn btn-success px-5 fw-bold">Bayar Sekarang</a>
+                    @if($belumBayar)
+                        <a href="{{ route('pembayaran.show', $pesanan->idTawar) }}"
+                        class="btn btn-success px-5 fw-bold">
+                            Bayar Sekarang
+                        </a>
 
-                    @elseif(in_array($statPengiriman, ['Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima']))
-                        <form action="{{ route('pembeli.pesanan.selesai', $pesanan->idPembayaran) }}" method="POST" class="m-0" onsubmit="return confirm('Selesaikan pesanan ini?')">
+                    @elseif(in_array($statPengiriman, [
+                        'dikirim',
+                        'menunggu diterima',
+                        'menunggu pesanan diterima'
+                    ]))
+                        <form action="{{ route('pembeli.pesanan.selesai', $pesanan->idPembayaran) }}"
+                            method="POST"
+                            class="m-0"
+                            onsubmit="return confirm('Selesaikan pesanan ini?')">
                             @csrf
-                            <button type="submit" class="btn btn-success px-5 fw-bold">Pesanan Diterima</button>
+                            <button type="submit" class="btn btn-success px-5 fw-bold">
+                                Pesanan Diterima
+                            </button>
                         </form>
 
-                    @elseif(in_array($statPengiriman, ['Pesanan Selesai', 'Selesai']))
+                    @elseif(in_array($statPengiriman, ['pesanan selesai', 'selesai']))
                         @if(!$pesanan->ulasan)
-                            <button type="button" class="btn btn-success px-5 fw-bold" data-bs-toggle="modal" data-bs-target="#modalUlasan-{{ $pesanan->idPembayaran }}">
+                            <button type="button"
+                                    class="btn btn-success px-5 fw-bold"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalUlasan-{{ $pesanan->idPembayaran }}">
                                 Nilai
                             </button>
                         @else
-                            <button class="btn btn-outline-secondary px-4" disabled>Sudah Dinilai</button>
+                            <button class="btn btn-outline-secondary px-4" disabled>
+                                Sudah Dinilai
+                            </button>
                         @endif
                     @endif
                 </div>

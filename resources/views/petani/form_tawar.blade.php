@@ -57,7 +57,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-grid-3x3-gap-fill"></i></span>
                                     <input type="text" class="form-control bg-light border-start-0 fw-bold text-dark" name="Komoditas" 
-                                           value="{{ $permintaan->komoditas->komoditas ?? '' }}" readonly>
+                                        value="{{ $permintaan->komoditas->komoditas ?? '' }}" readonly>
                                 </div>
                                 <div class="form-text text-muted" style="font-size: 11px;">Komoditas dikunci otomatis sesuai kategori permintaan pasar.</div>
                             </div>

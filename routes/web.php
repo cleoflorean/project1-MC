@@ -65,7 +65,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pembeli/penawaran/{id}/foto', [PembeliPermintaanController::class, 'lihatFoto'])->name('pembeli.penawaran.foto');
         // Route untuk Info Petani
         Route::get('/pembeli/petani/{id}/info', [PembeliPermintaanController::class, 'showPetani'])->name('pembeli.petani.show');
-      
+    
         Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
         Route::get('/profil/edit', [ProfilController::class, 'edit'])->name('profil.edit');
         Route::put('/profil/update', [ProfilController::class, 'update'])->name('profil.update');
@@ -139,6 +139,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/pengguna/{id}/reset-password', [AdminController::class, 'resetPassword'])->name('admin.pengguna.reset'); // Asumsi method ini ada
 
         // 4. Halaman Konfirmasi Pembayaran
+        Route::post('/pembayaran/{id}/cek-status', [PembayaranController::class, 'cekStatusMidtrans'])->name('admin.pembayaran.cekStatus');
         Route::get('/konfirmasi', [AdminController::class, 'konfirmasi'])->name('admin.konfirmasi');
         Route::post('/admin/transaksi/{id}/tolak', [App\Http\Controllers\AdminController::class, 'tolakPembayaran'])->name('admin.transaksi.tolak');
         

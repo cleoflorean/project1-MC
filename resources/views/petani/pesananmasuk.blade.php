@@ -13,11 +13,27 @@
     });
     
     $pesananProses = $dataPesanan->filter(function($p) {
-        $statPembayaran = trim($p->StatusPembayaran);
-        $statPengiriman = trim(optional($p->pengiriman)->StatusPesanan);
-        
-        // Masuk tab ini JIKA status pengiriman sedang disiapkan atau dikirim ATAU pembayaran Lunas
-        return in_array($statPengiriman, ['Menyiapkan Barang', 'Barang Disiapkan', 'Petani Menyiapkan Barang', 'Di Proses', 'Dikirim', 'Menunggu Diterima', 'Menunggu Pesanan Diterima']) || ($statPembayaran === 'Lunas' && !in_array($statPengiriman, ['Pesanan Selesai', 'Selesai', 'Dibatalkan', 'Ditolak']));
+        $statPembayaran = trim($p->StatusPembayaran ?? '');
+        $statPengiriman = trim(optional($p->pengiriman)->StatusPesanan ?? '');
+
+        return in_array($statPengiriman, [
+            'Menunggu Diproses',
+            'Menyiapkan Barang',
+            'Barang Disiapkan',
+            'Petani Menyiapkan Barang',
+            'Di Proses',
+            'Dikirim',
+            'Menunggu Diterima',
+            'Menunggu Pesanan Diterima'
+        ]) || (
+            in_array($statPembayaran, ['Lunas', 'Sudah Dibayar']) &&
+            !in_array($statPengiriman, [
+                'Pesanan Selesai',
+                'Selesai',
+                'Dibatalkan',
+                'Ditolak'
+            ])
+        );
     });
     
     $pesananSelesai = $dataPesanan->filter(function($p) {

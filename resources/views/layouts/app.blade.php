@@ -1,3 +1,4 @@
+{{-- PETANI --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -19,7 +20,6 @@
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-    {{-- CSS kustom TaniConnect --}}
     <link rel="stylesheet" href="{{ asset('css/tanidashboard.css') }}">
 
     @stack('styles')
@@ -33,7 +33,7 @@
      ============================================================ --}}
 <aside class="tc-sidebar" id="sidebar">
 
-    {{-- Logo TaniConnect --}}
+    {{-- Logo Tani --}}
     <div class="tc-sidebar-logo d-flex align-items-center" style="padding: 15px;">
         <img src="{{ asset('images/logo.jpeg') }}" alt="Tani Harvest Logo" style="height: 40px; width: auto; margin-right: 15px; object-fit: contain;">
         <div class="tc-logo-text-container">

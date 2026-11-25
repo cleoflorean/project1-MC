@@ -76,18 +76,45 @@
                     
                     @php
                         $statusPesanan = trim(optional($trx->pengiriman)->StatusPesanan);
+                        $statusPembayaran = strtolower(trim($trx->StatusPembayaran ?? ''));
+                        $statusMidtrans = strtolower(trim($trx->transaction_status ?? ''));
+
                         $klasterStatus = 'unknown';
-                        
-                        if ($trx->StatusPembayaran === 'Belum Bayar' || $trx->StatusPembayaran === 'Menunggu Pembayaran' || empty($trx->BuktiTransfer)) {
-                            $klasterStatus = 'unpaid';
-                        } elseif ($trx->StatusPembayaran === 'Menunggu Verifikasi Admin' || $trx->StatusPembayaran === 'Menunggu Verifikasi') {
-                            $klasterStatus = 'pending';
-                        } elseif ($statusPesanan === 'Pesanan Selesai' || $trx->StatusPembayaran === 'Ditolak' || $trx->StatusPembayaran === 'Dibatalkan' || $statusPesanan === 'Dibatalkan') {
-                            $klasterStatus = 'done';
-                        } elseif ($trx->StatusPembayaran === 'Lunas' && in_array($statusPesanan, ['Selesai', 'Pesanan Diterima', 'Barang Diterima', 'Diterima'])) {
-                            $klasterStatus = 'ready';
-                        } elseif ($trx->StatusPembayaran === 'Lunas') {
+
+                        // 1. Pembayaran berhasil melalui Midtrans
+                        if (
+                            in_array($statusMidtrans, ['settlement', 'capture']) ||
+                            in_array($statusPembayaran, ['sudah dibayar', 'lunas'])
+                        ) {
                             $klasterStatus = 'escrow';
+
+                        // 2. Pembayaran dibatalkan atau ditolak
+                        } elseif (
+                            in_array($statusPembayaran, ['ditolak', 'dibatalkan']) ||
+                            $statusMidtrans === 'cancel' ||
+                            $statusMidtrans === 'expire' ||
+                            $statusMidtrans === 'deny' ||
+                            $statusPesanan === 'Dibatalkan'
+                        ) {
+                            $klasterStatus = 'done';
+
+                        // 3. Menunggu verifikasi pembayaran manual
+                        } elseif (
+                            in_array($statusPembayaran, ['menunggu verifikasi admin', 'menunggu verifikasi'])
+                        ) {
+                            $klasterStatus = 'pending';
+
+                        // 4. Belum melakukan pembayaran
+                        } elseif (
+                            in_array($statusPembayaran, ['belum bayar', 'menunggu pembayaran', 'belum dibayar'])
+                        ) {
+                            $klasterStatus = 'unpaid';
+
+                        // 5. Barang sudah diterima
+                        } elseif (
+                            in_array($statusPesanan, ['pesanan selesai', 'selesai', 'pesanan diterima', 'barang diterima', 'diterima'])
+                        ) {
+                            $klasterStatus = 'ready';
                         }
                     @endphp
 
@@ -159,6 +186,8 @@
                                         <span style="color: #dc2626;">Batal</span>
                                     @elseif($klasterStatus === 'unpaid')
                                         <span>Menunggu Pembayaran</span>
+                                    @elseif($klasterStatus === 'escow' && $statusPesanan === 'Menunggu Pembayaran')
+                                        <span style="color: #0284c7;">Menunggu Diproses</span>
                                     @else
                                         <span style="color: #0284c7;">{{ $statusPesanan ?: 'Diproses' }}</span>
                                     @endif
@@ -181,26 +210,26 @@
                         <td style="padding: 16px 20px; text-align: right; border-bottom: 1px solid #f1f5f9; min-width: 140px; width: 15%;">
                             <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
                                 
-                                @if($klasterStatus === 'unpaid')
-                                    <span style="color: #94a3b8; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
-                                        <i class="fas fa-clock"></i> Belum Bayar
-                                    </span>
+                                @if($klasterStatus === 'unpaid' || $klasterStatus === 'pending')
+                                    <form action="{{ route('admin.pembayaran.cekStatus', $trx->idPembayaran) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Periksa status pembayaran melalui Midtrans?')"
+                                        style="margin: 0;">
 
-                                @elseif($klasterStatus === 'pending')
-                                    <div style="display: flex; gap: 6px; justify-content: flex-end;">
-                                        <form action="{{ route('admin.transaksi.verifikasi', $trx->idPembayaran) }}" method="POST" onsubmit="return confirm('Setujui pembayaran ini?')" style="margin:0;">
-                                            @csrf
-                                            <button type="submit" style="background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.7rem; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 4px rgba(16,185,129,0.2);" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
-                                                Terima
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('admin.transaksi.tolak', $trx->idPembayaran) }}" method="POST" onsubmit="return confirm('Tolak pembayaran ini?')" style="margin:0;">
-                                            @csrf
-                                            <button type="submit" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.7rem; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 4px rgba(239,68,68,0.2);" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
-                                                Tolak
-                                            </button>
-                                        </form>
-                                    </div>
+                                        @csrf
+
+                                        <button type="submit"
+                                                style="background: #2563eb; color: white; border: none; padding: 7px 12px; border-radius: 6px; font-weight: 600; font-size: 0.7rem; cursor: pointer;">
+
+                                            <i class="fas fa-sync-alt"></i>
+                                            Periksa Status
+
+                                        </button>
+                                    </form>
+                                    <span style-"color: #10b981; font-size: 0.75rem; font-weight: 600;">
+                                        <i class="fas fa-check-circle"></i>
+                                        {{  $trx->StatusPembayaran }}
+                                    </span>
 
                                 @elseif($klasterStatus === 'escrow')
                                     @php $rekPembeli = optional($trx->penawaran->permintaan->user->rekening); @endphp

@@ -18,7 +18,11 @@ class Pembayaran extends Model
         'TotalBayar', 
         'BuktiTransfer', 
         'StatusPembayaran', 
-        'WaktuBayar'
+        'WaktuBayar',
+        'snap_token',
+        'transaction_id',
+        'payment_type',
+        'transaction_status',
     ];
 
     // Relasi ke tabel penawaran
