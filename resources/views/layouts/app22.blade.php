@@ -14,6 +14,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('pembeli.css') }}">
+
+    <style>
+        .th-register-dropdown-menu {
+            background-color: #f7f5ee;
+            border: 1px solid #d8dfd2;
+            border-radius: 12px;
+            min-width: 220px;
+            box-shadow: 0 12px 28px rgba(24, 48, 28, 0.14);
+        }
+        .th-register-option-primary {
+            background-color: #2e7d32;
+            color: #ffffff;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .th-register-option-primary:hover,
+        .th-register-option-primary:focus {
+            background-color: #1b5e20;
+            color: #ffffff;
+        }
+        .th-register-option-secondary {
+            background-color: #ffffff;
+            color: #2e7d32;
+            border: 1px solid #2e7d32;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .th-register-option-secondary:hover,
+        .th-register-option-secondary:focus {
+            background-color: #edf5ee;
+            color: #1b5e20;
+        }
+    </style>
 </head>
 <body class="bg-light d-flex flex-column min-vh-100">
 
@@ -21,7 +56,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top py-3">
         <div class="container">
             <!-- Logo -->
-            <a class="navbar-brand d-flex align-items-center fw-bold text-success" href="#" style="font-size: 1.3rem;">
+            <a class="navbar-brand d-flex align-items-center fw-bold text-success" href="{{ route('beranda') }}" style="font-size: 1.3rem;">
                 <img src="{{ asset('images/logo.jpeg') }}" alt="Tani Harvest Logo" style="height: 40px; width: auto; margin-right: 12px; object-fit: contain;">
                 Tani Harvest
             </a>
@@ -37,6 +72,7 @@
                     @guest
                         <li class="nav-item">
                             <a href="{{ route('beranda') }}" class="nav-link fw-semibold {{ request()->routeIs('beranda') ? 'text-success active' : 'text-secondary' }}">
+                                Beranda
                             </a>
                         </li>
                     @endguest
@@ -84,7 +120,22 @@
                 <div class="d-flex align-items-center ms-auto">
                     @guest
                         <a href="{{ route('login') }}" class="btn btn-link text-success fw-bold text-decoration-none me-2">Masuk</a>
-                        <a href="{{ route('register') }}" class="btn btn-success px-4 py-2" style="border-radius: 6px;">Daftar</a>
+
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-success dropdown-toggle px-4 py-2 fw-semibold" id="daftarDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 6px;">
+                                Daftar
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end th-register-dropdown-menu p-3 mt-2" aria-labelledby="daftarDropdownBtn">
+                                <div class="d-grid gap-2">
+                                    <a href="{{ route('kurir.landing') }}" class="btn th-register-option-primary py-2">
+                                        Daftar Sebagai Kurir
+                                    </a>
+                                    <a href="{{ route('register') }}" class="btn th-register-option-secondary py-2">
+                                        Daftar Bukan Kurir
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     @endguest
 
                     @auth
@@ -95,15 +146,12 @@
                                 <!-- Foto Profil Bulat -->
                                 <div class="profile-avatar-circle" style="width: 38px; height: 38px; font-size: 0.8rem;">
                                     @php
-                                        // Ambil foto dari profile pembeli jika ada
                                         $fotoProfil = auth()->user()->profile?->FotoProfil;
                                     @endphp
 
                                     @if($fotoProfil) 
-                                        <!-- Menampilkan foto yang di-upload dari controller Anda -->
                                         <img src="{{ asset($fotoProfil) }}" alt="Profil">
                                     @else
-                                        <!-- Default jika belum mengupload foto (Inisial Nama) -->
                                         <span>{{ strtoupper(substr(auth()->user()->username, 0, 2)) }}</span>
                                     @endif
                                 </div>

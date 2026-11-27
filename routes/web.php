@@ -34,8 +34,15 @@ Route::get('/', function () {
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'authenticate']);
+
+// Registrasi Pembeli / Petani
 Route::get('/register', [RegisterController::class, 'showRegister'])->name('register');
 Route::post('/register', [RegisterController::class, 'store']);
+
+// Registrasi Kurir
+Route::view('/kurir', 'kurir.landing')->name('kurir.landing'); // tambahkan ini
+Route::get('/register/kurir', [RegisterController::class, 'showKurir'])->name('register.kurir');
+Route::post('/register/kurir', [RegisterController::class, 'store'])->name('register.kurir.post');
 
 Route::get('/lupa-sandi', [LupaSandiController::class, 'showLupaSandi'])->name('lupa-sandi');
 Route::post('/lupa-sandi', [LupaSandiController::class, 'storeLupaSandi'])->name('lupa-sandi.kirim');
@@ -47,14 +54,14 @@ Route::get('/lacak-resi', [KurirController::class, 'lacakResi'])->name('lacak.re
 // HALAMAN PRIVATE (Wajib Login)
 // =========================================================================
 Route::middleware(['auth'])->group(function () {
-    
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // =====================================================================
     // AREA PEMBELI
     // =====================================================================
     Route::get('/dashboard-pembeli', [PembeliPermintaanController::class, 'dashboard'])->name('pembeli');
-    
+
     Route::prefix('pembeli')->group(function () {
         Route::get('/permintaan', [PembeliPermintaanController::class, 'index'])->name('permintaan.index');
         Route::post('/permintaan/store', [PembeliPermintaanController::class, 'store'])->name('permintaan.store');
@@ -62,10 +69,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/permintaan/{id}/penawaran', [PembeliPermintaanController::class, 'lihatPenawaran'])->name('permintaan.penawaran');
         Route::patch('/penawaran/{id}/update-status', [PembeliPermintaanController::class, 'updateStatusPenawaran'])->name('pembeli.penawaran.update-status');
-        Route::get('/pembeli/penawaran/{id}/foto', [PembeliPermintaanController::class, 'lihatFoto'])->name('pembeli.penawaran.foto');
-        // Route untuk Info Petani
-        Route::get('/pembeli/petani/{id}/info', [PembeliPermintaanController::class, 'showPetani'])->name('pembeli.petani.show');
-    
+        Route::get('/penawaran/{id}/foto', [PembeliPermintaanController::class, 'lihatFoto'])->name('pembeli.penawaran.foto');
+        Route::get('/petani/{id}/info', [PembeliPermintaanController::class, 'showPetani'])->name('pembeli.petani.show');
+
         Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
         Route::get('/profil/edit', [ProfilController::class, 'edit'])->name('profil.edit');
         Route::put('/profil/update', [ProfilController::class, 'update'])->name('profil.update');
@@ -88,9 +94,9 @@ Route::middleware(['auth'])->group(function () {
     // AREA PETANI
     // =====================================================================
     Route::prefix('dashboard-petani')->group(function () {
-        
+
         Route::get('/', [DashboardController::class, 'index'])->name('petani.dashboard');
-        Route::view('/notifikasi', 'Petani.dashboard')->name('petani.notifikasi');
+        Route::view('/notifikasi', 'petani.dashboard')->name('petani.notifikasi');
 
         Route::get('/profil', [PetaniProfileController::class, 'index'])->name('petani.profil');
         Route::post('/profil/update', [PetaniProfileController::class, 'update'])->name('petani.profil.update');
@@ -126,31 +132,31 @@ Route::middleware(['auth'])->group(function () {
 
         // 1. Halaman Utama Dashboard Admin
         Route::get('/', [AdminController::class, 'index'])->name('admin.index');
-        
-        // 1.5. Halaman Profil & Rekening Admin (RUTE BARU)
+
+        // 1.5. Halaman Profil & Rekening Admin
         Route::get('/profil', [AdminController::class, 'profil'])->name('admin.profil');
         Route::put('/profil/update', [AdminController::class, 'updateProfil'])->name('admin.profil.update');
-        
+
         // 2. Halaman Data Pengguna
         Route::get('/pengguna', [AdminController::class, 'pengguna'])->name('admin.pengguna');
 
         // 3. Halaman Detail Pengguna & Reset Sandi Darurat
         Route::get('/pengguna/{id}/detail', [AdminController::class, 'detailPengguna'])->name('admin.pengguna.detail');
-        Route::post('/pengguna/{id}/reset-password', [AdminController::class, 'resetPassword'])->name('admin.pengguna.reset'); // Asumsi method ini ada
+        Route::post('/pengguna/{id}/reset-password', [AdminController::class, 'resetPassword'])->name('admin.pengguna.reset');
 
         // 4. Halaman Konfirmasi Pembayaran
         Route::post('/pembayaran/{id}/cek-status', [PembayaranController::class, 'cekStatusMidtrans'])->name('admin.pembayaran.cekStatus');
         Route::get('/konfirmasi', [AdminController::class, 'konfirmasi'])->name('admin.konfirmasi');
-        Route::post('/admin/transaksi/{id}/tolak', [App\Http\Controllers\AdminController::class, 'tolakPembayaran'])->name('admin.transaksi.tolak');
-        
+        Route::post('/transaksi/{id}/tolak', [AdminController::class, 'tolakPembayaran'])->name('admin.transaksi.tolak');
+
         // 5. Aksi Admin Resolusi Transaksi (Verifikasi, Refund, Cairkan)
         Route::post('/transaksi/{id}/verifikasi', [AdminController::class, 'verifikasiPembayaran'])->name('admin.transaksi.verifikasi');
         Route::post('/transaksi/{id}/refund', [AdminController::class, 'refundKePembeli'])->name('admin.transaksi.refund');
         Route::post('/transaksi/{id}/cairkan', [AdminController::class, 'cairkanKePetani'])->name('admin.transaksi.cairkan');
-    
+
         // 6. PUSAT RESOLUSI & LAPORAN
         Route::get('/laporan', [LaporanController::class, 'index'])->name('admin.laporan');
-        
+
         // 7. Aksi Tombol di dalam Halaman Laporan
         Route::post('/lupa-sandi/proses/{id}', [LaporanController::class, 'prosesLupaSandi'])->name('admin.lupasandi.proses');
         Route::post('/komplain-barang/update/{id}', [LaporanController::class, 'updateStatusKomplain'])->name('admin.komplain.update');
