@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pendaftaran Mitra Kurir - Tani Harvest</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://api.fontshare.com">
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@1&f[]=cabinet-grotesk@1&display=swap" rel="stylesheet">
     <style>
-        :root { --leaf-900:#153a22; --leaf-700:#2e7d32; --leaf-800:#1b5e20; --harvest:#f0b429; --soft:#f5f7f5; --ink:#1c2a21; --muted:#5d6b61; --line:#dbe2db; --danger:#b42318; }
+        :root { --leaf-900:#166534; --leaf-700:#2e7d32; --leaf-800:#1b5e20; --harvest:#f0b429; --soft:#f5f7f5; --ink:#1c2a21; --muted:#5d6b61; --line:#dbe2db; --danger:#b42318; }
         * { box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         body { margin: 0; background: var(--soft); color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.55; }
@@ -120,10 +120,7 @@
 <main class="content">
         <header class="content-head">
             <a class="brand" href="{{ route('kurir.landing') }}">
-                <svg viewBox="0 0 40 40" aria-hidden="true">
-                    <rect width="40" height="40" rx="10" fill="#f0b429"/>
-                    <path d="M20 32V17M20 22c-7 0-10-4-10-10 7 0 10 4 10 10Zm0-3c0-6 3-10 10-10 0 6-3 10-10 10Z" fill="none" stroke="#153a22" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <img src="{{ asset('images/logo.jpeg') }}" alt="Tani Harvest Logo" style="height: 40px; width: auto; margin-right: 12px; object-fit: contain;">
                 Tani Harvest
             </a>
             <h1>Bergabung sebagai mitra kurir</h1>
@@ -156,7 +153,7 @@
 
             <fieldset id="akun">
                 <legend>Akun</legend>
-                <p class="section-note">Dipakai untuk masuk ke aplikasi.</p>
+                <p class="section-note"></p>
                 <div class="grid">
                     <div>
                         <label class="label" for="username">Username</label>

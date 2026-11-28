@@ -1,5 +1,5 @@
 @extends('layouts.kurir')
-@section('title', 'Dashboard Kurir Internal - Tani Harvest')
+@section('title', 'Dashboard Kurir - Tani Harvest')
 
 @section('content')
 <div class="container py-4">
@@ -8,7 +8,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
         <div>
             <h3 class="fw-bold mb-1 text-dark">
-                <i class="fas fa-id-badge text-success me-2"></i>Dashboard Kurir Internal
+                <i class="fas fa-id-badge text-success me-2"></i>Dashboard Kurir
             </h3>
             <p class="text-secondary mb-0">Kelola rute penjemputan dari petani, update check-in drop point, dan serah terima ke pembeli.</p>
         </div>
